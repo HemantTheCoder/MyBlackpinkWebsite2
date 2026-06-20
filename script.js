@@ -232,3 +232,208 @@ function saveHighScore(gameKey, currentScore) {
     }
   }
 }
+
+// ---------------------
+// PUZZLE LOGIC
+// ---------------------
+let puzzleMoves = 0;
+let puzzleTiles = [];
+const puzzleSize = 3;
+let puzzleEmptyIdx = 8;
+let puzzleComplete = false;
+
+window.initPuzzle = function() {
+  puzzleMoves = 0;
+  puzzleComplete = false;
+  
+  const moveEl = document.getElementById('move-count');
+  const resEl = document.getElementById('puzzle-result');
+  if(moveEl) moveEl.textContent = puzzleMoves;
+  if(resEl) resEl.style.display = 'none';
+  
+  puzzleTiles = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+  puzzleEmptyIdx = 8;
+  
+  for(let i=0; i<150; i++) {
+    let validMoves = getValidPuzzleMoves(puzzleEmptyIdx);
+    let randomMove = validMoves[Math.floor(Math.random() * validMoves.length)];
+    swapPuzzleTiles(puzzleEmptyIdx, randomMove, false);
+  }
+  
+  renderPuzzleBoard();
+};
+
+function getValidPuzzleMoves(idx) {
+  const valid = [];
+  const row = Math.floor(idx / puzzleSize);
+  const col = idx % puzzleSize;
+  if(row > 0) valid.push(idx - puzzleSize);
+  if(row < puzzleSize - 1) valid.push(idx + puzzleSize);
+  if(col > 0) valid.push(idx - 1);
+  if(col < puzzleSize - 1) valid.push(idx + 1);
+  return valid;
+}
+
+function swapPuzzleTiles(i, j, animate=true) {
+  let temp = puzzleTiles[i];
+  puzzleTiles[i] = puzzleTiles[j];
+  puzzleTiles[j] = temp;
+  if (puzzleTiles[i] === 8) puzzleEmptyIdx = i;
+  if (puzzleTiles[j] === 8) puzzleEmptyIdx = j;
+  if (animate) {
+    puzzleMoves++;
+    const moveEl = document.getElementById('move-count');
+    if(moveEl) moveEl.textContent = puzzleMoves;
+    renderPuzzleBoard();
+    checkPuzzleWin();
+  }
+}
+
+function renderPuzzleBoard() {
+  const board = document.getElementById('board');
+  if(!board) return;
+  board.innerHTML = '';
+  
+  puzzleTiles.forEach((val, idx) => {
+    const div = document.createElement('div');
+    div.className = 'tile';
+    if (val === 8) {
+      div.classList.add('empty');
+    } else {
+      const row = Math.floor(val / puzzleSize);
+      const col = val % puzzleSize;
+      div.style.backgroundPosition = `${col * 50}% ${row * 50}%`;
+      div.onclick = () => handleTileClick(idx);
+    }
+    board.appendChild(div);
+  });
+}
+
+function handleTileClick(idx) {
+  if(puzzleComplete) return;
+  const validMoves = getValidPuzzleMoves(puzzleEmptyIdx);
+  if(validMoves.includes(idx)) {
+    swapPuzzleTiles(puzzleEmptyIdx, idx);
+  }
+}
+
+function checkPuzzleWin() {
+  for(let i=0; i<8; i++) {
+    if(puzzleTiles[i] !== i) return;
+  }
+  puzzleComplete = true;
+  document.getElementById('board').children[8].classList.remove('empty');
+  document.getElementById('board').children[8].style.backgroundPosition = `100% 100%`;
+  document.getElementById('puzzle-result').style.display = 'block';
+  document.getElementById('final-moves').textContent = puzzleMoves;
+  
+  const bestScore = localStorage.getItem('puzzleBestMoves');
+  const msgEl = document.getElementById('puzzle-leaderboard-msg');
+  if (!bestScore || puzzleMoves < parseInt(bestScore)) {
+    localStorage.setItem('puzzleBestMoves', puzzleMoves);
+    msgEl.textContent = "🏆 New Best Score! (Fewest Moves)";
+  } else {
+    msgEl.textContent = "Great job! Try to beat your record next time.";
+  }
+}
+
+// ---------------------
+// EMOJI GAME LOGIC
+// ---------------------
+const emojiData = [
+  { emoji: "🍦👄👧🏻", ans: "Ice Cream", opts: ["Ice Cream", "Sour Candy", "As If It's Your Last", "Bet You Wanna"] },
+  { emoji: "🔫💔🔪", ans: "Kill This Love", opts: ["Kill This Love", "DDU-DU DDU-DU", "Shut Down", "Typa Girl"] },
+  { emoji: "💖🐍💥", ans: "Pink Venom", opts: ["Pink Venom", "How You Like That", "Tally", "Crazy Over You"] },
+  { emoji: "🔥💃🏻🛑", ans: "Playing With Fire", opts: ["Playing With Fire", "Boombayah", "Whistle", "Stay"] },
+  { emoji: "💵💰🤑", ans: "Money", opts: ["Lalisa", "Money", "Rockstar", "Hard To Love"] },
+  { emoji: "🌹🎤💔", ans: "On The Ground", opts: ["Gone", "On The Ground", "APT.", "Hard To Love"] },
+  { emoji: "😗😙😚", ans: "Whistle", opts: ["Whistle", "Boombayah", "Stay", "As If It's Your Last"] },
+  { emoji: "🚘🚪⬇️", ans: "Shut Down", opts: ["Shut Down", "Typa Girl", "Yeah Yeah Yeah", "Ready For Love"] },
+  { emoji: "🤷🏻‍♀️👍🏻👎🏻", ans: "How You Like That", opts: ["How You Like That", "Pretty Savage", "Kick It", "Love To Hate Me"] },
+  { emoji: "🌸👧🏻💕", ans: "Lovesick Girls", opts: ["Lovesick Girls", "Hope Not", "You Never Know", "Don't Know What To Do"] },
+  { emoji: "🏃🏻‍♀️💨🔥", ans: "GO", opts: ["GO", "Ready For Love", "Pink Venom", "Shut Down"] },
+  { emoji: "🎸🌟🕺", ans: "Rockstar", opts: ["Rockstar", "Money", "Shoong", "Lalisa"] },
+  { emoji: "👧🏻👗💄", ans: "Mantra", opts: ["Mantra", "You & Me", "Solo", "Flower"] },
+  { emoji: "🌺💃🏻🔴", ans: "Flower", opts: ["Flower", "All Eyes On Me", "Solo", "On The Ground"] },
+  { emoji: "🏢🍺🕺", ans: "APT.", opts: ["APT.", "On The Ground", "Gone", "Hard To Love"] }
+];
+
+let emojiRound = 0;
+let emojiStreak = 0;
+let emojiBestStreak = 0;
+let emojiGamePool = [];
+
+window.startEmojiGame = function() {
+  emojiGamePool = [...emojiData].sort(() => 0.5 - Math.random()).slice(0, 10);
+  emojiRound = 0;
+  emojiStreak = 0;
+  emojiBestStreak = 0;
+  
+  document.getElementById('game-start').style.display = 'none';
+  document.getElementById('game-result').style.display = 'none';
+  document.getElementById('game-active').style.display = 'block';
+  loadEmojiRound();
+};
+
+function loadEmojiRound() {
+  if (emojiRound >= emojiGamePool.length) {
+    endEmojiGame();
+    return;
+  }
+  
+  const rData = emojiGamePool[emojiRound];
+  document.getElementById('emoji-text').textContent = rData.emoji;
+  document.getElementById('streak-text').textContent = emojiStreak;
+  document.getElementById('r-counter').textContent = emojiRound + 1;
+  
+  const container = document.getElementById('options-container');
+  container.innerHTML = '';
+  
+  const options = [...rData.opts].sort(() => 0.5 - Math.random());
+  const ansIndex = options.indexOf(rData.ans);
+  
+  options.forEach((opt, index) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.textContent = opt;
+    btn.onclick = () => selectEmojiAnswer(index, ansIndex, btn);
+    container.appendChild(btn);
+  });
+}
+
+function selectEmojiAnswer(selectedIndex, ansIndex, btnElement) {
+  const buttons = document.querySelectorAll('#options-container .option-btn');
+  buttons.forEach(b => b.style.pointerEvents = 'none');
+  
+  if (selectedIndex === ansIndex) {
+    btnElement.classList.add('correct');
+    emojiStreak++;
+    if(emojiStreak > emojiBestStreak) emojiBestStreak = emojiStreak;
+  } else {
+    btnElement.classList.add('wrong');
+    buttons[ansIndex].classList.add('correct');
+    emojiStreak = 0;
+  }
+  
+  document.getElementById('streak-text').textContent = emojiStreak;
+  
+  setTimeout(() => {
+    emojiRound++;
+    loadEmojiRound();
+  }, 1200);
+}
+
+function endEmojiGame() {
+  document.getElementById('game-active').style.display = 'none';
+  document.getElementById('game-result').style.display = 'block';
+  document.getElementById('final-streak').textContent = emojiBestStreak;
+  
+  const globalBest = localStorage.getItem('emojiBestStreak') || 0;
+  const msgEl = document.getElementById('leaderboard-msg');
+  if (emojiBestStreak > globalBest) {
+    localStorage.setItem('emojiBestStreak', emojiBestStreak);
+    msgEl.style.display = 'block';
+  } else {
+    msgEl.style.display = 'none';
+  }
+}
