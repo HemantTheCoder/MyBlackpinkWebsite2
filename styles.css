@@ -109,9 +109,11 @@ a:hover {
 }
 
 .btn {
-  background: var(--glass-bg);
-  color: var(--text-main);
-  border: 1px solid var(--glass-border);
+  background: rgba(255, 42, 133, 0.15);
+  color: var(--text-main) !important;
+  border: 1px solid var(--bp-pink);
+  box-shadow: 0 0 10px rgba(255, 42, 133, 0.3);
+  backdrop-filter: blur(5px);
   padding: 12px 24px;
   border-radius: 30px;
   font-size: 1rem;
@@ -119,40 +121,16 @@ a:hover {
   text-transform: uppercase;
   letter-spacing: 1px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   display: inline-block;
+  text-decoration: none;
 }
 
 .btn:hover {
   background: var(--bp-pink);
-  color: var(--bp-black);
-  border-color: var(--bp-pink);
-  box-shadow: 0 0 20px rgba(255, 102, 178, 0.5);
-  transform: translateY(-2px);
-}
-
-.btn.primary {
-  background: var(--bp-pink);
-  color: var(--bp-black);
-  border-color: var(--bp-pink);
-}
-
-.btn.primary:hover {
-  background: var(--bp-pink-hover);
-  box-shadow: 0 0 25px rgba(255, 102, 178, 0.7);
-}
-
-.btn-glow {
-  background: var(--bg-dark);
-  color: var(--text-main) !important;
-  border-color: var(--bp-pink);
-  box-shadow: 0 0 15px var(--bp-pink-glow);
-}
-
-.btn-glow:hover {
-  background: var(--bp-pink);
   color: var(--bp-black) !important;
-  box-shadow: 0 0 25px var(--bp-pink);
+  box-shadow: 0 0 25px var(--bp-pink-glow);
+  transform: translateY(-3px) scale(1.05);
 }
 
 /* Hero Section */
@@ -195,6 +173,9 @@ a:hover {
 .featured-img {
   width: 100%;
   max-width: 600px;
+  max-height: 500px;
+  object-fit: cover;
+  object-position: top center;
   display: block;
   margin: 0 auto 2rem;
   border-radius: 20px;
@@ -208,7 +189,6 @@ a:hover {
   border-color: var(--bp-pink);
   box-shadow: 0 0 25px var(--bp-pink-glow);
   transform: scale(1.03);
-  filter: contrast(1.1) brightness(1.1) saturate(1.3);
 }
 
 /* Footer */
