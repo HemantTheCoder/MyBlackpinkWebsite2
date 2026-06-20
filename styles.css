@@ -142,6 +142,19 @@ a:hover {
   box-shadow: 0 0 25px rgba(255, 102, 178, 0.7);
 }
 
+.btn-glow {
+  background: var(--bg-dark);
+  color: var(--text-main) !important;
+  border-color: var(--bp-pink);
+  box-shadow: 0 0 15px var(--bp-pink-glow);
+}
+
+.btn-glow:hover {
+  background: var(--bp-pink);
+  color: var(--bp-black) !important;
+  box-shadow: 0 0 25px var(--bp-pink);
+}
+
 /* Hero Section */
 .hero {
   position: relative;
