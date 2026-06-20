@@ -133,6 +133,20 @@ a:hover {
   transform: translateY(-3px) scale(1.05);
 }
 
+.btn-glow {
+  background: linear-gradient(135deg, var(--bp-pink), #ff66b2);
+  color: #fff !important;
+  border: none;
+  box-shadow: 0 5px 20px var(--bp-pink-glow);
+}
+
+.btn-glow:hover {
+  background: linear-gradient(135deg, #fff, var(--bp-pink));
+  color: var(--bp-pink) !important;
+  box-shadow: 0 10px 30px var(--bp-pink-glow);
+  transform: translateY(-5px) scale(1.08);
+}
+
 /* Hero Section */
 .hero {
   position: relative;

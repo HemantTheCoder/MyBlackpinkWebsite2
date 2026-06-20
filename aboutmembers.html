@@ -6,65 +6,6 @@
   <title>Blackpink Members</title>
   <link rel="stylesheet" href="styles.css">
   <script src="script.js" defer></script>
-  <style>
-    .members-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 3rem;
-      margin-top: 3rem;
-    }
-    .member-card {
-      text-align: center;
-      text-decoration: none;
-      color: inherit;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 3rem 2rem !important; /* Override glass-card padding for better centering */
-    }
-    .member-card-img-wrapper {
-      width: 220px;
-      height: 220px;
-      margin-bottom: 2rem;
-      border-radius: 50%;
-      padding: 6px;
-      background: linear-gradient(135deg, var(--bp-pink), #ff66b2);
-      box-shadow: 0 15px 35px var(--bp-pink-glow);
-      transition: all 0.4s ease;
-    }
-    .member-card img {
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      object-fit: cover;
-      object-position: top center;
-      border: 4px solid var(--bg-dark); /* Create a gap effect between gradient and image */
-      transition: all 0.4s ease;
-    }
-    .member-card:hover .member-card-img-wrapper {
-      transform: translateY(-10px) scale(1.05);
-      box-shadow: 0 25px 50px var(--bp-pink-glow);
-      background: linear-gradient(135deg, #fff, var(--bp-pink));
-    }
-    .member-card h3 {
-      font-size: 2.2rem;
-      color: #fff;
-      margin-bottom: 0.5rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      transition: color 0.3s ease;
-    }
-    .member-card:hover h3 {
-      color: var(--bp-pink);
-    }
-    .member-card p {
-      font-size: 1.1rem;
-      color: #ccc;
-      font-weight: 500;
-      letter-spacing: 1px;
-    }
-  </style>
 </head>
 <body>
 
