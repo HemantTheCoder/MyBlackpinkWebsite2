@@ -9,78 +9,109 @@
   <style>
     .members-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 2rem;
-      margin-top: 2rem;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 3rem;
+      margin-top: 3rem;
     }
     .member-card {
       text-align: center;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      cursor: pointer;
       text-decoration: none;
       color: inherit;
-      display: block;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 3rem 2rem !important; /* Override glass-card padding for better centering */
     }
-    .member-card:hover {
-      transform: translateY(-10px);
+    .member-card-img-wrapper {
+      width: 220px;
+      height: 220px;
+      margin-bottom: 2rem;
+      border-radius: 50%;
+      padding: 6px;
+      background: linear-gradient(135deg, var(--bp-pink), #ff66b2);
+      box-shadow: 0 15px 35px var(--bp-pink-glow);
+      transition: all 0.4s ease;
     }
     .member-card img {
-      width: 200px;
-      height: 200px;
+      width: 100%;
+      height: 100%;
       border-radius: 50%;
       object-fit: cover;
-      border: 4px solid var(--bp-pink);
-      margin-bottom: 1rem;
-      box-shadow: 0 10px 20px rgba(255, 102, 178, 0.3);
-      transition: transform 0.3s ease;
+      object-position: top center;
+      border: 4px solid var(--bg-dark); /* Create a gap effect between gradient and image */
+      transition: all 0.4s ease;
     }
-    .member-card:hover img {
-      transform: scale(1.05);
+    .member-card:hover .member-card-img-wrapper {
+      transform: translateY(-10px) scale(1.05);
+      box-shadow: 0 25px 50px var(--bp-pink-glow);
+      background: linear-gradient(135deg, #fff, var(--bp-pink));
     }
     .member-card h3 {
-      font-size: 1.8rem;
-      color: var(--bp-pink);
+      font-size: 2.2rem;
+      color: #fff;
       margin-bottom: 0.5rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      transition: color 0.3s ease;
+    }
+    .member-card:hover h3 {
+      color: var(--bp-pink);
+    }
+    .member-card p {
+      font-size: 1.1rem;
+      color: #ccc;
+      font-weight: 500;
+      letter-spacing: 1px;
     }
   </style>
 </head>
 <body>
 
-  <header class="hero" style="height: 40vh; background-image: url('header_bg.png');">
+  <header class="hero" style="height: 30vh; background: radial-gradient(circle at center, var(--glass-border), transparent);">
     <div class="hero-content">
-      <h1>The Members</h1>
+      <h1 style="font-size: 4rem;">The Members</h1>
     </div>
   </header>
 
   <main class="container">
     <div class="text-center">
-      <a href="index.html" class="btn primary" style="margin-bottom: 2rem;">Back to Home</a>
+      <a href="index.html" class="btn btn-glow" style="margin-bottom: 2rem;">&larr; Back to Home</a>
     </div>
 
-    <section class="glass-card">
-      <h2 style="margin-bottom: 2rem;">Meet Blackpink</h2>
+    <section class="glass-card" style="padding: 4rem;">
+      <h2 style="margin-bottom: 1rem; font-size: 3rem;">Meet Blackpink</h2>
+      <p style="text-align: center; color: #aaa; margin-bottom: 3rem; font-size: 1.2rem;">Select a member to explore their individual profile and solo achievements.</p>
       
       <div class="members-grid">
         <a href="Jisoo.html" class="glass-card member-card">
-          <img src="Jisoo.webp" alt="Jisoo">
+          <div class="member-card-img-wrapper">
+            <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Jisoo_from_BLACKPINK_PUBG_210321_(cropped).jpg?width=400" alt="Jisoo">
+          </div>
           <h3>Jisoo</h3>
           <p>Lead Vocalist, Visual</p>
         </a>
 
         <a href="Jennie.html" class="glass-card member-card">
-          <img src="Jennie.webp" alt="Jennie">
+          <div class="member-card-img-wrapper">
+            <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Jennie_Kim_from_BLACKPINK_PUBG_210321_(cropped).jpg?width=400" alt="Jennie">
+          </div>
           <h3>Jennie</h3>
           <p>Main Rapper, Lead Vocalist</p>
         </a>
 
         <a href="RoséSolo.html" class="glass-card member-card">
-          <img src="Rose.webp" alt="Rosé">
+          <div class="member-card-img-wrapper">
+            <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Blackpink_Rosé_Rimowa_1.jpg?width=400" alt="Rosé">
+          </div>
           <h3>Rosé</h3>
           <p>Main Vocalist, Lead Dancer</p>
         </a>
 
         <a href="Lalisa.html" class="glass-card member-card">
-          <img src="Lisa.webp" alt="Lisa">
+          <div class="member-card-img-wrapper">
+            <img src="https://commons.wikimedia.org/wiki/Special:FilePath/20240314_Lisa_Manoban_07.jpg?width=400" alt="Lisa">
+          </div>
           <h3>Lisa</h3>
           <p>Main Dancer, Lead Rapper</p>
         </a>
