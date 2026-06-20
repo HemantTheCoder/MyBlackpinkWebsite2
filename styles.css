@@ -276,3 +276,331 @@ footer p {
   0% { transform: translate(-50%, -50%) scale(0.5); opacity: 1; }
   100% { transform: translate(-50%, -50%) scale(3); opacity: 0; }
 }
+
+/* =========================================
+   GAMES HUB (.games-grid, .game-card)
+   ========================================= */
+.games-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 3rem;
+  margin-top: 3rem;
+}
+.game-card {
+  text-align: center;
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4rem 2rem !important;
+  position: relative;
+  overflow: hidden;
+}
+.game-icon {
+  font-size: 5rem;
+  margin-bottom: 1.5rem;
+  transition: transform 0.4s ease;
+}
+.game-card:hover .game-icon {
+  transform: scale(1.2) rotate(10deg);
+}
+.game-card h3 {
+  font-size: 2.5rem;
+  color: #fff;
+  margin-bottom: 1rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  transition: color 0.3s ease;
+}
+.game-card:hover h3 {
+  color: var(--bp-pink);
+}
+.game-card p {
+  font-size: 1.2rem;
+  color: #ccc;
+}
+.leaderboard-btn {
+  display: inline-block;
+  margin-top: 4rem;
+  font-size: 1.5rem;
+  padding: 1.5rem 4rem;
+  background: linear-gradient(135deg, #ffd700, #ff8c00);
+  color: #000;
+  border-radius: 50px;
+  font-weight: bold;
+  text-transform: uppercase;
+  box-shadow: 0 10px 30px rgba(255, 215, 0, 0.4);
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+.leaderboard-btn:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 40px rgba(255, 215, 0, 0.6);
+  color: #000;
+}
+
+/* =========================================
+   MINI-GAMES COMMON UI
+   ========================================= */
+.game-container {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  padding: 4rem;
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+  backdrop-filter: blur(12px);
+}
+.options-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-top: 3rem;
+}
+.option-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid var(--glass-border);
+  color: white;
+  padding: 2rem;
+  border-radius: 20px;
+  font-size: 1.5rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  backdrop-filter: blur(5px);
+}
+.option-btn:hover {
+  background: rgba(255, 42, 133, 0.2);
+  border-color: var(--bp-pink);
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 10px 25px var(--bp-pink-glow);
+}
+.option-btn.correct {
+  background: rgba(0, 255, 136, 0.2) !important;
+  border-color: #00ff88 !important;
+  color: #00ff88 !important;
+  transform: scale(1.05);
+  box-shadow: 0 0 30px rgba(0, 255, 136, 0.4);
+}
+.option-btn.wrong {
+  background: rgba(255, 51, 51, 0.2) !important;
+  border-color: #ff3333 !important;
+  color: #ff3333 !important;
+  transform: scale(0.95);
+}
+#game-result, #game-active {
+  display: none;
+}
+.score-badge {
+  display: inline-block;
+  background: var(--bp-pink);
+  color: white;
+  padding: 0.5rem 1.5rem;
+  border-radius: 50px;
+  font-weight: bold;
+  font-size: 1.2rem;
+  box-shadow: 0 5px 15px var(--bp-pink-glow);
+}
+
+/* Trivia Specific */
+.fan-rank {
+  font-size: 3.5rem;
+  color: var(--bp-pink);
+  text-shadow: 0 0 30px var(--bp-pink-glow);
+  margin: 2rem 0;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+#question-text {
+  font-size: 2.2rem;
+  line-height: 1.4;
+  margin-bottom: 1.5rem;
+  font-weight: 800;
+}
+
+/* Emoji Specific */
+.emoji-display {
+  font-size: 5rem;
+  letter-spacing: 10px;
+  margin: 3rem 0;
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+  background: rgba(0, 0, 0, 0.3);
+  padding: 2rem;
+  border-radius: 20px;
+  border: 2px dashed var(--bp-pink);
+}
+
+/* =========================================
+   PUZZLE SPECIFIC
+   ========================================= */
+.puzzle-board {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 2px;
+  background: var(--glass-border);
+  width: 100%;
+  aspect-ratio: 1;
+  margin-top: 2rem;
+  border: 4px solid var(--bp-pink);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 0 20px rgba(255, 42, 133, 0.5);
+}
+.tile {
+  width: 100%;
+  height: 100%;
+  background-image: url('https://commons.wikimedia.org/wiki/Special:FilePath/Blackpink_PUBG_210321.jpg?width=600');
+  background-size: 300% 300%;
+  cursor: pointer;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+.tile:hover {
+  opacity: 0.8;
+}
+.tile.empty {
+  background: none;
+  background-color: var(--bg-dark);
+  cursor: default;
+}
+.puzzle-stats {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 2rem;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: var(--bp-pink);
+}
+#puzzle-result {
+  display: none;
+  margin-top: 2rem;
+  font-size: 1.5rem;
+  color: #00ff88;
+  font-weight: bold;
+}
+
+/* =========================================
+   LEADERBOARDS
+   ========================================= */
+.leaderboard-container {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  padding: 4rem;
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+  backdrop-filter: blur(12px);
+}
+.lb-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--glass-border);
+  border-radius: 15px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+.lb-card:hover {
+  background: rgba(255, 42, 133, 0.1);
+  border-color: var(--bp-pink);
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px var(--bp-pink-glow);
+}
+.lb-title {
+  font-size: 1.8rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.lb-score {
+  font-size: 2.5rem;
+  font-weight: 900;
+  color: var(--bp-pink);
+  text-shadow: 0 0 15px var(--bp-pink-glow);
+}
+.reset-btn {
+  background: transparent;
+  border: 1px solid #ff3333;
+  color: #ff3333;
+  padding: 0.8rem 2rem;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 2rem;
+}
+.reset-btn:hover {
+  background: #ff3333;
+  color: white;
+  box-shadow: 0 0 15px rgba(255, 51, 51, 0.5);
+}
+
+/* =========================================
+   ABOUT MEMBERS LAYOUT
+   ========================================= */
+.members-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 3rem;
+  margin-top: 3rem;
+}
+.member-card {
+  text-align: center;
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 3rem 2rem !important; 
+}
+.member-card-img-wrapper {
+  width: 220px;
+  height: 220px;
+  margin-bottom: 2rem;
+  border-radius: 50%;
+  padding: 6px;
+  background: linear-gradient(135deg, var(--bp-pink), #ff66b2);
+  box-shadow: 0 15px 35px var(--bp-pink-glow);
+  transition: all 0.4s ease;
+}
+.member-card img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: top center;
+  border: 4px solid var(--bg-dark); 
+  transition: all 0.4s ease;
+}
+.member-card:hover .member-card-img-wrapper {
+  transform: translateY(-10px) scale(1.05);
+  box-shadow: 0 25px 50px var(--bp-pink-glow);
+  background: linear-gradient(135deg, #fff, var(--bp-pink));
+}
+.member-card h3 {
+  font-size: 2.2rem;
+  color: #fff;
+  margin-bottom: 0.5rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  transition: color 0.3s ease;
+}
+.member-card:hover h3 {
+  color: var(--bp-pink);
+}
+.member-card p {
+  font-size: 1.1rem;
+  color: #ccc;
+  font-weight: 500;
+  letter-spacing: 1px;
+}
