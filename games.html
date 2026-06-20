@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blink Games - Blackpink</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="script.js" defer></script>
+  <style>
+    .game-container {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      padding: 3rem;
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+    .option-btn {
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid var(--bp-pink);
+      color: white;
+      padding: 1.5rem;
+      border-radius: 15px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .option-btn:hover {
+      background: var(--bp-pink);
+      transform: translateY(-3px);
+      box-shadow: 0 5px 20px var(--bp-pink-glow);
+    }
+    .option-btn.correct {
+      background: #00ff88;
+      border-color: #00ff88;
+      color: black;
+      box-shadow: 0 5px 20px rgba(0, 255, 136, 0.5);
+    }
+    .option-btn.wrong {
+      background: #ff3333;
+      border-color: #ff3333;
+      color: white;
+    }
+    #game-result {
+      display: none;
+      margin-top: 2rem;
+    }
+    .fan-rank {
+      font-size: 2.5rem;
+      color: var(--bp-pink);
+      text-shadow: 0 0 20px var(--bp-pink-glow);
+      margin: 1rem 0;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="hero" style="height: 40vh; background-image: url('header_bg.png');">
+    <div class="hero-content">
+      <h1>The Ultimate Blink Trivia</h1>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="text-center" style="margin-bottom: 2rem;">
+      <a href="index.html" class="btn primary">Back to Home</a>
+    </div>
+
+    <div class="game-container" id="game-ui">
+      <div id="game-start">
+        <h2>Ready to test your knowledge?</h2>
+        <p style="font-size: 1.2rem; margin-bottom: 2rem;">Prove you're the ultimate Blink by answering questions about Blackpink's history, members, and recent 2026 activities!</p>
+        <button class="btn primary" onclick="startTrivia()">Start Game</button>
+      </div>
+
+      <div id="game-active" style="display: none;">
+        <h3 id="question-text" style="font-size: 1.5rem; margin-bottom: 1rem;">Question goes here?</h3>
+        <p>Score: <span id="score-text">0</span> / 5</p>
+        <div class="options-grid" id="options-container">
+          <!-- Buttons dynamically injected -->
+        </div>
+      </div>
+
+      <div id="game-result">
+        <h2>Trivia Complete!</h2>
+        <p style="font-size: 1.2rem;">Your final score is: <span id="final-score" style="font-weight: bold; color: var(--bp-pink);">0</span>/5</p>
+        <div class="fan-rank" id="fan-rank">Baby Blink</div>
+        <button class="btn primary" style="margin-top: 2rem;" onclick="startTrivia()">Play Again</button>
+      </div>
+    </div>
+
+  </main>
+
+  <footer>
+    <p>Created with 💖 by <a href="https://github.com/HemantTheCoder" target="_blank">Hemant</a></p>
+  </footer>
+
+  <!-- Spotify Music Player Widget -->
+  <div id="music-player" style="padding: 0; background: transparent; border: none; box-shadow: none;">
+    <iframe style="border-radius:12px" src="https://open.spotify.com/embed/artist/41MozSoPIsD1dJM0CLPjZF?utm_source=generator&theme=0" width="300" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+  </div>
+
+</body>
+</html>
