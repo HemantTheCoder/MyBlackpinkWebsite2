@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Leaderboards - Blink Games</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="script.js" defer></script>
+  <style>
+    .leaderboard-container {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      padding: 4rem;
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: center;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+      backdrop-filter: blur(12px);
+    }
+    .lb-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--glass-border);
+      border-radius: 15px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.3s ease;
+    }
+    .lb-card:hover {
+      background: rgba(255, 42, 133, 0.1);
+      border-color: var(--bp-pink);
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px var(--bp-pink-glow);
+    }
+    .lb-title {
+      font-size: 1.8rem;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .lb-score {
+      font-size: 2.5rem;
+      font-weight: 900;
+      color: var(--bp-pink);
+      text-shadow: 0 0 15px var(--bp-pink-glow);
+    }
+    .reset-btn {
+      background: transparent;
+      border: 1px solid #ff3333;
+      color: #ff3333;
+      padding: 0.8rem 2rem;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 2rem;
+    }
+    .reset-btn:hover {
+      background: #ff3333;
+      color: white;
+      box-shadow: 0 0 15px rgba(255, 51, 51, 0.5);
+    }
+  </style>
+</head>
+<body>
+
+  <header class="hero" style="height: 30vh; background: radial-gradient(circle at center, var(--glass-border), transparent);">
+    <div class="hero-content">
+      <h1 style="font-size: 3.5rem;">Leaderboards</h1>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="text-center" style="margin-bottom: 2rem;">
+      <a href="games.html" class="btn btn-glow">&larr; Back to Hub</a>
+    </div>
+
+    <div class="leaderboard-container">
+      <h2 style="margin-bottom: 1rem; font-size: 2.5rem;">Your Personal Records</h2>
+      <p style="color: #aaa; margin-bottom: 3rem; font-size: 1.2rem;">These are your highest achievements stored locally on your device.</p>
+      
+      <div class="lb-card">
+        <div class="lb-title">🧠 Ultimate Trivia</div>
+        <div class="lb-score" id="score-trivia">0 <span style="font-size: 1rem; color: #fff;">/ 10</span></div>
+      </div>
+
+      <div class="lb-card">
+        <div class="lb-title">🎶 Guess The Song</div>
+        <div class="lb-score" id="score-emoji">0 <span style="font-size: 1rem; color: #fff;">streak</span></div>
+      </div>
+
+      <div class="lb-card">
+        <div class="lb-title">🧩 Photo Puzzle</div>
+        <div class="lb-score" id="score-puzzle">-- <span style="font-size: 1rem; color: #fff;">moves</span></div>
+      </div>
+
+      <button class="reset-btn" onclick="resetLeaderboards()">Reset All Records</button>
+    </div>
+  </main>
+
+  <footer>
+    <p>Created with 💖 by <a href="https://github.com/HemantTheCoder" target="_blank">Hemant</a></p>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const trivia = localStorage.getItem('triviaHighScore') || 0;
+      const emoji = localStorage.getItem('emojiBestStreak') || 0;
+      const puzzle = localStorage.getItem('puzzleBestMoves');
+
+      document.getElementById('score-trivia').innerHTML = `${trivia} <span style="font-size: 1rem; color: #fff;">/ 10</span>`;
+      document.getElementById('score-emoji').innerHTML = `${emoji} <span style="font-size: 1rem; color: #fff;">streak</span>`;
+      
+      if(puzzle) {
+        document.getElementById('score-puzzle').innerHTML = `${puzzle} <span style="font-size: 1rem; color: #fff;">moves</span>`;
+      } else {
+        document.getElementById('score-puzzle').innerHTML = `-- <span style="font-size: 1rem; color: #fff;">moves</span>`;
+      }
+    });
+
+    function resetLeaderboards() {
+      if(confirm("Are you sure you want to erase all your high scores?")) {
+        localStorage.removeItem('triviaHighScore');
+        localStorage.removeItem('emojiBestStreak');
+        localStorage.removeItem('puzzleBestMoves');
+        location.reload();
+      }
+    }
+  </script>
+</body>
+</html>

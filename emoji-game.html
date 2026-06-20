@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Guess The Song - Blink Games</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="script.js" defer></script>
+  <style>
+    .game-container {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      padding: 4rem;
+      max-width: 900px;
+      margin: 0 auto;
+      text-align: center;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+      backdrop-filter: blur(12px);
+    }
+    .emoji-display {
+      font-size: 5rem;
+      letter-spacing: 10px;
+      margin: 3rem 0;
+      text-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+      background: rgba(0, 0, 0, 0.3);
+      padding: 2rem;
+      border-radius: 20px;
+      border: 2px dashed var(--bp-pink);
+    }
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+    .option-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 2px solid var(--glass-border);
+      color: white;
+      padding: 1.5rem;
+      border-radius: 15px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .option-btn:hover {
+      background: rgba(255, 42, 133, 0.2);
+      border-color: var(--bp-pink);
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px var(--bp-pink-glow);
+    }
+    .option-btn.correct {
+      background: rgba(0, 255, 136, 0.2) !important;
+      border-color: #00ff88 !important;
+      color: #00ff88 !important;
+    }
+    .option-btn.wrong {
+      background: rgba(255, 51, 51, 0.2) !important;
+      border-color: #ff3333 !important;
+      color: #ff3333 !important;
+    }
+    #game-result, #game-active {
+      display: none;
+    }
+    .score-badge {
+      display: inline-block;
+      background: var(--bp-pink);
+      color: white;
+      padding: 0.5rem 1.5rem;
+      border-radius: 50px;
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="hero" style="height: 30vh; background: radial-gradient(circle at center, var(--glass-border), transparent);">
+    <div class="hero-content">
+      <h1 style="font-size: 3.5rem;">Guess The Song</h1>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="text-center" style="margin-bottom: 2rem;">
+      <a href="games.html" class="btn btn-glow">&larr; Back to Hub</a>
+    </div>
+
+    <div class="game-container">
+      <!-- Start Screen -->
+      <div id="game-start">
+        <h2 style="font-size: 3rem; margin-bottom: 1rem;">Emoji Challenge</h2>
+        <p style="font-size: 1.3rem; margin-bottom: 3rem; color: #ccc;">Can you guess the Blackpink song using only emoji clues? You have 10 rounds!</p>
+        <button class="btn btn-glow" style="font-size: 1.5rem; padding: 1.5rem 4rem;" onclick="startEmojiGame()">Start Challenge</button>
+      </div>
+
+      <!-- Active Game Screen -->
+      <div id="game-active">
+        <div class="score-badge">Round: <span id="r-counter">1</span>/10 &nbsp;|&nbsp; Streak: <span id="streak-text">0</span></div>
+        <div class="emoji-display" id="emoji-text">🍦👄👧🏻</div>
+        <h3 style="margin-bottom: 2rem;">Which song is this?</h3>
+        <div class="options-grid" id="options-container">
+          <!-- Buttons injected here -->
+        </div>
+      </div>
+
+      <!-- Result Screen -->
+      <div id="game-result">
+        <h2 style="font-size: 3rem;">Challenge Over!</h2>
+        <p style="font-size: 1.5rem; margin-top: 1rem;">Longest Streak: <span id="final-streak" style="font-weight: bold; color: var(--bp-pink); font-size: 2rem;">0</span></p>
+        <p id="leaderboard-msg" style="color: #00ff88; font-size: 1.2rem; margin: 2rem 0; display: none;">New Best Streak Saved!</p>
+        <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 2rem;">
+          <button class="btn btn-glow" onclick="startEmojiGame()">Play Again</button>
+          <a href="leaderboard.html" class="btn primary">View Leaderboard</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>Created with 💖 by <a href="https://github.com/HemantTheCoder" target="_blank">Hemant</a></p>
+  </footer>
+
+  <script>
+    const emojiData = [
+      { emoji: "🍦👄👧🏻", ans: "Ice Cream", opts: ["Ice Cream", "Sour Candy", "As If It's Your Last", "Bet You Wanna"] },
+      { emoji: "🔫💔🔪", ans: "Kill This Love", opts: ["Kill This Love", "DDU-DU DDU-DU", "Shut Down", "Typa Girl"] },
+      { emoji: "💖🐍💥", ans: "Pink Venom", opts: ["Pink Venom", "How You Like That", "Tally", "Crazy Over You"] },
+      { emoji: "🔥💃🏻🛑", ans: "Playing With Fire", opts: ["Playing With Fire", "Boombayah", "Whistle", "Stay"] },
+      { emoji: "💵💰🤑", ans: "Money", opts: ["Lalisa", "Money", "Rockstar", "Hard To Love"] },
+      { emoji: "🌹🎤💔", ans: "On The Ground", opts: ["Gone", "On The Ground", "APT.", "Hard To Love"] },
+      { emoji: "😗😙😚", ans: "Whistle", opts: ["Whistle", "Boombayah", "Stay", "As If It's Your Last"] },
+      { emoji: "🚘🚪⬇️", ans: "Shut Down", opts: ["Shut Down", "Typa Girl", "Yeah Yeah Yeah", "Ready For Love"] },
+      { emoji: "🤷🏻‍♀️👍🏻👎🏻", ans: "How You Like That", opts: ["How You Like That", "Pretty Savage", "Kick It", "Love To Hate Me"] },
+      { emoji: "🌸👧🏻💕", ans: "Lovesick Girls", opts: ["Lovesick Girls", "Hope Not", "You Never Know", "Don't Know What To Do"] },
+      { emoji: "🏃🏻‍♀️💨🔥", ans: "GO", opts: ["GO", "Ready For Love", "Pink Venom", "Shut Down"] },
+      { emoji: "🎸🌟🕺", ans: "Rockstar", opts: ["Rockstar", "Money", "Shoong", "Lalisa"] },
+      { emoji: "👧🏻👗💄", ans: "Mantra", opts: ["Mantra", "You & Me", "Solo", "Flower"] },
+      { emoji: "🌺💃🏻🔴", ans: "Flower", opts: ["Flower", "All Eyes On Me", "Solo", "On The Ground"] },
+      { emoji: "🏢🍺🕺", ans: "APT.", opts: ["APT.", "On The Ground", "Gone", "Hard To Love"] }
+    ];
+
+    let currentRound = 0;
+    let streak = 0;
+    let bestStreak = 0;
+    let gamePool = [];
+
+    function startEmojiGame() {
+      gamePool = [...emojiData].sort(() => 0.5 - Math.random()).slice(0, 10);
+      currentRound = 0;
+      streak = 0;
+      bestStreak = 0;
+      
+      document.getElementById('game-start').style.display = 'none';
+      document.getElementById('game-result').style.display = 'none';
+      document.getElementById('game-active').style.display = 'block';
+      loadEmojiRound();
+    }
+
+    function loadEmojiRound() {
+      if (currentRound >= gamePool.length) {
+        endGame();
+        return;
+      }
+      
+      const rData = gamePool[currentRound];
+      document.getElementById('emoji-text').textContent = rData.emoji;
+      document.getElementById('streak-text').textContent = streak;
+      document.getElementById('r-counter').textContent = currentRound + 1;
+      
+      const container = document.getElementById('options-container');
+      container.innerHTML = '';
+      
+      // Shuffle options
+      const options = [...rData.opts].sort(() => 0.5 - Math.random());
+      const ansIndex = options.indexOf(rData.ans);
+      
+      options.forEach((opt, index) => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.textContent = opt;
+        btn.onclick = () => selectEmojiAnswer(index, ansIndex, btn);
+        container.appendChild(btn);
+      });
+    }
+
+    function selectEmojiAnswer(selectedIndex, ansIndex, btnElement) {
+      const buttons = document.querySelectorAll('.option-btn');
+      buttons.forEach(b => b.style.pointerEvents = 'none');
+      
+      if (selectedIndex === ansIndex) {
+        btnElement.classList.add('correct');
+        streak++;
+        if(streak > bestStreak) bestStreak = streak;
+      } else {
+        btnElement.classList.add('wrong');
+        buttons[ansIndex].classList.add('correct');
+        streak = 0; // Streak breaks
+      }
+      
+      document.getElementById('streak-text').textContent = streak;
+      
+      setTimeout(() => {
+        currentRound++;
+        loadEmojiRound();
+      }, 1200);
+    }
+
+    function endGame() {
+      document.getElementById('game-active').style.display = 'none';
+      document.getElementById('game-result').style.display = 'block';
+      document.getElementById('final-streak').textContent = bestStreak;
+      
+      // Save Leaderboard
+      const globalBest = localStorage.getItem('emojiBestStreak') || 0;
+      const msgEl = document.getElementById('leaderboard-msg');
+      if (bestStreak > globalBest) {
+        localStorage.setItem('emojiBestStreak', bestStreak);
+        msgEl.style.display = 'block';
+      } else {
+        msgEl.style.display = 'none';
+      }
+    }
+  </script>
+</body>
+</html>
