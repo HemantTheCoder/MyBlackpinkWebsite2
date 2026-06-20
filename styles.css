@@ -26,8 +26,8 @@ body {
   line-height: 1.6;
   min-height: 100vh;
   overflow-x: hidden;
-  /* Keep custom cursor if available, otherwise default */
-  cursor: url("https://cdn.glitch.com/ac49c1e8-2791-4469-b308-8ddd9a3408bf%2FBlackpink%20Lightstick.cur?v=1615995035242"), auto;
+  /* Custom Blackpink Lightstick SVG Cursor */
+  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'><rect x='2' y='8' width='10' height='12' fill='%23ff2a85' rx='4'/><rect x='20' y='8' width='10' height='12' fill='%23ff2a85' rx='4'/><rect x='14' y='16' width='4' height='16' fill='%23111' rx='2'/><rect x='10' y='10' width='12' height='6' fill='%23111' rx='1'/></svg>") 16 10, auto;
 }
 
 /* Typography */
