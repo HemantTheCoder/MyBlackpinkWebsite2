@@ -8,8 +8,9 @@
   <script src="script.js" defer></script>
   <style>
     .hero-lisa {
-      background-image: url("https://cdn.glitch.com/ac49c1e8-2791-4469-b308-8ddd9a3408bf%2Flisa-blackpink-k-pop-singer-red-background-5k-5120x2880-4670.jpg?v=1631791694584");
+      background-image: url("Lisa.webp");
       height: 50vh;
+      background-position: center 20%;
     }
     .facts-list {
       text-align: left;
@@ -39,7 +40,7 @@
     </div>
 
     <section class="glass-card text-center">
-      <img src="https://cdn.glitch.me/ac49c1e8-2791-4469-b308-8ddd9a3408bf%2Fab21c4df96414062989e7d5a9a0f39aa.jpg?v=1634635153652" alt="Lisa" class="featured-img" style="max-width: 400px; border-radius: 20px;">
+      <img src="Lisa.webp" alt="Lisa" class="featured-img" style="max-width: 400px; border-radius: 20px;">
       
       <h2>Profile</h2>
       <div style="font-size: 1.1rem; line-height: 2; margin-bottom: 2rem;">
@@ -80,17 +81,9 @@
     <p>Created with 💖 by <a href="https://github.com/HemantTheCoder" target="_blank">Hemant</a></p>
   </footer>
 
-  <!-- Interactive Music Player Widget -->
-  <div id="music-player">
-    <div class="player-header">
-      <span>🎵 Now Playing</span>
-      <span id="track-name">Select Track</span>
-    </div>
-    <div class="player-controls">
-      <button id="prev-btn" class="ctrl-btn">&#9198;</button>
-      <button id="play-pause-btn" class="ctrl-btn">&#9658;</button>
-      <button id="next-btn" class="ctrl-btn">&#9199;</button>
-    </div>
+  <!-- Spotify Music Player Widget -->
+  <div id="music-player" style="padding: 0; background: transparent; border: none; box-shadow: none;">
+    <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/37i9dQZF1DX11Rj90I3B11?utm_source=generator&theme=0" width="300" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
   </div>
 
 </body>

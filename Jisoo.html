@@ -8,8 +8,9 @@
   <script src="script.js" defer></script>
   <style>
     .hero-jisoo {
-      background-image: url("https://cdn.glitch.com/ac49c1e8-2791-4469-b308-8ddd9a3408bf%2F4b0bdfc6-a639-11ea-8ea0-d7434be00753_image_hires_121748.jpg?v=1625650608017");
+      background-image: url("Jisoo.webp");
       height: 50vh;
+      background-position: center 20%;
     }
     .facts-list {
       text-align: left;
@@ -39,7 +40,7 @@
     </div>
 
     <section class="glass-card text-center">
-      <img src="https://cdn.glitch.com/ac49c1e8-2791-4469-b308-8ddd9a3408bf%2Fjisoobday.png?v=1625650961319" alt="Jisoo" class="featured-img" style="max-width: 400px; border-radius: 20px;">
+      <img src="Jisoo.webp" alt="Jisoo" class="featured-img" style="max-width: 400px; border-radius: 20px;">
       
       <h2>Profile</h2>
       <div style="font-size: 1.1rem; line-height: 2; margin-bottom: 2rem;">
@@ -84,17 +85,9 @@
     <p>Created with 💖 by <a href="https://github.com/HemantTheCoder" target="_blank">Hemant</a></p>
   </footer>
 
-  <!-- Interactive Music Player Widget -->
-  <div id="music-player">
-    <div class="player-header">
-      <span>🎵 Now Playing</span>
-      <span id="track-name">Select Track</span>
-    </div>
-    <div class="player-controls">
-      <button id="prev-btn" class="ctrl-btn">&#9198;</button>
-      <button id="play-pause-btn" class="ctrl-btn">&#9658;</button>
-      <button id="next-btn" class="ctrl-btn">&#9199;</button>
-    </div>
+  <!-- Spotify Music Player Widget -->
+  <div id="music-player" style="padding: 0; background: transparent; border: none; box-shadow: none;">
+    <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/37i9dQZF1DX11Rj90I3B11?utm_source=generator&theme=0" width="300" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
   </div>
 
 </body>
