@@ -27,7 +27,7 @@ body {
   min-height: 100vh;
   overflow-x: hidden;
   /* Custom Blackpink Lightstick SVG Cursor */
-  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'><rect x='2' y='8' width='10' height='12' fill='%23ff2a85' rx='4'/><rect x='20' y='8' width='10' height='12' fill='%23ff2a85' rx='4'/><rect x='14' y='16' width='4' height='16' fill='%23111' rx='2'/><rect x='10' y='10' width='12' height='6' fill='%23111' rx='1'/></svg>") 16 10, auto;
+  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'><g stroke='%23ffffff' stroke-width='1.5'><rect x='3' y='8' width='10' height='12' fill='%23ff2a85' rx='4'/><rect x='19' y='8' width='10' height='12' fill='%23ff2a85' rx='4'/><rect x='14' y='16' width='4' height='14' fill='%23222222' rx='2'/><rect x='10' y='10' width='12' height='6' fill='%23222222' rx='1'/></g></svg>") 16 10, auto;
 }
 
 /* Typography */
