@@ -1,180 +1,109 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-    <title>Jisoo</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blackpink Members</title>
   <link rel="stylesheet" href="styles.css">
-  <script src="script.js"></script>
+  <script src="script.js" defer></script>
   <style>
-     .parallax {
-  background-image: url("https://cdn.glitch.com/ac49c1e8-2791-4469-b308-8ddd9a3408bf%2F4b0bdfc6-a639-11ea-8ea0-d7434be00753_image_hires_121748.jpg?v=1625650608017");
-
-  /* Set a specific height */
-  min-height: auto;
-
-  /* Create the parallax scrolling effect */
-  background-attachment: fixed;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
-}
-     </style>
-   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    .members-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+    .member-card {
+      text-align: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+    .member-card:hover {
+      transform: translateY(-10px);
+    }
+    .member-card img {
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid var(--bp-pink);
+      margin-bottom: 1rem;
+      box-shadow: 0 10px 20px rgba(255, 102, 178, 0.3);
+      transition: transform 0.3s ease;
+    }
+    .member-card:hover img {
+      transform: scale(1.05);
+    }
+    .member-card h3 {
+      font-size: 1.8rem;
+      color: var(--bp-pink);
+      margin-bottom: 0.5rem;
+    }
+  </style>
 </head>
+<body>
 
-<body bgcolor="#FF80FF">
-  <div  class="parallax"
- style="-moz-user-select: none; -webkit-user-select: none; -ms-user-select:none; user-select:none;-o-user-select:none;" 
- unselectable="on"
- onselectstart="return false;" 
- onmousedown="return false;">
-   <script>
-  (function(d, id) {
-    if (d.getElementById(id)) return;
-    var sc, node = d.getElementsByTagName('script')[0];
-    sc = d.createElement('script'); sc.id = id;
-    sc.src = 'https://sdk.getsitekit.com/static/js/app.js#apiKey=16400aeb107d6a9bbd902f428a8bef80';
-    node.parentNode.insertBefore(sc, node);
-  }(document, 'sitekit-sdk'));
-</script>
-    <script language="JavaScript">
+  <header class="hero" style="height: 40vh; background-image: url('https://cdn.glitch.com/ac49c1e8-2791-4469-b308-8ddd9a3408bf%2Fac49c1e8-2791-4469-b308-8ddd9a3408bf_7lq8s0pcq5vx.jpg?v=1616063986959');">
+    <div class="hero-content">
+      <h1>The Members</h1>
+    </div>
+  </header>
 
-var message="Function Disabled!";
+  <main class="container">
+    <div class="text-center">
+      <a href="index.html" class="btn primary" style="margin-bottom: 2rem;">Back to Home</a>
+    </div>
 
-function clickIE4(){
-if (event.button==2){
-alert(message);
-return false;
-}
-}
+    <section class="glass-card">
+      <h2 style="margin-bottom: 2rem;">Meet Blackpink</h2>
+      
+      <div class="members-grid">
+        <a href="Jisoo.html" class="glass-card member-card">
+          <img src="https://cdn.glitch.com/ac49c1e8-2791-4469-b308-8ddd9a3408bf%2Fjisoobday.png?v=1625650961319" alt="Jisoo">
+          <h3>Jisoo</h3>
+          <p>Lead Vocalist, Visual</p>
+        </a>
 
-function clickNS4(e){
-if (document.layers||document.getElementById&&!document.all){
-if (e.which==2||e.which==3){
-alert(message);
-return false;
-}
-}
-}
-document.onkeydown = function(e) {
-        if (e.ctrlKey && 
-            (e.keyCode === 67 || 
-             e.keyCode === 86 || 
-             e.keyCode === 85 || 
-             e.keyCode === 117)) {
-            return false;
-        } else {
-            return true;
-        }
-};
-if (document.layers){
-document.captureEvents(Event.MOUSEDOWN);
-document.onmousedown=clickNS4;
-}
-else if (document.all&&!document.getElementById){
-document.onmousedown=clickIE4;
-}
+        <a href="Jennie.html" class="glass-card member-card">
+          <img src="https://cdn.glitch.com/ac49c1e8-2791-4469-b308-8ddd9a3408bf%2F1099874.jpg?v=1626508179156" alt="Jennie">
+          <h3>Jennie</h3>
+          <p>Main Rapper, Lead Vocalist</p>
+        </a>
 
-document.oncontextmenu=new Function("alert(message);return false")
+        <a href="RoséSolo.html" class="glass-card member-card">
+          <img src="https://cdn.glitch.com/ac49c1e8-2791-4469-b308-8ddd9a3408bf%2Frose_blackpink_8znak_bb05_nz7w_2019_billboard_1548.jpg?v=1626509172283" alt="Rosé">
+          <h3>Rosé</h3>
+          <p>Main Vocalist, Lead Dancer</p>
+        </a>
 
-</script>
-  <audio autoplay loop>
-  <source src="https://cdn.glitch.com/ac49c1e8-2791-4469-b308-8ddd9a3408bf%2FBLACKPINK%20JISOO%20-%20'HABITS%20(Stay%20High)'%20Solo%20Cover-%5BAudioTrimmer.com%5D.mp3?v=1613741446037">
-  </audio>
-    <h4>
-    <marquee>
-      Song : <b>Habits (Stay High). [Cover By Jisoo]. <a href="https://www.youtube.com/watch?v=zaMUXYtQURQ">Lyrics Video</a></b>
-      </marquee>
-    </h4>
-    <h1><center><b><i><u>Kim Ji-soo aka Jisoo</u></i></b></center></h1>
+        <a href="Lalisa.html" class="glass-card member-card">
+          <img src="https://cdn.glitch.com/ac49c1e8-2791-4469-b308-8ddd9a3408bf%2Flisa-blackpink.jpg?v=1626509493649" alt="Lisa">
+          <h3>Lisa</h3>
+          <p>Main Dancer, Lead Rapper</p>
+        </a>
+      </div>
+    </section>
+  </main>
 
-    <center><img src="https://cdn.glitch.com/ac49c1e8-2791-4469-b308-8ddd9a3408bf%2Fjisoobday.png?v=1625650961319" width="90%"></center>
-        <h4>
-        <center>Stage Name: Jisoo (지수)<br><hr>
-Birth Name: Kim Ji Soo (김지수)<br><hr>
-Nickames: Chi Choo, Jichu<br><hr>
-Position: Lead Vocalist, Visual<br><hr>
-Birthday: January 3, 1995<br><hr>
-Zodiac Sign: Capricorn<br><hr>
-Birthplace: Gunpo, South Korea<br><hr>
-Height: 162 cm (5 ft 3¾ in)<br><hr>
-Weight: 44 kg (97 lbs)<br><hr>
-Blood Type: A<br><hr>
-MBTI Type: ESTJ<br><hr>
-Instagram: @sooyaaa__<br><hr>
-Weibo: sooyaaa__<br><hr>
-<br><hr>
-<hr>
- 
-          <b>Jisoo Facts:</b><br>
-– Jisoo was born in Gunpo, a city in the province of Gyeonggi, South Korea.<br><hr>
-– She has an older brother and an older sister, she is the youngest.<br><hr>
-– She trained for 5 years (since July 2011).<br><hr>
-– Jisoo’s Chinese zodiac sign is Dog.<br><hr>
-– She has a 4D personality. XD<br><hr>
-– She laughs a lot.<br><hr>
-– She likes giving random nicknames to people.<br><hr>
-– According to Jennie, Jisoo is the mood maker of the group.<br><hr>
-– Jsoo loves telling dad Jokes (Vlive)<br><hr>
-– Jisoo invented the word “yeong-an” which means “anyoeong” (and is the reverse form of it).<br><hr>
-– Jisoo can play the drums.<br><hr>
-– Jisoo can play piano but not the guitar (in a vlive with Rosé she told Rosé to teach her).<br><hr>
-– She can speak Korean, Japanese and basic Chinese.<br><hr>
-– According to Jennie (V Live App), Jisoo doesn’t speak English (because she’s embarrassed to do it) but she can understand it very well.<br><hr>
-– Jisoo was popular in her school for her beauty and kindness.<br><hr>
-– Jisoo’s audition song was “I Have A Lover” by Lee Eun Mi.<br><hr>
-– Jisoo is scared of heights.<br><hr>
-– Jisoo would date Rose if she was a guy. (vLive Q&A)<br><hr>
-– Jisoo’s lips turn into a heart shape when she smiles.<br><hr>
-– Jisoo’s most favorite part of her face are her lips. (vLive Q&A)<br><hr>
-– Jisoo hates shopping because she is often confused what to buy. (BP House)<br><hr>
-– She is close friends with Twice’s Nayeon (since trainee days) and with Red Velvet’s Seulgi.<br><hr>
-– Jisoo is also friends with Bona of WJSN and Sowon of GFriend.<br><hr>
-– Jisoo invented two words: Ppoong and Nyeongan<br><hr>
-– Jisoo was an Inkigayo MC (starting from Feb 5 2017 to Feb 3 2018) alongside GOT7‘s Jinyoung and NCT‘s Doyoung.<br><hr>
-– She had a cameo appearance on KBS’s ‘The Producers’ (2015).<br><hr>
-– She acted in HISUHYUN’s ‘I’m Different’ MV.<br><hr>
-– Jisoo acted in EPIK HIGH – ‘스포일러(SPOILER) + 헤픈엔딩(HAPPEN ENDING)’ M/V.<br><hr>
-– She appeared in different CFs such as SAMSONITE RED CF with Lee Minho (2015), Nikon 1 J5 CF (2015), SMART UNIFORM CF with iKON (2015), Angel Stone CF (2015), SMART UNIFORM CF with iKON (2016), LG Stylus2 CF (2016).<br><hr>
-– Jisoo really likes Pikachu (she has a lot of Pikachu merchandise).<br><hr>
-– Jisoo sleeps with a plushie of a bunny and a plushie of Snoopy.<br><hr>
-– Jisoo likes reading books.<br><hr>
-– IKON members said she has the brightest smile.<br><hr>
-– Jisoo is well known for being the only member that hasn’t cried at award shows, but one of the other members said that she cries alone.<br><hr>
-– Regarding food, she can eat almost everything (except organs XD), but she especially likes rice.<br><hr>
-– Jisoo has a dog named Dalgom.<br><hr>
-– Jisoo called Lisa her ‘Chocolate mate’ because Lisa gave her iced chocolate during a live show (which Jisoo was craving) but Jisoo didn’t ask her to get it for her.<br><hr>
-– Jisoo can play basketball and inline skates but she can’t ride bicycles.<br><hr>
-– Also, she did taekwondo (white belt).<br><hr>
-– She said she plays “Overwatch” with Jennie.<br><hr>
-– She is not scared on ghost or scary stories.<br><hr>
-– She likes Harry Potter and Tom Hardy.<br><hr>
-– Jisoo’s favourite singer/band is TVXQ. (“Knowing Bros”)<br><hr>
-– She also likes to read manga as she keeps a stack of them near her bed to help her sleep. (V-live)<br><hr>
-– She loves the color purple. (According to what she said on their Comeback V Live)<br><hr>
-– She’s a PC Gamer. (BLACKPINK House EP.1-2)<br><hr>
-– Jisoo ranked 78th on TC Candler “The 100 Most Beautiful Faces of 2019”.<br><hr>
-– Kim Samuel publicly confessed that he has a crush on Jisoo.<br><hr>
-– Jisoo is called “Man Heart’s Destroyer” and “Boy Crush”.<br><hr>
-– BigBang’s Seungri said that Jisoo reminds him of T.O.P, who is random and unpredictable but also charismatic.<br><hr>
-– Jisoo had a cameo appearance in Arthdal Chronicles.<br><hr>
-– In August 2020, she was confirmed as a leading actress for drama called ‘Snowdrop’.<br><hr>
-– Jisoo’s ideal type: someone who is really into her or who smiles pretty.<br><hr>
-<br><hr>
-          <b>Jisoo Drama Series:</b><br>
-Snowdrop (설강화) | JTBC / 2021 – Eun Young-cho<br>
-Arthdal Chronicles (아스달 연대기) | tvN / 2019 – Sae Na-rae (Cameo)<br><hr></center>
-    </h4>
-    <center>
-        <a href="https://en.wikipedia.org/wiki/Jisoo_(singer,_born_1995)" class="button">Know More</a>
-      </center>
-    <center>
-        <a href="Jennie.html" class="button2">Next Member</a>
-      </center>
-        <center>
-        <a href="index.html" class="button">Home</a>
-      </center>
+  <footer>
+    <p>Created with 💖 by <a href="https://github.com/HemantTheCoder" target="_blank">Hemant</a></p>
+  </footer>
+
+  <!-- Interactive Music Player Widget -->
+  <div id="music-player">
+    <div class="player-header">
+      <span>🎵 Now Playing</span>
+      <span id="track-name">Select Track</span>
+    </div>
+    <div class="player-controls">
+      <button id="prev-btn" class="ctrl-btn">&#9198;</button>
+      <button id="play-pause-btn" class="ctrl-btn">&#9658;</button>
+      <button id="next-btn" class="ctrl-btn">&#9199;</button>
+    </div>
   </div>
-  </body>
 
+</body>
 </html>

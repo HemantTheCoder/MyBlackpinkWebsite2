@@ -1,61 +1,245 @@
-.button {
-  background-color: black;
-  border: none;
-  color: white;
-  padding: 16px 32px;
-  text-align: center;
-  font-size: 16px;
-  margin: 4px 2px;
-  opacity: 0.8;
-  transition: 0.3s;
-  display: inline-block;
-  text-decoration: none;
-  cursor: pointer;
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap');
+
+:root {
+  --bg-dark: #0f0f13;
+  --bg-gradient: linear-gradient(135deg, #181820 0%, #0d0d12 100%);
+  --bp-pink: #ff66b2;
+  --bp-pink-hover: #ff3399;
+  --bp-black: #121212;
+  --text-main: #f0f0f0;
+  --text-muted: #a0a0a0;
+  --glass-bg: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.1);
 }
 
-.button2 {
-  background-color: #e754a5;
-  border: none;
-  color: white;
-  padding: 16px 32px;
-  text-align: center;
-  font-size: 16px;
-  margin: 4px 2px;
-  opacity: 0.8;
-  transition: 0.3s;
-  display: inline-block;
-  text-decoration: none;
-  cursor: pointer;
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-.button:hover {opacity: 1}
-.button2:hover {opacity: 1}
+body {
+  font-family: 'Outfit', sans-serif;
+  background: var(--bg-gradient);
+  color: var(--text-main);
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+  /* Keep custom cursor if available, otherwise default */
+  cursor: url("https://cdn.glitch.com/ac49c1e8-2791-4469-b308-8ddd9a3408bf%2FBlackpink%20Lightstick.cur?v=1615995035242"), auto;
+}
+
+/* Typography */
+h1, h2, h3, h4 {
+  font-weight: 800;
+  margin-bottom: 1rem;
+}
 
 h1 {
-        background-color: #FF80FF;
-        opacity: 80%;
-      }
-h3 {
-        background-color: #FF80FF;
-        opacity: 80%;
-      }
-h4 {
-        background-color: #FF80FF;
-        opacity: 80%;
-      }
-      body {
-        cursor: url("https://cdn.glitch.com/ac49c1e8-2791-4469-b308-8ddd9a3408bf%2FBlackpink%20Lightstick.cur?v=1615995035242"),
-          auto;
-      }
-      [class*="col-"] {
-  width: 100%;
-}
-.responsive {
-  width: 100%;
-  height: auto;
+  font-size: 3rem;
+  background: linear-gradient(to right, var(--text-main), var(--bp-pink));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-align: center;
 }
 
-.marquee {
-  background-colour: #FF80FF;
-  opacity: 80%;
+h2 {
+  font-size: 2.5rem;
+  color: var(--bp-pink);
+  text-align: center;
+}
+
+a {
+  color: var(--bp-pink);
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+a:hover {
+  color: var(--bp-pink-hover);
+}
+
+/* Layout Utilities */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.text-center {
+  text-align: center;
+}
+
+/* Glassmorphism Cards */
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.glass-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 40px 0 rgba(255, 102, 178, 0.2);
+}
+
+/* Buttons */
+.btn-group {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  margin: 2rem 0;
+}
+
+.btn {
+  background: var(--glass-bg);
+  color: var(--text-main);
+  border: 1px solid var(--glass-border);
+  padding: 12px 24px;
+  border-radius: 30px;
+  font-size: 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-block;
+}
+
+.btn:hover {
+  background: var(--bp-pink);
+  color: var(--bp-black);
+  border-color: var(--bp-pink);
+  box-shadow: 0 0 20px rgba(255, 102, 178, 0.5);
+  transform: translateY(-2px);
+}
+
+.btn.primary {
+  background: var(--bp-pink);
+  color: var(--bp-black);
+  border-color: var(--bp-pink);
+}
+
+.btn.primary:hover {
+  background: var(--bp-pink-hover);
+  box-shadow: 0 0 25px rgba(255, 102, 178, 0.7);
+}
+
+/* Hero Section */
+.hero {
+  position: relative;
+  height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-image: url("https://cdn.glitch.com/ac49c1e8-2791-4469-b308-8ddd9a3408bf%2Fizx4xs-Blackpink-8znak-bb05-nz7w-2019-feat-billboard-cdakjehr-jxs8xjkx-1548-compressed.jpg?v=1625137420177");
+  background-attachment: fixed;
+  background-position: center top;
+  background-repeat: no-repeat;
+  background-size: cover;
+  border-radius: 0 0 30px 30px;
+  overflow: hidden;
+  margin-bottom: 3rem;
+}
+
+.hero::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: linear-gradient(to bottom, rgba(15,15,19,0.3) 0%, rgba(15,15,19,1) 100%);
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+}
+
+/* Image styling */
+.responsive-img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 15px;
+}
+
+.featured-img {
+  width: 100%;
+  max-width: 600px;
+  display: block;
+  margin: 0 auto 2rem;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+/* Footer */
+footer {
+  text-align: center;
+  padding: 3rem 1rem;
+  margin-top: 4rem;
+  border-top: 1px solid var(--glass-border);
+}
+
+footer p {
+  color: var(--text-muted);
+}
+
+/* Music Player Widget */
+#music-player {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 1px solid var(--bp-pink);
+  border-radius: 15px;
+  padding: 15px;
+  width: 300px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.player-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.player-controls {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  align-items: center;
+}
+
+.ctrl-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-main);
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.ctrl-btn:hover {
+  color: var(--bp-pink);
+}
+
+#track-name {
+  color: var(--bp-pink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
 }

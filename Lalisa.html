@@ -1,198 +1,97 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <link rel="stylesheet" href="styles.css"/>
-    
-    <style>
-      .parallax {
-        background-image: url("https://cdn.glitch.com/ac49c1e8-2791-4469-b308-8ddd9a3408bf%2Flisa-blackpink-k-pop-singer-red-background-5k-5120x2880-4670.jpg?v=1631791694584");
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lisa - Blackpink</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="script.js" defer></script>
+  <style>
+    .hero-lisa {
+      background-image: url("https://cdn.glitch.com/ac49c1e8-2791-4469-b308-8ddd9a3408bf%2Flisa-blackpink-k-pop-singer-red-background-5k-5120x2880-4670.jpg?v=1631791694584");
+      height: 50vh;
+    }
+    .facts-list {
+      text-align: left;
+      margin: 0 auto;
+      max-width: 800px;
+      line-height: 1.8;
+    }
+    .facts-list li {
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--glass-border);
+    }
+  </style>
+</head>
+<body>
 
-        /* Set a specific height */
-        min-height: auto;
+  <header class="hero hero-lisa">
+    <div class="hero-content">
+      <h1>Lalisa Manoban</h1>
+      <p style="font-size: 1.2rem; font-weight: 300;">Main Dancer, Lead Rapper</p>
+    </div>
+  </header>
 
-        /* Create the parallax scrolling effect */
-        background-attachment: fixed;
-        background-position: center;
-        background-repeat: no-repeat;
-        background-size: cover;
-      }
-    </style>
-    <title>Lalisa</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script
-      data-ad-client="ca-pub-5894482427254751"
-      async
-      src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"
-    ></script>
-    <script language="JavaScript">
+  <main class="container">
+    <div class="text-center" style="margin-bottom: 2rem;">
+      <a href="aboutmembers.html" class="btn primary">Back to Members Hub</a>
+    </div>
 
-var message="Function Disabled!";
+    <section class="glass-card text-center">
+      <img src="https://cdn.glitch.me/ac49c1e8-2791-4469-b308-8ddd9a3408bf%2Fab21c4df96414062989e7d5a9a0f39aa.jpg?v=1634635153652" alt="Lisa" class="featured-img" style="max-width: 400px; border-radius: 20px;">
+      
+      <h2>Profile</h2>
+      <div style="font-size: 1.1rem; line-height: 2; margin-bottom: 2rem;">
+        <p><strong>Stage Name:</strong> Lisa (리사/ลิซ่า)</p>
+        <p><strong>Birth Name:</strong> Lalisa Manoban (ลลิสา มโนบาล)</p>
+        <p><strong>Birthday:</strong> March 27, 1997</p>
+        <p><strong>Birthplace:</strong> Buriram, Thailand</p>
+        <p><strong>Instagram:</strong> <a href="https://instagram.com/lalalalisa_m" target="_blank">@lalalalisa_m</a></p>
+      </div>
+    </section>
 
-function clickIE4(){
-if (event.button==2){
-alert(message);
-return false;
-}
-}
+    <section class="glass-card">
+      <h2 class="text-center">Fun Facts & Recent News</h2>
+      <ul class="facts-list" style="list-style-type: none;">
+        <li>🌸 She was the only person accepted to YG in the YG Audition in Thailand 2010.</li>
+        <li>🌸 She can speak Korean, English, Japanese, Thai and basic Chinese.</li>
+        <li>🌸 Lisa loves photography and taking pictures.</li>
+        <li>🌸 Her favorite food is French fries and she loves yellow.</li>
+        <li>🌸 She is the most followed K-pop idol on Instagram.</li>
+        <li>🌸 She debuted as a soloist on September 10, 2021 with the album "Lalisa".</li>
+        <li>🌸 <strong>Recent (2025/2026):</strong> Lisa launched her own management company, <strong>LLOUD</strong>, to handle her solo career while continuing group activities with BLACKPINK under YG.</li>
+        <li>🌸 She has expanded her global representation, signing with Wasserman Music for worldwide touring and RCA Records.</li>
+      </ul>
+      
+      <div class="text-center" style="margin-top: 2rem;">
+        <a href="https://en.wikipedia.org/wiki/Lisa_(rapper)" class="btn primary" target="_blank">Read More on Wikipedia</a>
+      </div>
+    </section>
 
-function clickNS4(e){
-if (document.layers||document.getElementById&&!document.all){
-if (e.which==2||e.which==3){
-alert(message);
-return false;
-}
-}
-}
-document.onkeydown = function(e) {
-        if (e.ctrlKey && 
-            (e.keyCode === 67 || 
-             e.keyCode === 86 || 
-             e.keyCode === 85 || 
-             e.keyCode === 117)) {
-            return false;
-        } else {
-            return true;
-        }
-};
-if (document.layers){
-document.captureEvents(Event.MOUSEDOWN);
-document.onmousedown=clickNS4;
-}
-else if (document.all&&!document.getElementById){
-document.onmousedown=clickIE4;
-}
+    <div class="btn-group">
+      <a href="RoséSolo.html" class="btn">Previous Member: Rosé</a>
+      <a href="index.html" class="btn primary">Home</a>
+    </div>
 
-document.oncontextmenu=new Function("alert(message);return false")
+  </main>
 
-</script>
-  </head>
-<div class="parallax">
-  <body>
-    <div
-      style="-moz-user-select: none; -webkit-user-select: none; -ms-user-select:none; user-select:none;-o-user-select:none;"
-      unselectable="on"
-      onselectstart="return false;"
-      onmousedown="return false;"
-      class="parallax">
-        
-      <script>
-        (function(d, id) {
-          if (d.getElementById(id)) return;
-          var sc,
-            node = d.getElementsByTagName("script")[0];
-          sc = d.createElement("script");
-          sc.id = id;
-          sc.src =
-            "https://sdk.getsitekit.com/static/js/app.js#apiKey=16400aeb107d6a9bbd902f428a8bef80";
-          node.parentNode.insertBefore(sc, node);
-        })(document, "sitekit-sdk");
-      </script>
-    <audio onloadeddata="var audioPlayer = this; setTimeout(function() { audioPlayer.play(); }, 192000)">
-  <source src="https://cdn.glitch.com/ac49c1e8-2791-4469-b308-8ddd9a3408bf%2FLISA%20MONEY%20Lyrics%20(%EB%A6%AC%EC%82%AC%20MONEY%20%EA%B0%80%EC%82%AC)%20(Color%20Coded%20Lyrics).mp3?v=1631280812947">
-  </audio>
-      <audio onloadeddata="var audioPlayer = this; setTimeout(function() { audioPlayer.play(); }, 358000)">
-  <source src="https://cdn.glitch.me/ac49c1e8-2791-4469-b308-8ddd9a3408bf%2FDJ%20Snake%20-%20SG%20(With%20Ozuna%2C%20LISA%20(BLACKPINK)%2C%20Megan%20Thee%20Stallion)%20Lyrics%20(Color%20Coded%20Lyrics).mp3?v=1634893418636">
-  </audio>
-<marquee bgcolor="#FF80FF">
-      Songs Played (in Sequence) :- Lalisa, Money, SG(Feat. DJ Snake, Ozuna, Megan Thee Stallion And Lisa)
-      </marquee>
-      <h1>
-        <center>
-          <b
-            ><i><u>Lalisa Manoban aka Lisa</u></i></b
-          >
-        </center>
-      </h1>
-      <center>
-        <img
-          src="https://cdn.glitch.me/ac49c1e8-2791-4469-b308-8ddd9a3408bf%2Fab21c4df96414062989e7d5a9a0f39aa.jpg?v=1634635153652"
-          class="responsive"
-        />
-      </center>
-      <center>
-        <h4>
-          Stage Name: Lisa (리사/ลิซ่า)<br><hr>
-Birth Name: Lalisa Manoban (ลลิสา มโนบาล) / Pranpriya Manoban (ปราณปริยา มโนบาล)<br><hr>
-Nicknames: Lili, Lalice, Laliz, Pokpak<br><hr>
-Position: Main Dancer, Lead Rapper, Sub-Vocalist, Maknae<br><hr>
-Birthday: March 27, 1997<br><hr>
-Chinese Zodiac Sign: Ox<br><hr>
-Thai Zodiac Sign: Pisces<br><hr>
-Western Zodiac Sign: Aries<br><hr>
-Birthplace: Buriram, Thailand<br><hr>
-Height: 166.5 cm (5’5.6″)<br><hr>
-Weight: 44.7 kg (98.5 lbs)<br><hr>
-Blood Type: O<br><hr>
-MBTI Type: ESFJ<br><hr>
-Instagram: @lalalalisa_m<br><hr>
-Weibo: lalalalisa_m<br><hr>
-YouTube: Lilifilm<br><hr>
+  <footer>
+    <p>Created with 💖 by <a href="https://github.com/HemantTheCoder" target="_blank">Hemant</a></p>
+  </footer>
 
-<br><hr>
-          <hr>
- 
-          <b><i>LISA Facts:</i></b><br><hr>
-– Lisa was born in Buriram Province, and moved in Bangkok, Thailand at age three.<br><hr>
-– Lisa is an only child, according to SBS Cultwo Show (July 6 2017).<br><hr>
-– Lisa’s stepfather who’s a top certified Swiss chef in Thailand is Marco Brüschweiler.<br><hr>
-– Formerly, her name was Pranpriya and her friends called her by the nickname Pockpack. It was changed to Lalisa after a fortune telling. (Lalisa means the one who is praised.)<br><hr>
-– She’s childhood friends with GOT7′s BamBam as they were both part of the dance crew We Zaa Cool.<br><hr>
-– She was the only person accepted to YG in the YG Audition in Thailand 2010.<br><hr>
-– She trained for 5 years 3 months (2011 April).<br><hr>
-– She became a trainee during middle school and lived in Korea since.<br><hr>
-– She can speak Korean, English, Japanese, Thai and basic Chinese.<br><hr>
-– According to all members and staff Lisa is the most different onstage vs off stage.<br><hr>
-– Members said she’s really playful and mischievous off stage.<br><hr>
-– She was voted as the best at aegyo in Blackpink by all members.<br><hr>
-– Lisa is referred to as the “Thailand Princess” in her birthplace.<br><hr>
-– She appeared in BIG BANG Taeyang’s ‘Ringa Linga’ MV.<br><hr>
-– Lisa loves make-up a lot (revealed on Get It Beauty).<br><hr>
-– Lisa plays Ukulele.<br><hr>
-– She can also play the guitar. (According to Lisa on “LINE TV THAILAND”)<br><hr>
-– Lisa is a Buddhist.<br><hr>
-– Her favorite food are French fries.<br><hr>
-– Her Korean favorite dish is Gamjatang (spicy pork spine soup).<br><hr>
-– Lisa’s favorite cuisine is Japanese, and she loves sushi. (Blackpink House ep. 7-3)<br><hr>
-– Her favorite drinks are the sweet drinks.<br><hr>
-– Her favorite color is yellow.<br><hr>
-– Her favorite number is 27 because it her birthday.<br><hr>
-– Lisa’s favorite movie is ‘Hachi’ (Vlive Star Road ep. 11)<br><hr>
-– Lisa’s has four cats, named Leo, Luca, Lily and Louis.<br><hr>
-– Lisa said that Rose taught her how to play the guitar during trainee days.<br><hr>
-– According to Parris Goebel, Lisa is the kind of dancer who isn’t made, but the kind who is naturally blessed.<br><hr>
-– Lisa’s new nickname is LaLi Con Artist due to her cheating at board games. (13th of April,2017 on V Live.)<br><hr>
-– Lisa loves to sleep.<br><hr>
-– She loves photography and taking pictures. She often takes pics of the other members.<br><hr>
-– Lisa has been friends with Bambam for 14 years (as of 2017).<br><hr>
-– Lisa’s also friends with CLC’s Sorn, NCT‘s Ten and (G)I-DLE’s Minnie.<br><hr>
-– Lisa is part of the “Thai line”, a group chat consisting of GOT7‘s BamBam, CLC‘s Sorn and NCT‘s Ten.<br><hr>
-– Lisa participated in the dance collaboration of the SBS Gayo Daejun 2016 with Shinee‘s Taemin, BTS‘ Jimin, NCT‘s Ten, GOT7‘s Yugyeom and Jinyoung, Red Velvet‘s Seulgi, DIA‘s Eunjin and Oh My Girl‘s YooA.<br><hr>
-– She wants to participate to the dancing show ‘Hit the Stage‘ because she thinks that show is for Main Dancers like her (According from Lisa at Interview in Japan).<br><hr>
-– Seungri said that Lisa reminds him of Daesung, she has a bright aura and seems full of energy.<br><hr>
-– Lisa and Rose are the first K-Pop girl group members to reach 1 million ‘likes’ on Instagram.<br><hr>
-– She acted in NONA9ON CF (2014, 2015, 2016 and 2017).<br><hr>
-– Lisa ranked 15th on “The 100 Most Beautiful Faces Of 2017”.<br><hr>
-– Lisa is ranked 9th on TC Candler “The 100 Most Beautiful Faces of 2018”.<br><hr>
-– Lisa is ranked 3rd on TC Candler “The 100 Most Beautiful Faces of 2019”.<br><hr>
-– Lisa is one of the cast members in the show “Real Men 300”.<br><hr>
-– She is the number one most followed K-pop idol on Instagram. (May 2019)<br><hr>
-– Lisa was chosen as the dance mentor of Chinese show Youth With You 2 & 3.<br><hr>
-– On August 20, 2020 it was announced that Lisa is their new Bulgari ambassador (in Korea).<br><hr>
-– On September 22, 2020 Celine has announced that Lisa will represent the house as their global ambassador.<br><hr>
-– On October 19, 2020 MAC Cosmetics announced that Lisa is their newest global ambassador.<br><hr>
-– She’s debuted as a soloist on September 10, 2021 with first single album “Lalisa”.<br><hr>
-        </h4>
-      </center>
-      <center>
-      <video src="https://cdn.glitch.com/ac49c1e8-2791-4469-b308-8ddd9a3408bf%2Fezgif-4-187acdd419a4.mp4?v=1631617457725" autoplay class="responsive">
-        </video>
-      </center>
-        <center>
-        <a href="https://en.wikipedia.org/wiki/Lisa_(rapper)" class="button2">Know More</a><br>
-        <a href="RoséSolo.html" class="button">Previous Member</a><br>
-          <a href="index.html" class="button2">Home</a><br>
-    </center>
+  <!-- Interactive Music Player Widget -->
+  <div id="music-player">
+    <div class="player-header">
+      <span>🎵 Now Playing</span>
+      <span id="track-name">Select Track</span>
+    </div>
+    <div class="player-controls">
+      <button id="prev-btn" class="ctrl-btn">&#9198;</button>
+      <button id="play-pause-btn" class="ctrl-btn">&#9658;</button>
+      <button id="next-btn" class="ctrl-btn">&#9199;</button>
+    </div>
   </div>
-  </div>
-  </body>
+
+</body>
 </html>

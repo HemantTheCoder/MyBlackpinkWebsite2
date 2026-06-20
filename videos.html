@@ -1,140 +1,130 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-	<script type="text/javascript">
-	function changeColor(colorName) {
-    document.body.style.background = colorName;
-}
-</script>
-    <title>Latest Videos</title>
-  <script data-ad-client="ca-pub-5894482427254751" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Latest Videos - Blackpink</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="script.js" defer></script>
+  <style>
+    .video-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+    .video-card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+    .video-card iframe {
+      width: 100%;
+      height: 250px;
+      border: none;
+    }
+    .video-info {
+      padding: 1rem;
+      text-align: center;
+    }
+    .video-info h3 {
+      font-size: 1.1rem;
+      color: var(--text-main);
+      margin-bottom: 0;
+    }
+  </style>
 </head>
+<body>
 
-<body bgcolor="pink">
-  <script language="JavaScript">
+  <header class="hero" style="height: 30vh; background-image: url('https://cdn.glitch.com/ac49c1e8-2791-4469-b308-8ddd9a3408bf%2Fizx4xs-Blackpink-8znak-bb05-nz7w-2019-feat-billboard-cdakjehr-jxs8xjkx-1548-compressed.jpg?v=1625137420177');">
+    <div class="hero-content">
+      <h1>Latest Videos</h1>
+    </div>
+  </header>
 
-var message="Function Disabled!";
+  <main class="container">
+    <div class="text-center" style="margin-bottom: 2rem;">
+      <a href="index.html" class="btn primary">Back to Home</a>
+    </div>
 
-function clickIE4(){
-if (event.button==2){
-alert(message);
-return false;
-}
-}
+    <section>
+      <h2 class="text-center">Recent Music Videos</h2>
+      
+      <div class="video-grid">
+        <!-- Pink Venom -->
+        <div class="video-card">
+          <iframe src="https://www.youtube.com/embed/gQlMMD8auMs" allowfullscreen></iframe>
+          <div class="video-info">
+            <h3>BLACKPINK - 'Pink Venom' M/V</h3>
+          </div>
+        </div>
 
-function clickNS4(e){
-if (document.layers||document.getElementById&&!document.all){
-if (e.which==2||e.which==3){
-alert(message);
-return false;
-}
-}
-}
-document.onkeydown = function(e) {
-        if (e.ctrlKey && 
-            (e.keyCode === 67 || 
-             e.keyCode === 86 || 
-             e.keyCode === 85 || 
-             e.keyCode === 117)) {
-            return false;
-        } else {
-            return true;
-        }
-};
-if (document.layers){
-document.captureEvents(Event.MOUSEDOWN);
-document.onmousedown=clickNS4;
-}
-else if (document.all&&!document.getElementById){
-document.onmousedown=clickIE4;
-}
+        <!-- Shut Down -->
+        <div class="video-card">
+          <iframe src="https://www.youtube.com/embed/POe9SOEKotk" allowfullscreen></iframe>
+          <div class="video-info">
+            <h3>BLACKPINK - 'Shut Down' M/V</h3>
+          </div>
+        </div>
 
-document.oncontextmenu=new Function("alert(message);return false")
+        <!-- Flower (Jisoo) -->
+        <div class="video-card">
+          <iframe src="https://www.youtube.com/embed/YudHcBIxlYw" allowfullscreen></iframe>
+          <div class="video-info">
+            <h3>JISOO - '꽃(FLOWER)' M/V</h3>
+          </div>
+        </div>
 
-</script>
-  <script>
-  (function(d, id) {
-    if (d.getElementById(id)) return;
-    var sc, node = d.getElementsByTagName('script')[0];
-    sc = d.createElement('script'); sc.id = id;
-    sc.src = 'https://sdk.getsitekit.com/static/js/app.js#apiKey=16400aeb107d6a9bbd902f428a8bef80';
-    node.parentNode.insertBefore(sc, node);
-  }(document, 'sitekit-sdk'));
-</script>
-
-	<center><button class="btnBlue"     onclick="changeColor('blue')">Blue</button>
-<button class="btnRed"      onclick="changeColor('red')">Red</button>
-<button class="btnGreen"    onclick="changeColor('green')">Green</button>
-<button class="btnOrange"   onclick="changeColor('orange')">Orange</button>
-<button class="btnYellow"   onclick="changeColor('yellow')">Yellow</button>
-<button class="btnPink"     onclick="changeColor('pink')">Pink</button>
-<button class="btnPurple"   onclick="changeColor('purple')">Purple</button>
-<button class="btnBrown"    onclick="changeColor('brown')">Brown</button>
-<button class="btnBlack"    onclick="changeColor('black')">Black</button>
-<button class="btnGray"     onclick="changeColor('gray')">Gray</button></center>
-
-    <center>
-        <button><a href="https://www.youtube.com/channel/UCOmHUn--16B90oW2L6FRR3A" target="blank">More Videos</a></button>
-        <br>
-        <button><a href="index.html">Back To Home</a></center></button>
-    <b><i><u><marquee>This Website Is Made By Hemant</marquee></u></i></b>
-        <br><h1><center><b><u><i>Latest Videos</i></u></b></center></h1>
-  <h1><center><b><u><i><center><b><u><i>ROSÉ | Interview Film</i></u></b></center></h1>
-    <center>
-       <iframe width="560" height="315" src="https://www.youtube.com/embed/YmZEXPPDCzc" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-  <h1><center><b><u><i><center><b><u><i>ROSÉ - 'On The Ground' M/V</i></u></b></center></h1>
-    <center>
-       <iframe width="560" height="315" src="https://www.youtube.com/embed/CKZvWhCqx1s" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-	<h1><center><b><u><i><center><b><u><i>BLACKPINK - 'THE SHOW' MESSAGE VIDEO #2</i></u></b></center></h1>
-    <center>
-       <iframe width="560" height="315" src="https://www.youtube.com/embed/DOzjtEV7Bjk" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-	<h1><center><b><u><i><center><b><u><i>BLACKPINK 2021 SEASON'S GREETINGS PREVIEW</i></u></b></center></h1>
-    <center>
-       <iframe width="560" height="315" src="https://www.youtube.com/embed/J0bgkMW8nRQ" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-	   <h1><center><b><u><i><center><b><u><i>BLACKPINK - ‘THE SHOW’ GUIDE VIDEO</i></u></b></center></h1>
-    <center>
-       <iframe width="560" height="315" src="https://www.youtube.com/embed/k6P1w_KBCGk" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-	    <h1><center><b><u><i><center><b><u><i>BLACKPINK - 'THE SHOW' TRAILER #2</i></u></b></center></h1>
-    <center>
-       <iframe width="560" height="315" src="https://www.youtube.com/embed/7SjQeoEtrn4" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-	    <h1><center><b><u><i><center><b><u><i>BLACKPINK – ‘Lovesick Girls’ M/V</i></u></b></center></h1>
-    <center>
-       <iframe width="560" height="315" src="https://www.youtube.com/embed/dyRsYk0LyA8" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-	<h1><center><b><u><i><center><b><u><i>BLACKPINK - 'Lovesick Girls' Jimmy Kimmel Live
-</i></u></b></center></h1>
-    <center>
-       <iframe width="560" height="315" src="https://www.youtube.com/embed/3l5jwqPT2yk" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-<br>
-	<h1><center><b><u><i><center><b><u><i>BLACKPINK - '24/365 with BLACKPINK' EP.15</i></u></b></center></h1>
-    <center>
-       <iframe width="560" height="315" src="https://www.youtube.com/embed/K0bsoA3SEJs" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-   <br>
-<h1><center><b><u><i><center><b><u><i>BLACKPINK - 'THE ALBUM' JACKET MAKING FILM</i></u></b></center></h1>
-    <center>
-       <iframe width="560" height="315" src="https://www.youtube.com/embed/_QVsY6wdYgM" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-   <br>
-<h1><center><center><b><u><i>BLACKPINK - ‘Pretty Savage’ 1011 SBS Inkigayo</i></u></b></center></h1>
-    <center>
-       <iframe width="560" height="315" src="https://www.youtube.com/embed/gU2HqP4NxUs" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-	<br>
-   	<h1><center><b><u><i>BLACKPINK - 'Lovesick Girls' DANCE PRACTICE VIDEO</i></u></b></center></h1>
-    <center>
-        <iframe width="560" height="315" src="https://www.youtube.com/embed/YxksUfnuEbI" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-        <br>
-        <h1><center><b><u><i>BLACKPINK - 1st FULL ALBUM [THE ALBUM] SAMPLER</i></u></b></center></h1>
-        <iframe width="560" height="315" src="https://www.youtube.com/embed/1L-qLpSjCrg" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-        <h1><center><b><u><i>BLACKPINK dishes about music, festivals and style | BLACKPINK on RELEASED</i></u></b></center></h1>
-        <iframe width="560" height="315" src="https://www.youtube.com/embed/PLd-PoQtJFk" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-        <h1><center><b><u><i>Each BLACKPINK member wants a superpower | BLACKPINK on RELEASED</i></u></b></center></h1>
-	      <iframe width="560" height="315" src="https://www.youtube.com/embed/_oGv-g2HSEc" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        <!-- You & Me (Jennie) -->
+        <div class="video-card">
+          <iframe src="https://www.youtube.com/embed/e1xXgoJuD_o" allowfullscreen></iframe>
+          <div class="video-info">
+            <h3>JENNIE - 'You & Me' DANCE PERFORMANCE</h3>
+          </div>
+        </div>
         
-        <h1><center><b><u><i>Which Member Would? | BLACKPINK on RELEASED</i></u></b></center></h1>
-        <iframe width="560" height="315" src="https://www.youtube.com/embed/zd8fTHw-8UI" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-        <br>
+        <!-- Lovesick Girls -->
+        <div class="video-card">
+          <iframe src="https://www.youtube.com/embed/dyRsYk0LyA8" allowfullscreen></iframe>
+          <div class="video-info">
+            <h3>BLACKPINK - 'Lovesick Girls' M/V</h3>
+          </div>
+        </div>
 
-        <button>
-            <center><a href="https://www.youtube.com/channel/UCOmHUn--16B90oW2L6FRR3A" target="blank">More Videos</a></button>
-        <button><a href="index.html">Back To Home</a></center></button>
+        <!-- How You Like That -->
+        <div class="video-card">
+          <iframe src="https://www.youtube.com/embed/ioNng23DkIM" allowfullscreen></iframe>
+          <div class="video-info">
+            <h3>BLACKPINK - 'How You Like That' M/V</h3>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-center" style="margin-top: 3rem;">
+        <a href="https://www.youtube.com/c/BLACKPINKOFFICIAL" class="btn primary" target="_blank">View All on Official Channel</a>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <p>Created with 💖 by <a href="https://github.com/HemantTheCoder" target="_blank">Hemant</a></p>
+  </footer>
+
+  <!-- Interactive Music Player Widget -->
+  <div id="music-player">
+    <div class="player-header">
+      <span>🎵 Now Playing</span>
+      <span id="track-name">Select Track</span>
+    </div>
+    <div class="player-controls">
+      <button id="prev-btn" class="ctrl-btn">&#9198;</button>
+      <button id="play-pause-btn" class="ctrl-btn">&#9658;</button>
+      <button id="next-btn" class="ctrl-btn">&#9199;</button>
+    </div>
+  </div>
+
 </body>
 </html>
