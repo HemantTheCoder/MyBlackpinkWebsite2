@@ -13,6 +13,105 @@
   <script src="script.js" defer></script>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
   
+<style>/* INJECTED-PAGE-CSS */
+
+#tour-map {
+  width: 100%;
+  height: 500px;
+  border-radius: 18px;
+  border: 1.5px solid rgba(255,42,133,0.35);
+  box-shadow: 0 0 40px rgba(255,42,133,0.2);
+  overflow: hidden;
+  z-index: 1;
+}
+.map-title { text-align: center; margin-bottom: 1.5rem; }
+.map-title h2 {
+  font-size: clamp(1.5rem, 4vw, 2.2rem);
+  font-weight: 900;
+  background: linear-gradient(135deg, #fff, #ff2a85);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.map-title p { color: rgba(255,255,255,0.5); font-size: 0.9rem; margin-top: 0.4rem; }
+.tour-toggle-bar {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+.tour-btn {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 700;
+  padding: 0.6rem 1.8rem;
+  border-radius: 999px;
+  border: 2px solid;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  letter-spacing: 0.05em;
+}
+.tour-btn-bp { border-color: #ff2a85; background: rgba(255,42,133,0.08); color: #ff8fab; }
+.tour-btn-bp.active { background: #ff2a85; color: #fff; box-shadow: 0 0 20px rgba(255,42,133,0.5); }
+.tour-btn-dl { border-color: #a855f7; background: rgba(168,85,247,0.08); color: #c084fc; }
+.tour-btn-dl.active { background: #a855f7; color: #fff; box-shadow: 0 0 20px rgba(168,85,247,0.5); }
+.map-legend {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  margin: 1rem 0;
+  flex-wrap: wrap;
+}
+.legend-item { display: flex; align-items: center; gap: 0.6rem; font-size: 0.88rem; color: rgba(255,255,255,0.7); }
+.legend-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+.legend-dot-bp { background: #ff2a85; box-shadow: 0 0 8px #ff2a85; }
+.legend-dot-dl { background: #a855f7; box-shadow: 0 0 8px #a855f7; }
+#map-section { margin-bottom: 2rem; }
+.stats-strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+.stats-strip .stat-card {
+  background: rgba(20,10,30,0.6);
+  border: 1.5px solid rgba(255,42,133,0.2);
+  border-radius: 14px;
+  padding: 1.2rem;
+  text-align: center;
+}
+.stats-strip .stat-card .stat-icon { font-size: 1.6rem; margin-bottom: 0.3rem; }
+.stat-num-bp { font-size: 2rem; font-weight: 900; color: #ff2a85; line-height: 1; }
+.stat-num-dl { font-size: 2rem; font-weight: 900; color: #a855f7; line-height: 1; }
+.stats-strip .stat-label { font-size: 0.78rem; color: rgba(255,255,255,0.5); margin-top: 0.3rem; }
+.city-list-section { margin-top: 2rem; }
+.city-list-title {
+  font-size: 1.1rem;
+  font-weight: 800;
+  margin: 1.5rem 0 1rem;
+  letter-spacing: 0.05em;
+}
+.city-list-title-bp { color: #ff2a85; }
+.city-list-title-dl { color: #a855f7; }
+.city-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+.city-chip {
+  background: rgba(255,42,133,0.06);
+  border: 1px solid rgba(255,42,133,0.18);
+  border-radius: 10px;
+  padding: 0.7rem 1rem;
+  font-size: 0.83rem;
+  line-height: 1.5;
+}
+.city-chip strong { color: #ff2a85; display: block; font-size: 0.88rem; }
+.city-chip span { color: rgba(255,255,255,0.65); }
+.city-chip em { color: rgba(255,255,255,0.35); font-style: normal; font-size: 0.76rem; }
+</style>
 </head>
 <body>
 
@@ -166,5 +265,87 @@
     </div>
   </div>
 
+<script>/* INJECTED-PAGE-JS */
+
+document.addEventListener('DOMContentLoaded', function() {
+  if (typeof L === 'undefined') { console.warn('Leaflet not loaded'); return; }
+  var bpStops = [
+    { city: 'Seoul', coords: [37.5665, 126.9780], venue: 'KSPO Dome', date: 'Sep 2022' },
+    { city: 'Los Angeles', coords: [34.0522, -118.2437], venue: 'Crypto.com Arena', date: 'Feb 2023' },
+    { city: 'New York', coords: [40.7128, -74.0060], venue: 'Prudential Center', date: 'Feb 2023' },
+    { city: 'Dallas', coords: [32.7767, -96.7970], venue: 'American Airlines Center', date: 'Feb 2023' },
+    { city: 'Chicago', coords: [41.8781, -87.6298], venue: 'United Center', date: 'Mar 2023' },
+    { city: 'London', coords: [51.5074, -0.1278], venue: 'The O2 Arena', date: 'Mar 2023' },
+    { city: 'Paris', coords: [48.8566, 2.3522], venue: 'Accor Arena', date: 'Mar 2023' },
+    { city: 'Barcelona', coords: [41.3851, 2.1734], venue: 'Palau Sant Jordi', date: 'Mar 2023' },
+    { city: 'Amsterdam', coords: [52.3676, 4.9041], venue: 'Ziggo Dome', date: 'Apr 2023' },
+    { city: 'Sydney', coords: [-33.8688, 151.2093], venue: 'Qudos Bank Arena', date: 'Jun 2023' },
+    { city: 'Bangkok', coords: [13.7563, 100.5018], venue: 'Impact Arena', date: 'Jun 2023' },
+    { city: 'Singapore', coords: [1.3521, 103.8198], venue: 'National Stadium', date: 'Jul 2023' },
+    { city: 'Jakarta', coords: [-6.2088, 106.8456], venue: 'Gelora Bung Karno', date: 'Jul 2023' }
+  ];
+  var dlStops = [
+    { city: 'Seoul', coords: [37.5665, 126.9780], venue: 'Olympic Stadium', date: 'Mar 2026' },
+    { city: 'Tokyo', coords: [35.6762, 139.6503], venue: 'Tokyo Dome', date: 'Mar 2026' },
+    { city: 'Los Angeles', coords: [34.0522, -118.2437], venue: 'SoFi Stadium', date: 'Apr 2026' },
+    { city: 'New York', coords: [40.7128, -74.0060], venue: 'MetLife Stadium', date: 'Apr 2026' },
+    { city: 'London', coords: [51.5074, -0.1278], venue: 'Wembley Stadium', date: 'May 2026' },
+    { city: 'Paris', coords: [48.8566, 2.3522], venue: 'Stade de France', date: 'May 2026' },
+    { city: 'Berlin', coords: [52.5200, 13.4050], venue: 'Olympiastadion', date: 'May 2026' },
+    { city: 'Dubai', coords: [25.2048, 55.2708], venue: 'Coca-Cola Arena', date: 'Jun 2026' },
+    { city: 'Mumbai', coords: [19.0760, 72.8777], venue: 'DY Patil Stadium', date: 'Jun 2026' },
+    { city: 'Bangkok', coords: [13.7563, 100.5018], venue: 'National Stadium', date: 'Jun 2026' },
+    { city: 'Manila', coords: [14.5995, 120.9842], venue: 'Philippine Arena', date: 'Jul 2026' }
+  ];
+
+  var map = L.map('tour-map', { center: [25, 10], zoom: 2, zoomControl: true });
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors',
+    maxZoom: 18
+  }).addTo(map);
+
+  function makeIcon(color) {
+    return L.divIcon({
+      className: '',
+      html: '<div style="width:14px;height:14px;border-radius:50%;background:'+color+';border:2px solid #fff;box-shadow:0 0 8px '+color+'"></div>',
+      iconSize: [14,14], iconAnchor: [7,7]
+    });
+  }
+
+  var bpLayer = L.layerGroup();
+  var dlLayer = L.layerGroup();
+
+  bpStops.forEach(function(s) {
+    L.marker(s.coords, {icon: makeIcon('#ff2a85')})
+      .bindPopup('<b style="color:#ff2a85">\uD83C\uDF38 '+s.city+'<\/b><br><span style="font-size:0.85em">'+s.venue+'<\/span><br><em style="color:#aaa;font-size:0.8em">'+s.date+'<\/em>')
+      .addTo(bpLayer);
+  });
+  dlStops.forEach(function(s) {
+    L.marker(s.coords, {icon: makeIcon('#a855f7')})
+      .bindPopup('<b style="color:#a855f7">\u26A1 '+s.city+'<\/b><br><span style="font-size:0.85em">'+s.venue+'<\/span><br><em style="color:#aaa;font-size:0.8em">'+s.date+'<\/em>')
+      .addTo(dlLayer);
+  });
+  bpLayer.addTo(map);
+
+  function renderGrid(stops, id, color) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.innerHTML = stops.map(function(s) {
+      return '<div class="city-chip"><strong>'+s.city+'<\/strong><span>'+s.venue+'<\/span><br><em>'+s.date+'<\/em><\/div>';
+    }).join('');
+  }
+  renderGrid(bpStops, 'bp-city-grid', '#ff2a85');
+  renderGrid(dlStops, 'dl-city-grid', '#a855f7');
+
+  window.switchTour = function(tour) {
+    var bp = document.getElementById('btn-bp');
+    var dl = document.getElementById('btn-dl');
+    if (bp) bp.classList.toggle('active', tour==='bp');
+    if (dl) dl.classList.toggle('active', tour==='dl');
+    if (tour==='bp') { map.removeLayer(dlLayer); bpLayer.addTo(map); }
+    else { map.removeLayer(bpLayer); dlLayer.addTo(map); }
+  };
+});
+</script>
 </body>
 </html>
