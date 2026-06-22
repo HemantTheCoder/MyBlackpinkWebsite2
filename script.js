@@ -335,6 +335,12 @@ function initAll() {
   if (document.getElementById('silhouette-img')) {
     initSilhouetteGame();
   }
+  if (document.getElementById('masonry-grid')) initGallery();
+  if (document.querySelector('.timeline-item')) initTimeline();
+  if (document.querySelector('.era-tab')) initDiscography();
+  if (document.getElementById('tour-map')) initWorldTour();
+  if (document.getElementById('quote-card')) initQuoteGenerator();
+  if (document.querySelector('.stat-card[data-display]')) initRecords();
   if (document.getElementById('poll-opt-Square-Up')) {
     initFanPoll();
   }
@@ -1161,3 +1167,564 @@ function showPollResults(votedChoice, animate) {
   const badge = document.getElementById('poll-voted-badge');
   if (badge) badge.style.display = 'block';
 }
+
+
+// =============================================
+// GALLERY PAGE
+// =============================================
+window.initGallery = function () {
+  const grid = document.getElementById('masonry-grid');
+  if (!grid) return;
+
+  const cards = Array.from(grid.querySelectorAll('.photo-card'));
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  const countEl = document.getElementById('count-num');
+
+  // Reveal cards with stagger
+  cards.forEach(function (card, i) {
+    setTimeout(function () { card.classList.add('visible'); }, i * 60);
+  });
+
+  // Filter logic
+  filterBtns.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      filterBtns.forEach(function (b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      const filter = btn.dataset.filter;
+      let visible = 0;
+      cards.forEach(function (card) {
+        const member = card.dataset.member;
+        if (filter === 'all' || member === filter) {
+          card.classList.remove('hidden');
+          visible++;
+        } else {
+          card.classList.add('hidden');
+        }
+      });
+      if (countEl) countEl.textContent = visible;
+    });
+  });
+
+  // Lightbox
+  let lightboxOpen = false;
+  let currentIdx = 0;
+  const visibleCards = function () { return cards.filter(function (c) { return !c.classList.contains('hidden'); }); };
+
+  // Build lightbox DOM
+  if (!document.getElementById('lightbox')) {
+    const lb = document.createElement('div');
+    lb.id = 'lightbox';
+    lb.innerHTML = `<div class="lb-backdrop"></div>
+      <div class="lb-container">
+        <div class="lb-top-bar">
+          <div class="lb-counter"><strong id="lb-cur">1</strong> / <strong id="lb-total">11</strong></div>
+          <button class="lb-close" id="lb-close">✕</button>
+        </div>
+        <div class="lb-img-wrap">
+          <img id="lb-img" src="" alt="">
+          <button class="lb-nav lb-prev" id="lb-prev">&#8592;</button>
+          <button class="lb-nav lb-next" id="lb-next">&#8594;</button>
+        </div>
+        <div class="lb-caption" id="lb-caption"></div>
+      </div>`;
+    document.body.appendChild(lb);
+
+    document.getElementById('lb-close').onclick = closeLightbox;
+    document.querySelector('.lb-backdrop').onclick = closeLightbox;
+    document.getElementById('lb-prev').onclick = function () { moveLightbox(-1); };
+    document.getElementById('lb-next').onclick = function () { moveLightbox(1); };
+    document.addEventListener('keydown', function (e) {
+      if (!lightboxOpen) return;
+      if (e.key === 'ArrowRight') moveLightbox(1);
+      if (e.key === 'ArrowLeft') moveLightbox(-1);
+      if (e.key === 'Escape') closeLightbox();
+    });
+  }
+
+  function openLightbox(idx) {
+    const vc = visibleCards();
+    if (!vc.length) return;
+    currentIdx = idx;
+    lightboxOpen = true;
+    const lb = document.getElementById('lightbox');
+    lb.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    showLightboxSlide(vc);
+  }
+
+  function closeLightbox() {
+    lightboxOpen = false;
+    document.getElementById('lightbox').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function moveLightbox(dir) {
+    const vc = visibleCards();
+    currentIdx = (currentIdx + dir + vc.length) % vc.length;
+    showLightboxSlide(vc);
+  }
+
+  function showLightboxSlide(vc) {
+    const card = vc[currentIdx];
+    const img = card.querySelector('img');
+    const lbImg = document.getElementById('lb-img');
+    if (img) lbImg.src = img.src;
+    document.getElementById('lb-caption').textContent = card.dataset.label || '';
+    document.getElementById('lb-cur').textContent = currentIdx + 1;
+    document.getElementById('lb-total').textContent = vc.length;
+  }
+
+  cards.forEach(function (card, i) {
+    card.addEventListener('click', function () {
+      const vc = visibleCards();
+      const vcIdx = vc.indexOf(card);
+      if (vcIdx !== -1) openLightbox(vcIdx);
+    });
+  });
+};
+
+// =============================================
+// TIMELINE PAGE
+// =============================================
+window.initTimeline = function () {
+  if (!document.querySelector('.timeline-item')) return;
+  const observer = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.timeline-item').forEach(function (item) {
+    observer.observe(item);
+  });
+};
+
+// =============================================
+// DISCOGRAPHY PAGE
+// =============================================
+window.initDiscography = function () {
+  const tabs = document.querySelectorAll('.era-tab');
+  const cards = document.querySelectorAll('.era-card');
+  if (!tabs.length) return;
+
+  tabs.forEach(function (tab) {
+    tab.addEventListener('click', function () {
+      tabs.forEach(function (t) { t.classList.remove('active'); });
+      tab.classList.add('active');
+      const filter = tab.dataset.filter;
+      cards.forEach(function (card) {
+        if (filter === 'ALL' || card.dataset.era === filter) {
+          card.style.display = '';
+          setTimeout(function () { card.classList.add('visible'); }, 50);
+        } else {
+          card.classList.remove('visible');
+          card.style.display = 'none';
+        }
+      });
+    });
+  });
+
+  // Reveal all cards initially
+  const obs = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }
+    });
+  }, { threshold: 0.1 });
+  cards.forEach(function (c) { obs.observe(c); });
+};
+
+// =============================================
+// WORLD TOUR MAP PAGE (Leaflet.js)
+// =============================================
+window.initWorldTour = function () {
+  if (!document.getElementById('tour-map')) return;
+  if (typeof L === 'undefined') {
+    // Leaflet not loaded yet — retry after delay
+    setTimeout(window.initWorldTour, 500);
+    return;
+  }
+
+  const bpStops = [
+    { city: 'Seoul', coords: [37.5665, 126.9780], venue: 'KSPO Dome', date: 'Sep 2022' },
+    { city: 'Los Angeles', coords: [34.0522, -118.2437], venue: 'Crypto.com Arena', date: 'Feb 2023' },
+    { city: 'New York', coords: [40.7128, -74.0060], venue: 'Prudential Center', date: 'Feb 2023' },
+    { city: 'Dallas', coords: [32.7767, -96.7970], venue: 'American Airlines Center', date: 'Feb 2023' },
+    { city: 'Chicago', coords: [41.8781, -87.6298], venue: 'United Center', date: 'Mar 2023' },
+    { city: 'Hamilton', coords: [43.2557, -79.8711], venue: 'FirstOntario Centre', date: 'Mar 2023' },
+    { city: 'London', coords: [51.5074, -0.1278], venue: 'The O2', date: 'Mar 2023' },
+    { city: 'Paris', coords: [48.8566, 2.3522], venue: 'Accor Arena', date: 'Mar 2023' },
+    { city: 'Barcelona', coords: [41.3851, 2.1734], venue: 'Palau Sant Jordi', date: 'Mar 2023' },
+    { city: 'Amsterdam', coords: [52.3676, 4.9041], venue: 'Ziggo Dome', date: 'Apr 2023' },
+    { city: 'Sydney', coords: [-33.8688, 151.2093], venue: 'Qudos Bank Arena', date: 'Jun 2023' },
+    { city: 'Bangkok', coords: [13.7563, 100.5018], venue: 'Impact Arena', date: 'Jun 2023' },
+    { city: 'Singapore', coords: [1.3521, 103.8198], venue: 'National Stadium', date: 'Jul 2023' },
+    { city: 'Jakarta', coords: [-6.2088, 106.8456], venue: 'Gelora Bung Karno', date: 'Jul 2023' }
+  ];
+
+  const dlStops = [
+    { city: 'Seoul', coords: [37.5665, 126.9780], venue: 'Olympic Stadium', date: 'Mar 2026' },
+    { city: 'Tokyo', coords: [35.6762, 139.6503], venue: 'Tokyo Dome', date: 'Mar 2026' },
+    { city: 'Los Angeles', coords: [34.0522, -118.2437], venue: 'SoFi Stadium', date: 'Apr 2026' },
+    { city: 'Las Vegas', coords: [36.1699, -115.1398], venue: 'Allegiant Stadium', date: 'Apr 2026' },
+    { city: 'New York', coords: [40.7128, -74.0060], venue: 'MetLife Stadium', date: 'Apr 2026' },
+    { city: 'London', coords: [51.5074, -0.1278], venue: 'Wembley Stadium', date: 'May 2026' },
+    { city: 'Paris', coords: [48.8566, 2.3522], venue: 'Stade de France', date: 'May 2026' },
+    { city: 'Berlin', coords: [52.5200, 13.4050], venue: 'Olympiastadion', date: 'May 2026' },
+    { city: 'Dubai', coords: [25.2048, 55.2708], venue: 'Coca-Cola Arena', date: 'Jun 2026' },
+    { city: 'Mumbai', coords: [19.0760, 72.8777], venue: 'DY Patil Stadium', date: 'Jun 2026' },
+    { city: 'Bangkok', coords: [13.7563, 100.5018], venue: 'National Stadium', date: 'Jun 2026' },
+    { city: 'Manila', coords: [14.5995, 120.9842], venue: 'Philippine Arena', date: 'Jul 2026' }
+  ];
+
+  const map = L.map('tour-map', { center: [20, 10], zoom: 2 });
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; <a href="https://carto.com/">CARTO</a>',
+    maxZoom: 19
+  }).addTo(map);
+
+  let bpLayer = L.layerGroup();
+  let dlLayer = L.layerGroup();
+
+  function makeIcon(color) {
+    return L.divIcon({
+      className: '',
+      html: '<div style="width:16px;height:16px;border-radius:50%;background:' + color + ';border:2px solid #fff;box-shadow:0 0 10px ' + color + ';"></div>',
+      iconSize: [16, 16],
+      iconAnchor: [8, 8]
+    });
+  }
+
+  bpStops.forEach(function (s) {
+    L.marker(s.coords, { icon: makeIcon('#ff2a85') })
+      .bindPopup('<div style="background:#1a0025;border:1px solid #ff2a85;border-radius:10px;padding:0.8rem;color:#fff;min-width:160px;"><strong style="color:#ff2a85">🌸 ' + s.city + '</strong><br><span style="color:#ddd;font-size:0.85rem;">' + s.venue + '</span><br><span style="color:#aaa;font-size:0.8rem;">📅 ' + s.date + '</span></div>', { maxWidth: 220 })
+      .addTo(bpLayer);
+  });
+
+  dlStops.forEach(function (s) {
+    L.marker(s.coords, { icon: makeIcon('#a855f7') })
+      .bindPopup('<div style="background:#0a001a;border:1px solid #a855f7;border-radius:10px;padding:0.8rem;color:#fff;min-width:160px;"><strong style="color:#a855f7">⚡ ' + s.city + '</strong><br><span style="color:#ddd;font-size:0.85rem;">' + s.venue + '</span><br><span style="color:#aaa;font-size:0.8rem;">📅 ' + s.date + '</span></div>', { maxWidth: 220 })
+      .addTo(dlLayer);
+  });
+
+  bpLayer.addTo(map);
+
+  // Populate city grids
+  function renderCityGrid(stops, id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.innerHTML = stops.map(function (s) {
+      return '<div class="city-chip"><strong>' + s.city + '</strong><br><span>' + s.venue + '</span><br><em>' + s.date + '</em></div>';
+    }).join('');
+  }
+  renderCityGrid(bpStops, 'bp-city-grid');
+  renderCityGrid(dlStops, 'dl-city-grid');
+
+  window.switchTour = function (tour) {
+    document.getElementById('btn-bp').classList.toggle('active', tour === 'bp');
+    document.getElementById('btn-dl').classList.toggle('active', tour === 'dl');
+    if (tour === 'bp') {
+      map.removeLayer(dlLayer);
+      bpLayer.addTo(map);
+    } else {
+      map.removeLayer(bpLayer);
+      dlLayer.addTo(map);
+    }
+  };
+};
+
+// =============================================
+// QUOTE GENERATOR PAGE
+// =============================================
+window.initQuoteGenerator = function () {
+  if (!document.getElementById('quote-display')) return;
+
+  const quotes = [
+    { text: "Don't know what to do, it's true — I'm stuck on you.", member: 'BLACKPINK', song: "Don't Know What To Do" },
+    { text: "We were born to be alone, but why do I come back to you?", member: 'BLACKPINK', song: 'Lovesick Girls' },
+    { text: "I'm the one they call a savage.", member: 'BLACKPINK', song: 'Pretty Savage' },
+    { text: "How you like that? Look at you now — you're so beautiful.", member: 'BLACKPINK', song: 'How You Like That' },
+    { text: "Boombayah! Call me monster, I'm a savage beast.", member: 'BLACKPINK', song: 'Boombayah' },
+    { text: "I set fire to the rain, yeah I like it like that.", member: 'BLACKPINK', song: 'Playing With Fire' },
+    { text: "Kill this love — before it kills us first.", member: 'BLACKPINK', song: 'Kill This Love' },
+    { text: "Baby I'm a savage. Slightly crazy, totally amazing.", member: 'BLACKPINK', song: 'Pretty Savage' },
+    { text: "Ice cream, chillin' chillin', drip on top.", member: 'Rosé & Selena Gomez', song: 'Ice Cream' },
+    { text: "Whistle baby, whistle baby, let me know.", member: 'BLACKPINK', song: 'Whistle' },
+    { text: "On the ground, on the ground — only on the ground.", member: 'Rosé', song: 'On The Ground' },
+    { text: "Money, that's what I want. Money, that's what I need.", member: 'Lisa', song: 'Money' },
+    { text: "I'm a diamond, born under pressure.", member: 'Lisa', song: 'Lalisa' },
+    { text: "When I look in the mirror, I see a flower.", member: 'Jisoo', song: 'Flower' },
+    { text: "Solo — I'm the one for me.", member: 'Jennie', song: 'SOLO' },
+    { text: "APT, APT — every time I'm with you.", member: 'Rosé ft. Bruno Mars', song: 'APT.' },
+    { text: "Man, it's my world — Rockstar, in control.", member: 'Lisa', song: 'Rockstar' },
+    { text: "Mantra — repeat after me: I am everything.", member: 'Jennie', song: 'Mantra' },
+    { text: "Pink Venom, drop it on the floor.", member: 'BLACKPINK', song: 'Pink Venom' },
+    { text: "Shut down the city — BLACKPINK in your area!", member: 'BLACKPINK', song: 'Shut Down' },
+    { text: "I've waited my whole life to be right here with you.", member: 'BLACKPINK', song: 'Ready For Love' },
+    { text: "You never know how it feels to be me.", member: 'BLACKPINK', song: 'You Never Know' },
+    { text: "Forever young — I want to be forever young.", member: 'BLACKPINK', song: 'Forever Young' },
+    { text: "As if it's your last — love me like it's your last.", member: 'BLACKPINK', song: "As If It's Your Last" }
+  ];
+
+  const memberQuotes = {
+    all: quotes,
+    jisoo: quotes.filter(function (q) { return q.member === 'Jisoo' || q.member === 'BLACKPINK'; }),
+    jennie: quotes.filter(function (q) { return q.member === 'Jennie' || q.member === 'BLACKPINK'; }),
+    rose: quotes.filter(function (q) { return q.member.includes('Rosé') || q.member === 'BLACKPINK'; }),
+    lisa: quotes.filter(function (q) { return q.member === 'Lisa' || q.member === 'BLACKPINK'; })
+  };
+
+  let currentMember = 'all';
+  let currentQuote = null;
+
+  function getRandomQuote() {
+    const pool = memberQuotes[currentMember] || quotes;
+    return pool[Math.floor(Math.random() * pool.length)];
+  }
+
+  function displayQuote(q) {
+    currentQuote = q;
+    const display = document.getElementById('quote-display');
+    const songEl = document.getElementById('quote-song');
+    const memberEl = document.getElementById('quote-member');
+    if (display) {
+      display.style.opacity = '0';
+      setTimeout(function () {
+        display.textContent = '"' + q.text + '"';
+        display.style.opacity = '1';
+      }, 300);
+    }
+    if (songEl) songEl.textContent = '— ' + q.song;
+    if (memberEl) memberEl.textContent = q.member;
+  }
+
+  // Member selector buttons
+  document.querySelectorAll('.member-select-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      document.querySelectorAll('.member-select-btn').forEach(function (b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      currentMember = btn.dataset.member || 'all';
+      displayQuote(getRandomQuote());
+    });
+  });
+
+  // Generate button
+  const genBtn = document.getElementById('generate-btn');
+  if (genBtn) {
+    genBtn.addEventListener('click', function () { displayQuote(getRandomQuote()); });
+  }
+
+  // Copy button
+  const copyBtn = document.getElementById('copy-btn');
+  if (copyBtn) {
+    copyBtn.addEventListener('click', function () {
+      if (!currentQuote) return;
+      const text = '"' + currentQuote.text + '" — ' + currentQuote.member + ' (' + currentQuote.song + ')';
+      navigator.clipboard.writeText(text).then(function () {
+        if (typeof showToast === 'function') showToast('Quote copied to clipboard! 💗');
+      });
+    });
+  }
+
+  // Share to Instagram button
+  const shareBtn = document.getElementById('share-btn');
+  if (shareBtn) {
+    shareBtn.addEventListener('click', function () {
+      window.open('https://instagram.com/h.e.m.a.n.t_12', '_blank');
+    });
+  }
+
+  // Load initial quote
+  displayQuote(getRandomQuote());
+};
+
+// =============================================
+// RECORDS PAGE — Animated counters
+// =============================================
+window.initRecords = function () {
+  const statCards = document.querySelectorAll('.stat-card[data-display]');
+  if (!statCards.length) return;
+  const obs = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) {
+        const card = entry.target;
+        const display = card.dataset.display;
+        const numEl = card.querySelector('[data-counter]');
+        if (numEl && !card.dataset.counted) {
+          card.dataset.counted = '1';
+          numEl.textContent = display; // Just show final value immediately for complex strings
+        }
+        obs.unobserve(card);
+      }
+    });
+  }, { threshold: 0.3 });
+  statCards.forEach(function (c) { obs.observe(c); });
+
+  // Guinness + Billboard slide-in animations
+  const slideObs = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        slideObs.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.guinness-card, .billboard-card, .yt-card').forEach(function (el) {
+    slideObs.observe(el);
+  });
+};
+
+
+// =============================================
+// QUOTE GENERATOR (full implementation)
+// =============================================
+const qgLyrics = {
+  jisoo: [
+    { lyric: "I'm right here. Oh, flower bloomed.", song: 'Flower' },
+    { lyric: "Because I'm the one.", song: 'Flower' },
+    { lyric: "All my flowers grew for you.", song: 'Flower' },
+    { lyric: "BLACKPINK is the revolution.", song: 'Kill This Love' },
+    { lyric: "Forever young — I want to be forever young.", song: 'Forever Young' }
+  ],
+  jennie: [
+    { lyric: "I'm the one — solo. You can't get my love.", song: 'SOLO' },
+    { lyric: "I walk alone, no one by my side.", song: 'SOLO' },
+    { lyric: "I was the one who had your heart.", song: 'SOLO' },
+    { lyric: "Mantra — repeat after me: I am everything.", song: 'Mantra' },
+    { lyric: "Human, nature — that's just me.", song: 'Human' },
+    { lyric: "I'm a mess but a damn beautiful one.", song: 'Mantra' }
+  ],
+  rose: [
+    { lyric: "On the ground, only on the ground — I belong here.", song: 'On The Ground' },
+    { lyric: "I've been gone too long from myself.", song: 'Gone' },
+    { lyric: "APT — every time I call your name.", song: 'APT.' },
+    { lyric: "Hard to love, I know — but I'm worth it.", song: 'Hard To Love' },
+    { lyric: "I'm your fire, I'm your flood.", song: 'Gone' },
+    { lyric: "The happiest girl — pretending for you.", song: 'The Happiest Girl' }
+  ],
+  lisa: [
+    { lyric: "Money — that's what I want, that's what I need.", song: 'Money' },
+    { lyric: "Lalisa, Lalisa, Lalisa — I want to go.", song: 'Lalisa' },
+    { lyric: "I'm a rockstar — in control, in the zone.", song: 'Rockstar' },
+    { lyric: "I'm the baddest of them all.", song: 'Lalisa' },
+    { lyric: "New chapter — watch me shine.", song: 'Rockstar' },
+    { lyric: "Born to flex, born to rule.", song: 'Money' }
+  ]
+};
+
+const qgMemberInfo = {
+  jisoo:  { name: 'JISOO',  emoji: '🌸', img: 'Jisoo.webp',   color: '#ff8fab' },
+  jennie: { name: 'JENNIE', emoji: '👑', img: 'Jennie.webp',  color: '#ff2a85' },
+  rose:   { name: 'ROSÉ',   emoji: '🌹', img: 'Rose.webp',    color: '#ff6eb0' },
+  lisa:   { name: 'LISA',   emoji: '💛', img: 'Lisa.webp',    color: '#ffd700' }
+};
+
+let qgCurrentMember = null;
+
+window.selectMember = function (member) {
+  qgCurrentMember = member;
+  document.querySelectorAll('.member-btn').forEach(function (btn) {
+    btn.classList.toggle('active', btn.dataset.member === member);
+  });
+
+  const info = qgMemberInfo[member];
+  const select = document.getElementById('lyric-select');
+  if (!select) return;
+  select.innerHTML = '<option value="">— Pick a lyric —</option>';
+  (qgLyrics[member] || []).forEach(function (l, i) {
+    const opt = document.createElement('option');
+    opt.value = i;
+    opt.textContent = '"' + l.lyric.substring(0, 50) + (l.lyric.length > 50 ? '…' : '') + '" — ' + l.song;
+    select.appendChild(opt);
+  });
+
+  // Update card with member
+  const nameEl = document.getElementById('card-member-name');
+  const photoEl = document.getElementById('card-member-photo');
+  const imgEl = document.getElementById('card-member-img');
+  const emojiEl = document.getElementById('card-emoji');
+  if (nameEl) { nameEl.textContent = info.name; nameEl.style.display = ''; }
+  if (photoEl) photoEl.style.display = '';
+  if (imgEl) imgEl.src = info.img;
+  if (emojiEl) { emojiEl.textContent = info.emoji; emojiEl.style.display = ''; }
+
+  // Update card glow color
+  const card = document.getElementById('quote-card');
+  if (card) card.style.borderColor = info.color + '66';
+  const orb = document.getElementById('card-glow-orb');
+  if (orb) orb.style.background = 'radial-gradient(circle, ' + info.color + '44 0%, transparent 70%)';
+
+  // Clear lyric
+  const lyricEl = document.getElementById('card-lyric');
+  const songEl = document.getElementById('card-song');
+  const placeholder = document.getElementById('card-placeholder');
+  if (lyricEl) lyricEl.style.display = 'none';
+  if (songEl) songEl.style.display = 'none';
+  if (placeholder) placeholder.style.display = '';
+};
+
+window.updateLyric = function () {
+  const select = document.getElementById('lyric-select');
+  if (!select || !qgCurrentMember) return;
+  const idx = parseInt(select.value);
+  if (isNaN(idx)) return;
+  const lyricData = qgLyrics[qgCurrentMember][idx];
+  if (!lyricData) return;
+
+  const lyricEl = document.getElementById('card-lyric');
+  const songEl = document.getElementById('card-song');
+  const divEl = document.getElementById('card-divider');
+  const placeholder = document.getElementById('card-placeholder');
+  if (lyricEl) { lyricEl.textContent = '"' + lyricData.lyric + '"'; lyricEl.style.display = ''; }
+  if (songEl) { songEl.textContent = '— ' + lyricData.song; songEl.style.display = ''; }
+  if (divEl) divEl.style.display = '';
+  if (placeholder) placeholder.style.display = 'none';
+};
+
+window.shuffleCard = function () {
+  const members = Object.keys(qgLyrics);
+  const randMember = members[Math.floor(Math.random() * members.length)];
+  window.selectMember(randMember);
+  const lyrics = qgLyrics[randMember];
+  const randIdx = Math.floor(Math.random() * lyrics.length);
+  const select = document.getElementById('lyric-select');
+  if (select) {
+    select.value = randIdx;
+    window.updateLyric();
+  }
+};
+
+window.copyLyric = function () {
+  const lyricEl = document.getElementById('card-lyric');
+  if (!lyricEl || lyricEl.style.display === 'none') {
+    if (typeof showToast === 'function') showToast('Pick a lyric first! 💗');
+    return;
+  }
+  const songEl = document.getElementById('card-song');
+  const text = lyricEl.textContent + ' ' + (songEl ? songEl.textContent : '');
+  navigator.clipboard.writeText(text).then(function () {
+    if (typeof showToast === 'function') showToast('Lyric copied! 💗');
+  });
+};
+
+window.downloadCard = function () {
+  const card = document.getElementById('quote-card');
+  if (!card) return;
+  const lyricEl = document.getElementById('card-lyric');
+  if (!lyricEl || lyricEl.style.display === 'none') {
+    if (typeof showToast === 'function') showToast('Select a member and lyric first! 💗');
+    return;
+  }
+  if (typeof html2canvas !== 'undefined') {
+    html2canvas(card, { backgroundColor: null, scale: 2 }).then(function (canvas) {
+      const link = document.createElement('a');
+      link.download = 'blackpink-quote-card.png';
+      link.href = canvas.toDataURL();
+      link.click();
+      if (typeof showToast === 'function') showToast('Card downloaded! 🖤💗');
+    });
+  } else {
+    if (typeof showToast === 'function') showToast('Download not available, try copying instead! 💗');
+  }
+};
