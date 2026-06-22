@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -27,6 +27,21 @@
 </head>
 <body>
 
+  <!-- Loading Screen -->
+  <div id="loading-screen">
+    <div class="loading-logo">BLACKPINK</div>
+    <div class="loading-bar"><div class="loading-fill"></div></div>
+  </div>
+
+  <!-- Page Transition Overlay -->
+  <div id="page-transition"></div>
+
+  <!-- Lightstick Canvas Background -->
+  <canvas id="lightstick-canvas"></canvas>
+
+  <!-- Era Toggle Button -->
+  <button id="era-toggle-btn" onclick="cycleEra()">&#x1F5A4; Original</button>
+
   <header class="hero hero-jisoo">
     <div class="hero-content">
       <h1>Kim Ji-soo</h1>
@@ -44,8 +59,8 @@
       
       <h2>Profile</h2>
       <div style="font-size: 1.1rem; line-height: 2; margin-bottom: 2rem;">
-        <p><strong>Stage Name:</strong> Jisoo (지수)</p>
-        <p><strong>Birth Name:</strong> Kim Ji Soo (김지수)</p>
+        <p><strong>Stage Name:</strong> Jisoo (ì§€ìˆ˜)</p>
+        <p><strong>Birth Name:</strong> Kim Ji Soo (ê¹€ì§€ìˆ˜)</p>
         <p><strong>Birthday:</strong> January 3, 1995</p>
         <p><strong>Birthplace:</strong> Gunpo, South Korea</p>
         <p><strong>Instagram:</strong> <a href="https://instagram.com/sooyaaa__" target="_blank">@sooyaaa__</a></p>
@@ -55,18 +70,18 @@
     <section class="glass-card">
       <h2 class="text-center">Fun Facts</h2>
       <ul class="facts-list" style="list-style-type: none;">
-        <li>🌸 She trained for 5 years (since July 2011).</li>
-        <li>🌸 She has a 4D personality and laughs a lot.</li>
-        <li>🌸 According to Jennie, Jisoo is the mood maker of the group.</li>
-        <li>🌸 Jisoo loves telling dad Jokes.</li>
-        <li>🌸 She can play the drums and piano.</li>
-        <li>🌸 Jisoo is scared of heights.</li>
-        <li>🌸 Jisoo hates shopping because she is often confused what to buy.</li>
-        <li>🌸 She loves the color purple and really likes Pikachu.</li>
-        <li>🌸 Jisoo has a dog named Dalgom.</li>
-        <li>🌸 She is called "Man Heart's Destroyer" and "Boy Crush".</li>
-        <li>🌸 She acted as a leading actress for the drama 'Snowdrop'.</li>
-        <li>🌸 <strong>Recent (2024-2026):</strong> Jisoo established her own label, <strong>BLISSOO</strong>. She has been taking the acting world by storm, starring in the highly anticipated zombie drama <em>Influenza</em> and the blockbuster movie <em>Omniscient Reader's Viewpoint</em>! She also returned with BLACKPINK for their 2026 <em>Deadline</em> EP.</li>
+        <li>ðŸŒ¸ She trained for 5 years (since July 2011).</li>
+        <li>ðŸŒ¸ She has a 4D personality and laughs a lot.</li>
+        <li>ðŸŒ¸ According to Jennie, Jisoo is the mood maker of the group.</li>
+        <li>ðŸŒ¸ Jisoo loves telling dad Jokes.</li>
+        <li>ðŸŒ¸ She can play the drums and piano.</li>
+        <li>ðŸŒ¸ Jisoo is scared of heights.</li>
+        <li>ðŸŒ¸ Jisoo hates shopping because she is often confused what to buy.</li>
+        <li>ðŸŒ¸ She loves the color purple and really likes Pikachu.</li>
+        <li>ðŸŒ¸ Jisoo has a dog named Dalgom.</li>
+        <li>ðŸŒ¸ She is called "Man Heart's Destroyer" and "Boy Crush".</li>
+        <li>ðŸŒ¸ She acted as a leading actress for the drama 'Snowdrop'.</li>
+        <li>ðŸŒ¸ <strong>Recent (2024-2026):</strong> Jisoo established her own label, <strong>BLISSOO</strong>. She has been taking the acting world by storm, starring in the highly anticipated zombie drama <em>Influenza</em> and the blockbuster movie <em>Omniscient Reader's Viewpoint</em>! She also returned with BLACKPINK for their 2026 <em>Deadline</em> EP.</li>
       </ul>
       
       <div class="text-center" style="margin-top: 2rem;">
@@ -82,13 +97,41 @@
   </main>
 
   <footer>
-    <p>Created with 💖 by <a href="https://github.com/HemantTheCoder" target="_blank">Hemant</a></p>
+    <p>Created with ðŸ’– by <a href="https://github.com/HemantTheCoder" target="_blank">Hemant</a></p>
   </footer>
 
   <!-- Spotify Music Player Widget -->
-  <div id="music-player" style="padding: 0; background: transparent; border: none; box-shadow: none;">
-    <iframe style="border-radius:12px" src="https://open.spotify.com/embed/artist/41MozSoPIsD1dJM0CLPjZF?utm_source=generator&theme=0" width="300" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
-  </div>
+  
 
+
+  <!-- Back to Top -->
+  <button id="back-to-top" aria-label="Back to top">&#8593;</button>
+
+  <!-- Toast Container -->
+  <div id="toast-container"></div>
+
+  <!-- YouTube Music Player Widget -->
+  <div id="music-player">
+    <div class="player-toggle" onclick="toggleMusicPlayer()">
+      <span class="player-toggle-label">&#127925; BLACKPINK Music</span>
+      <span id="player-toggle-icon">&#9660;</span>
+    </div>
+    <div id="player-body">
+      <div class="player-track-info">
+        <div class="player-track-title" id="yt-track-name">Whistle</div>
+        <div class="player-track-artist" id="yt-track-artist">BLACKPINK</div>
+      </div>
+      <div id="yt-player-container">
+        <div id="yt-player"></div>
+      </div>
+      <div class="player-controls">
+        <button class="ctrl-btn" onclick="ytPrev()" title="Previous">&#9198;</button>
+        <button class="ctrl-btn play-pause" id="yt-play-btn" onclick="ytPlayPause()" title="Play/Pause">&#9654;</button>
+        <button class="ctrl-btn" onclick="ytNext()" title="Next">&#9197;</button>
+      </div>
+      <div class="player-tracklist" id="player-tracklist"></div>
+    </div>
+  </div>
 </body>
 </html>
+

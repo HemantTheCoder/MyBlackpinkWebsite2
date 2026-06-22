@@ -1,0 +1,574 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="Description" content="BLACKPINK Interactive World Tour Map - Born Pink Tour and Deadline Tour city stops around the globe">
+  <title>World Tour Map - Blackpink</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+  <script src="script.js" defer></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <style>
+    /* ─── MAP WRAPPER ─── */
+    #map-section {
+      position: relative;
+      border-radius: 20px;
+      overflow: hidden;
+      border: 1.5px solid rgba(255,42,133,0.3);
+      box-shadow: 0 0 60px rgba(255,42,133,0.2), 0 20px 60px rgba(0,0,0,0.6);
+      margin: 2rem 0;
+    }
+
+    #tour-map {
+      width: 100%;
+      height: 520px;
+      background: #0a0012;
+    }
+
+    @media(max-width:600px) { #tour-map { height: 360px; } }
+
+    /* ─── TOUR TOGGLE ─── */
+    .tour-toggle-bar {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      margin: 2rem 0 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .tour-btn {
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      padding: 0.75rem 2rem;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .tour-btn-bp {
+      border: 2px solid rgba(255,42,133,0.5);
+      background: rgba(255,42,133,0.08);
+      color: rgba(255,255,255,0.7);
+    }
+    .tour-btn-bp.active {
+      background: linear-gradient(135deg, rgba(255,42,133,0.3), rgba(255,110,176,0.2));
+      border-color: #ff2a85;
+      color: #fff;
+      box-shadow: 0 0 25px rgba(255,42,133,0.55), 0 4px 20px rgba(255,42,133,0.3);
+      transform: translateY(-2px);
+    }
+    .tour-btn-bp:hover:not(.active) {
+      border-color: rgba(255,42,133,0.7);
+      color: #fff;
+      transform: translateY(-1px);
+    }
+
+    .tour-btn-dl {
+      border: 2px solid rgba(0,220,255,0.4);
+      background: rgba(0,220,255,0.06);
+      color: rgba(255,255,255,0.7);
+    }
+    .tour-btn-dl.active {
+      background: linear-gradient(135deg, rgba(0,220,255,0.25), rgba(0,150,255,0.15));
+      border-color: #00dcff;
+      color: #fff;
+      box-shadow: 0 0 25px rgba(0,220,255,0.5), 0 4px 20px rgba(0,220,255,0.25);
+      transform: translateY(-2px);
+    }
+    .tour-btn-dl:hover:not(.active) {
+      border-color: rgba(0,220,255,0.7);
+      color: #fff;
+      transform: translateY(-1px);
+    }
+
+    /* ─── CUSTOM MARKER ─── */
+    .custom-marker {
+      display: flex; align-items: center; justify-content: center;
+      width: 36px; height: 36px; border-radius: 50% 50% 50% 0;
+      transform: rotate(-45deg);
+      font-size: 0; /* inner emoji visible via ::after */
+      cursor: pointer;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      position: relative;
+    }
+    .custom-marker:hover { transform: rotate(-45deg) scale(1.2); }
+    .custom-marker .marker-inner {
+      transform: rotate(45deg);
+      font-size: 1rem;
+      line-height: 1;
+    }
+
+    .bp-marker {
+      background: linear-gradient(135deg, #ff2a85, #ff6eb0);
+      border: 2px solid rgba(255,255,255,0.5);
+      box-shadow: 0 0 12px rgba(255,42,133,0.8), 0 0 4px rgba(255,42,133,0.4);
+    }
+    .dl-marker {
+      background: linear-gradient(135deg, #00dcff, #0066ff);
+      border: 2px solid rgba(255,255,255,0.5);
+      box-shadow: 0 0 12px rgba(0,220,255,0.8), 0 0 4px rgba(0,220,255,0.4);
+    }
+
+    /* ─── POPUP OVERRIDE ─── */
+    .leaflet-popup-content-wrapper {
+      background: rgba(10,0,25,0.92) !important;
+      backdrop-filter: blur(16px) !important;
+      border: 1px solid rgba(255,42,133,0.4) !important;
+      border-radius: 14px !important;
+      box-shadow: 0 0 30px rgba(255,42,133,0.3) !important;
+      color: #fff !important;
+      font-family: 'Outfit', sans-serif !important;
+      padding: 0 !important;
+    }
+    .leaflet-popup-content {
+      margin: 0 !important;
+      padding: 1rem 1.2rem !important;
+      min-width: 180px;
+    }
+    .leaflet-popup-tip { background: rgba(255,42,133,0.5) !important; }
+    .leaflet-popup-close-button { color: rgba(255,255,255,0.6) !important; font-size: 1rem !important; top: 6px !important; right: 8px !important; }
+    .leaflet-popup-close-button:hover { color: #ff2a85 !important; }
+
+    .popup-city {
+      font-size: 1rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 0.3rem;
+    }
+    .popup-venue {
+      font-size: 0.82rem;
+      color: rgba(255,255,255,0.65);
+      margin-bottom: 0.4rem;
+      line-height: 1.4;
+    }
+    .popup-date {
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      padding: 0.15rem 0.6rem;
+      border-radius: 999px;
+      display: inline-block;
+    }
+    .popup-date-bp { color: #ff2a85; background: rgba(255,42,133,0.15); border: 1px solid rgba(255,42,133,0.3); }
+    .popup-date-dl { color: #00dcff; background: rgba(0,220,255,0.12); border: 1px solid rgba(0,220,255,0.3); }
+    .popup-emoji   { font-size: 1.3rem; float: right; margin-left: 0.5rem; }
+
+    /* ─── SECTION TITLE ─── */
+    .map-title {
+      text-align: center;
+      margin: 0 0 0.5rem;
+    }
+    .map-title h2 {
+      font-size: clamp(1.6rem,4vw,2.4rem);
+      font-weight: 800;
+      background: linear-gradient(135deg, #fff 0%, #ff2a85 55%, #00dcff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .map-title p { color: rgba(255,255,255,0.5); font-size: 0.95rem; margin-top: 0.4rem; }
+
+    /* ─── STATS STRIP ─── */
+    .stats-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+      margin: 2.5rem 0;
+    }
+    .stat-card {
+      flex: 1 1 160px;
+      max-width: 220px;
+      padding: 1.4rem 1rem;
+      border-radius: 16px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: inherit;
+      filter: blur(0);
+      border-radius: 16px;
+      z-index: 0;
+    }
+    .stat-card > * { position: relative; z-index: 1; }
+    .stat-card-bp {
+      background: rgba(255,42,133,0.08);
+      border: 1.5px solid rgba(255,42,133,0.3);
+    }
+    .stat-card-dl {
+      background: rgba(0,220,255,0.06);
+      border: 1.5px solid rgba(0,220,255,0.25);
+    }
+    .stat-num-bp { font-size: 2.5rem; font-weight: 900; color: #ff2a85; line-height: 1; }
+    .stat-num-dl { font-size: 2.5rem; font-weight: 900; color: #00dcff; line-height: 1; }
+    .stat-label { font-size: 0.78rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255,255,255,0.5); margin-top: 0.4rem; }
+    .stat-icon  { font-size: 1.6rem; margin-bottom: 0.4rem; }
+
+    /* ─── LEGEND ─── */
+    .map-legend {
+      display: flex;
+      gap: 2rem;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.65);
+      font-weight: 500;
+    }
+    .legend-dot {
+      width: 14px; height: 14px; border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .legend-dot-bp {
+      background: linear-gradient(135deg, #ff2a85, #ff6eb0);
+      box-shadow: 0 0 8px rgba(255,42,133,0.7);
+    }
+    .legend-dot-dl {
+      background: linear-gradient(135deg, #00dcff, #0066ff);
+      box-shadow: 0 0 8px rgba(0,220,255,0.7);
+    }
+
+    /* ─── CITY LIST ─── */
+    .city-list-section {
+      margin: 3rem 0;
+    }
+    .city-list-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 1.2rem;
+      text-align: center;
+    }
+    .city-list-title-bp { color: #ff2a85; }
+    .city-list-title-dl { color: #00dcff; }
+
+    .city-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 0.7rem;
+      margin-bottom: 2.5rem;
+    }
+    .city-chip {
+      display: flex; align-items: center; gap: 0.6rem;
+      padding: 0.6rem 1rem; border-radius: 10px;
+      font-size: 0.82rem; font-weight: 600;
+      cursor: pointer;
+      transition: all 0.25s;
+    }
+    .city-chip-bp {
+      background: rgba(255,42,133,0.07);
+      border: 1px solid rgba(255,42,133,0.2);
+      color: rgba(255,255,255,0.75);
+    }
+    .city-chip-bp:hover { background: rgba(255,42,133,0.18); border-color: #ff2a85; color: #fff; transform: translateY(-2px); }
+    .city-chip-dl {
+      background: rgba(0,220,255,0.06);
+      border: 1px solid rgba(0,220,255,0.18);
+      color: rgba(255,255,255,0.75);
+    }
+    .city-chip-dl:hover { background: rgba(0,220,255,0.18); border-color: #00dcff; color: #fff; transform: translateY(-2px); }
+    .city-chip-flag { font-size: 1.1rem; }
+    .city-chip-info { display: flex; flex-direction: column; gap: 0.1rem; }
+    .city-chip-name  { font-weight: 700; font-size: 0.85rem; }
+    .city-chip-venue { font-size: 0.7rem; opacity: 0.6; }
+
+    /* ─── REVEAL ─── */
+    .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .reveal.revealed { opacity: 1; transform: translateY(0); }
+
+    /* Override Leaflet attribution */
+    .leaflet-control-attribution { background: rgba(0,0,0,0.6) !important; color: rgba(255,255,255,0.4) !important; font-size: 0.65rem !important; }
+    .leaflet-control-attribution a { color: rgba(255,255,255,0.5) !important; }
+  </style>
+</head>
+<body>
+  <div id="loading-screen">
+    <div class="loading-logo">BLACKPINK</div>
+    <div class="loading-bar"><div class="loading-fill"></div></div>
+  </div>
+  <div id="page-transition"></div>
+
+  <header class="hero" style="height:38vh; background: linear-gradient(135deg,#020015 0%,#0a001a 35%,#15002b 65%,#050010 100%);">
+    <div class="hero-content">
+      <h1 style="font-size:clamp(2rem,7vw,4rem);font-weight:900;letter-spacing:0.04em;">🌍 World Tour Map</h1>
+      <p style="margin-top:0.7rem;color:rgba(255,255,255,0.6);font-size:1rem;letter-spacing:0.05em;">Born Pink Tour · Deadline Tour · Around the Globe</p>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="text-center" style="margin-bottom:0.5rem;">
+      <a href="index.html" class="btn btn-glow" style="margin-bottom:0;">← Back to Home</a>
+    </div>
+
+    <div class="map-title reveal" style="margin-top:2rem;">
+      <h2>✈️ BLACKPINK on the World Stage</h2>
+      <p>Toggle between tours · Click markers for venue details</p>
+    </div>
+
+    <!-- Tour Toggle -->
+    <div class="tour-toggle-bar reveal">
+      <button class="tour-btn tour-btn-bp active" id="btn-bp" onclick="switchTour('bp')">
+        🌸 Born Pink Tour
+      </button>
+      <button class="tour-btn tour-btn-dl" id="btn-dl" onclick="switchTour('dl')">
+        ⚡ Deadline Tour
+      </button>
+    </div>
+
+    <!-- Legend -->
+    <div class="map-legend reveal">
+      <div class="legend-item">
+        <div class="legend-dot legend-dot-bp"></div>
+        <span>🌸 Born Pink Tour (Sep 2022 – Jul 2023)</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot legend-dot-dl"></div>
+        <span>⚡ Deadline Tour (Mar 2026 – Jul 2026)</span>
+      </div>
+    </div>
+
+    <!-- Map -->
+    <div id="map-section" class="reveal">
+      <div id="tour-map"></div>
+    </div>
+
+    <!-- Stats Strip -->
+    <div class="stats-strip reveal">
+      <div class="stat-card stat-card-bp">
+        <div class="stat-icon">🌸</div>
+        <div class="stat-num-bp" id="bp-cities">14</div>
+        <div class="stat-label">Born Pink Cities</div>
+      </div>
+      <div class="stat-card stat-card-dl">
+        <div class="stat-icon">⚡</div>
+        <div class="stat-num-dl" id="dl-cities">12</div>
+        <div class="stat-label">Deadline Cities</div>
+      </div>
+      <div class="stat-card" style="background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.1);">
+        <div class="stat-icon">🌐</div>
+        <div style="font-size:2.5rem;font-weight:900;color:#fff;line-height:1;" id="total-cities">20</div>
+        <div class="stat-label">Unique Countries</div>
+      </div>
+      <div class="stat-card" style="background:rgba(255,200,0,0.05);border:1.5px solid rgba(255,200,0,0.2);">
+        <div class="stat-icon">🎤</div>
+        <div style="font-size:2.5rem;font-weight:900;color:#ffd700;line-height:1;">2</div>
+        <div class="stat-label">World Tours</div>
+      </div>
+    </div>
+
+    <!-- City Lists -->
+    <div class="city-list-section reveal">
+      <div class="city-list-title city-list-title-bp">🌸 Born Pink Tour Stops</div>
+      <div class="city-grid" id="bp-city-grid"></div>
+
+      <div class="city-list-title city-list-title-dl">⚡ Deadline Tour Stops</div>
+      <div class="city-grid" id="dl-city-grid"></div>
+    </div>
+
+    <div style="text-align:center;margin:1rem 0 3rem;font-size:1.5rem;opacity:0.35;letter-spacing:1rem;">✦ ✦ ✦</div>
+  </main>
+
+  <footer>
+    <p>Created with 💖 by <a href="https://github.com/HemantTheCoder" target="_blank">Hemant</a></p>
+  </footer>
+
+  <button id="back-to-top" aria-label="Back to top">↑</button>
+  <div id="toast-container"></div>
+
+  <div id="music-player">
+    <div class="player-toggle" onclick="toggleMusicPlayer()">
+      <span id="player-toggle-icon">▼</span>
+    </div>
+    <div id="player-body">
+      <div class="player-info">
+        <div class="player-title">🎵 BLACKPINK Music</div>
+        <div id="yt-track-name" class="player-track">Whistle</div>
+      </div>
+      <div id="yt-player-container"><div id="yt-player"></div></div>
+      <div class="player-controls">
+        <button class="ctrl-btn" onclick="ytPrev()">⏮</button>
+        <button class="ctrl-btn" id="yt-play-btn" onclick="ytPlayPause()">▶</button>
+        <button class="ctrl-btn" onclick="ytNext()">⏭</button>
+      </div>
+      <div class="player-tracklist" id="player-tracklist"></div>
+    </div>
+  </div>
+
+  <script>
+    /* ─────────────────────────────────────────
+       SCROLL REVEAL
+    ───────────────────────────────────────── */
+    const revealObs = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('revealed'); });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+
+    /* ─────────────────────────────────────────
+       TOUR DATA
+    ───────────────────────────────────────── */
+    const bpStops = [
+      { city:'Seoul',      country:'🇰🇷', lat:37.5665,  lng:126.9780, venue:'KSPO Dome',               date:'Sep 2022' },
+      { city:'Los Angeles',country:'🇺🇸', lat:34.0522,  lng:-118.2437,venue:'Crypto.com Arena',         date:'Feb 2023' },
+      { city:'New York',   country:'🇺🇸', lat:40.7128,  lng:-74.0060, venue:'Prudential Center',        date:'Feb 2023' },
+      { city:'Dallas',     country:'🇺🇸', lat:32.7767,  lng:-96.7970, venue:'American Airlines Center', date:'Feb 2023' },
+      { city:'Chicago',    country:'🇺🇸', lat:41.8781,  lng:-87.6298, venue:'United Center',            date:'Mar 2023' },
+      { city:'Hamilton',   country:'🇨🇦', lat:43.2557,  lng:-79.8711, venue:'FirstOntario Centre',      date:'Mar 2023' },
+      { city:'London',     country:'🇬🇧', lat:51.5074,  lng:-0.1278,  venue:'The O2',                   date:'Mar 2023' },
+      { city:'Paris',      country:'🇫🇷', lat:48.8566,  lng:2.3522,   venue:'Accor Arena',              date:'Mar 2023' },
+      { city:'Barcelona',  country:'🇪🇸', lat:41.3851,  lng:2.1734,   venue:'Palau Sant Jordi',         date:'Mar 2023' },
+      { city:'Amsterdam',  country:'🇳🇱', lat:52.3676,  lng:4.9041,   venue:'Ziggo Dome',               date:'Apr 2023' },
+      { city:'Sydney',     country:'🇦🇺', lat:-33.8688, lng:151.2093, venue:'Qudos Bank Arena',         date:'Jun 2023' },
+      { city:'Bangkok',    country:'🇹🇭', lat:13.7563,  lng:100.5018, venue:'Impact Arena',             date:'Jun 2023' },
+      { city:'Singapore',  country:'🇸🇬', lat:1.3521,   lng:103.8198, venue:'National Stadium',         date:'Jul 2023' },
+      { city:'Jakarta',    country:'🇮🇩', lat:-6.2088,  lng:106.8456, venue:'Gelora Bung Karno',        date:'Jul 2023' },
+    ];
+
+    const dlStops = [
+      { city:'Seoul',      country:'🇰🇷', lat:37.5665,  lng:126.9780, venue:'Olympic Stadium',          date:'Mar 2026' },
+      { city:'Tokyo',      country:'🇯🇵', lat:35.6762,  lng:139.6503, venue:'Tokyo Dome',               date:'Mar 2026' },
+      { city:'Los Angeles',country:'🇺🇸', lat:34.0522,  lng:-118.2437,venue:'SoFi Stadium',             date:'Apr 2026' },
+      { city:'Las Vegas',  country:'🇺🇸', lat:36.1699,  lng:-115.1398,venue:'Allegiant Stadium',        date:'Apr 2026' },
+      { city:'New York',   country:'🇺🇸', lat:40.7128,  lng:-74.0060, venue:'MetLife Stadium',          date:'Apr 2026' },
+      { city:'London',     country:'🇬🇧', lat:51.5074,  lng:-0.1278,  venue:'Wembley Stadium',          date:'May 2026' },
+      { city:'Paris',      country:'🇫🇷', lat:48.8566,  lng:2.3522,   venue:'Stade de France',          date:'May 2026' },
+      { city:'Berlin',     country:'🇩🇪', lat:52.5200,  lng:13.4050,  venue:'Olympiastadion',           date:'May 2026' },
+      { city:'Dubai',      country:'🇦🇪', lat:25.2048,  lng:55.2708,  venue:'Coca-Cola Arena',          date:'Jun 2026' },
+      { city:'Mumbai',     country:'🇮🇳', lat:19.0760,  lng:72.8777,  venue:'DY Patil Stadium',         date:'Jun 2026' },
+      { city:'Bangkok',    country:'🇹🇭', lat:13.7563,  lng:100.5018, venue:'National Stadium',         date:'Jun 2026' },
+      { city:'Manila',     country:'🇵🇭', lat:14.5995,  lng:120.9842, venue:'Philippine Arena',         date:'Jul 2026' },
+    ];
+
+    /* ─────────────────────────────────────────
+       LEAFLET MAP INIT
+    ───────────────────────────────────────── */
+    const map = L.map('tour-map', {
+      center: [20, 10],
+      zoom: 2,
+      zoomControl: true,
+      attributionControl: true,
+      scrollWheelZoom: true,
+    });
+
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
+      subdomains: 'abcd',
+      maxZoom: 20,
+    }).addTo(map);
+
+    /* ─── Layer Groups ─── */
+    const bpLayer = L.layerGroup();
+    const dlLayer = L.layerGroup();
+    let activeTour = 'bp';
+
+    function makeIcon(type) {
+      const cls  = type === 'bp' ? 'bp-marker' : 'dl-marker';
+      return L.divIcon({
+        className: '',
+        html: `<div class="custom-marker ${cls}"><span class="marker-inner">🪷</span></div>`,
+        iconSize:   [36, 36],
+        iconAnchor: [18, 36],
+        popupAnchor:[0, -38],
+      });
+    }
+
+    function makePopup(stop, type) {
+      const dateCls = type === 'bp' ? 'popup-date-bp' : 'popup-date-dl';
+      const emoji   = type === 'bp' ? '🌸' : '⚡';
+      return `
+        <div>
+          <div class="popup-city">${stop.country} ${stop.city}<span class="popup-emoji">${emoji}</span></div>
+          <div class="popup-venue">${stop.venue}</div>
+          <span class="popup-date ${dateCls}">${stop.date}</span>
+        </div>`;
+    }
+
+    bpStops.forEach(s => {
+      L.marker([s.lat, s.lng], { icon: makeIcon('bp') })
+        .bindPopup(makePopup(s, 'bp'), { maxWidth: 240, className: '' })
+        .addTo(bpLayer);
+    });
+
+    dlStops.forEach(s => {
+      L.marker([s.lat, s.lng], { icon: makeIcon('dl') })
+        .bindPopup(makePopup(s, 'dl'), { maxWidth: 240, className: '' })
+        .addTo(dlLayer);
+    });
+
+    bpLayer.addTo(map); // default: Born Pink shown
+
+    /* ─── Tour Switch ─── */
+    function switchTour(tour) {
+      activeTour = tour;
+      if (tour === 'bp') {
+        dlLayer.remove(); bpLayer.addTo(map);
+        document.getElementById('btn-bp').classList.add('active');
+        document.getElementById('btn-dl').classList.remove('active');
+      } else {
+        bpLayer.remove(); dlLayer.addTo(map);
+        document.getElementById('btn-dl').classList.add('active');
+        document.getElementById('btn-bp').classList.remove('active');
+      }
+    }
+
+    /* ─── Fix map tile render after CSS transition ─── */
+    setTimeout(() => map.invalidateSize(), 600);
+
+    /* ─────────────────────────────────────────
+       CITY CHIPS
+    ───────────────────────────────────────── */
+    function renderCityChips(stops, containerId, type) {
+      const grid = document.getElementById(containerId);
+      grid.innerHTML = '';
+      stops.forEach(s => {
+        const chip = document.createElement('div');
+        chip.className = `city-chip city-chip-${type}`;
+        chip.innerHTML = `
+          <span class="city-chip-flag">${s.country}</span>
+          <div class="city-chip-info">
+            <span class="city-chip-name">${s.city}</span>
+            <span class="city-chip-venue">${s.date} · ${s.venue}</span>
+          </div>`;
+        chip.addEventListener('click', () => {
+          switchTour(type);
+          map.flyTo([s.lat, s.lng], 5, { duration: 1.2 });
+          // open popup
+          const layer = type === 'bp' ? bpLayer : dlLayer;
+          layer.eachLayer(marker => {
+            const ll = marker.getLatLng();
+            if (Math.abs(ll.lat - s.lat) < 0.001 && Math.abs(ll.lng - s.lng) < 0.001) {
+              setTimeout(() => marker.openPopup(), 1300);
+            }
+          });
+          document.getElementById('map-section').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        });
+        grid.appendChild(chip);
+      });
+    }
+
+    renderCityChips(bpStops, 'bp-city-grid', 'bp');
+    renderCityChips(dlStops, 'dl-city-grid', 'dl');
+
+    /* ─── Unique countries count ─── */
+    const allCities = [...bpStops, ...dlStops];
+    const uniqueCountries = new Set(allCities.map(s => s.country)).size;
+    document.getElementById('total-cities').textContent = uniqueCountries;
+  </script>
+</body>
+</html>

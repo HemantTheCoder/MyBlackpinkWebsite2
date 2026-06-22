@@ -1,0 +1,421 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="Description" content="BLACKPINK Records and Achievements - Guinness World Records, Billboard milestones, and YouTube achievements.">
+  <title>Records & Achievements - Blackpink</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="script.js" defer></script>
+  <style>
+    #loading-screen{position:fixed;inset:0;background:#050508;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;transition:opacity 0.6s ease,visibility 0.6s ease;}
+    #loading-screen.hidden{opacity:0;visibility:hidden;pointer-events:none;}
+    .loading-logo{font-size:3rem;font-weight:900;letter-spacing:6px;background:linear-gradient(to right,#fff,var(--bp-pink),#fff);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:shine 2s linear infinite;}
+    .loading-bar{width:260px;height:4px;background:rgba(255,255,255,0.1);border-radius:4px;margin-top:2rem;overflow:hidden;}
+    .loading-fill{height:100%;width:0;background:linear-gradient(90deg,var(--bp-pink),#ff66b2);border-radius:4px;animation:load-progress 1.8s ease forwards;}
+    @keyframes load-progress{to{width:100%;}}
+    #page-transition{position:fixed;inset:0;background:var(--bp-pink);transform:scaleY(0);transform-origin:bottom;z-index:8888;pointer-events:none;}
+
+    /* Stats Counter Section */
+    .stats-section{margin:3rem 0;}
+    .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1.5rem;margin:2rem 0;}
+    .stat-card{
+      text-align:center;padding:2rem 1rem;border-radius:20px;
+      background:var(--glass-bg);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+      border:1px solid var(--glass-border);box-shadow:0 8px 32px rgba(0,0,0,0.4);
+      opacity:0;transform:translateY(30px) scale(0.95);
+      transition:opacity 0.6s ease,transform 0.6s cubic-bezier(0.175,0.885,0.32,1.275);
+    }
+    .stat-card.revealed{opacity:1;transform:translateY(0) scale(1);}
+    .stat-card:hover{
+      transform:translateY(-8px) scale(1.04);
+      box-shadow:0 20px 50px rgba(0,0,0,0.5),0 0 25px var(--bp-pink-glow);
+      border-color:var(--bp-pink);
+    }
+    .stat-number{
+      font-size:2.8rem;font-weight:900;line-height:1;
+      background:linear-gradient(135deg,var(--bp-pink),#ff66b2);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+      margin-bottom:0.5rem;
+    }
+    .stat-label{color:#aaa;font-size:0.8rem;letter-spacing:2px;text-transform:uppercase;font-weight:600;}
+    .stat-icon{font-size:2rem;margin-bottom:0.8rem;}
+
+    /* Section headers */
+    .sec-title{
+      font-size:1.8rem;font-weight:900;letter-spacing:2px;text-transform:uppercase;
+      text-align:center;margin:3.5rem 0 0.5rem;
+    }
+    .sec-title span{color:var(--bp-pink);}
+    .sec-divider{width:80px;height:3px;background:linear-gradient(90deg,var(--bp-pink),#ff66b2);border-radius:3px;margin:0.5rem auto 2rem;}
+
+    /* Guinness Cards */
+    .guinness-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.8rem;margin-bottom:3rem;}
+    .guinness-card{
+      border-radius:20px;padding:1.8rem;position:relative;overflow:hidden;
+      background:linear-gradient(135deg,rgba(20,15,0,0.8),rgba(30,25,5,0.8));
+      backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+      border:1px solid rgba(201,168,76,0.4);
+      box-shadow:0 8px 32px rgba(0,0,0,0.5),inset 0 1px 0 rgba(201,168,76,0.2);
+      opacity:0;transform:translateX(-50px);
+      transition:opacity 0.7s ease,transform 0.7s cubic-bezier(0.175,0.885,0.32,1.275);
+    }
+    .guinness-card.revealed{opacity:1;transform:translateX(0);}
+    .guinness-card:hover{
+      transform:translateY(-8px) scale(1.02);
+      box-shadow:0 20px 50px rgba(0,0,0,0.6),0 0 25px rgba(201,168,76,0.4);
+      border-color:rgba(240,208,128,0.6);
+    }
+    .guinness-card::before{
+      content:'';position:absolute;top:0;left:0;right:0;height:3px;
+      background:linear-gradient(90deg,#C9A84C,#F0D080,#C9A84C);
+    }
+    .gold-badge{
+      display:inline-flex;align-items:center;gap:0.5rem;padding:6px 16px;border-radius:30px;
+      font-size:0.72rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;
+      background:linear-gradient(135deg,rgba(201,168,76,0.25),rgba(240,208,128,0.15));
+      border:1px solid rgba(201,168,76,0.6);
+      color:#F0D080;margin-bottom:1rem;
+    }
+    .guinness-title{font-size:1.15rem;font-weight:800;color:#fff;margin-bottom:0.5rem;}
+    .guinness-desc{font-size:0.88rem;color:#bbb;line-height:1.6;}
+    .record-shine{
+      position:absolute;top:-50%;right:-30%;width:150px;height:200%;
+      background:linear-gradient(90deg,transparent,rgba(240,208,128,0.04),transparent);
+      transform:rotate(20deg);pointer-events:none;
+    }
+
+    /* Billboard Section */
+    .billboard-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;margin-bottom:3rem;}
+    .billboard-card{
+      border-radius:18px;padding:1.8rem;
+      background:linear-gradient(135deg,rgba(10,5,30,0.8),rgba(20,10,50,0.8));
+      border:1px solid rgba(100,60,200,0.4);
+      box-shadow:0 8px 28px rgba(0,0,0,0.4);
+      opacity:0;transform:translateY(40px);
+      transition:opacity 0.6s ease,transform 0.6s cubic-bezier(0.175,0.885,0.32,1.275);
+    }
+    .billboard-card.revealed{opacity:1;transform:translateY(0);}
+    .billboard-card:hover{
+      transform:translateY(-6px);
+      box-shadow:0 15px 40px rgba(0,0,0,0.5),0 0 20px rgba(100,60,200,0.5);
+      border-color:rgba(140,100,255,0.6);
+    }
+    .billboard-card::before{content:'';display:block;height:3px;background:linear-gradient(90deg,#6040c8,#b080ff);border-radius:2px;margin-bottom:1rem;}
+    .bb-badge{
+      display:inline-block;padding:4px 12px;border-radius:20px;font-size:0.7rem;font-weight:800;
+      letter-spacing:1.5px;text-transform:uppercase;background:rgba(100,60,200,0.25);
+      border:1px solid rgba(140,100,255,0.5);color:#b080ff;margin-bottom:0.8rem;
+    }
+    .bb-title{font-size:1rem;font-weight:800;color:#fff;margin-bottom:0.4rem;}
+    .bb-desc{font-size:0.85rem;color:#bbb;}
+
+    /* YouTube Section */
+    .yt-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1.5rem;margin-bottom:3rem;}
+    .yt-card{
+      border-radius:18px;padding:1.8rem;text-align:center;
+      background:linear-gradient(135deg,rgba(20,5,5,0.8),rgba(35,5,5,0.8));
+      border:1px solid rgba(255,0,0,0.25);
+      box-shadow:0 8px 28px rgba(0,0,0,0.4);
+      opacity:0;transform:scale(0.9);
+      transition:opacity 0.6s ease,transform 0.6s cubic-bezier(0.175,0.885,0.32,1.275);
+    }
+    .yt-card.revealed{opacity:1;transform:scale(1);}
+    .yt-card:hover{transform:translateY(-6px) scale(1.03);box-shadow:0 15px 40px rgba(0,0,0,0.5),0 0 20px rgba(255,60,60,0.4);border-color:rgba(255,60,60,0.5);}
+    .yt-icon{font-size:2.2rem;margin-bottom:0.8rem;}
+    .yt-views{font-size:2rem;font-weight:900;color:#ff4444;margin-bottom:0.3rem;}
+    .yt-song{font-size:0.95rem;font-weight:700;color:#fff;margin-bottom:0.3rem;}
+    .yt-detail{font-size:0.8rem;color:#888;}
+
+    /* Slide directions */
+    .slide-left{transform:translateX(-60px)!important;}
+    .slide-right{transform:translateX(60px)!important;}
+    .slide-left.revealed,.slide-right.revealed{transform:translateX(0)!important;}
+
+    /* Back to top & toast */
+    #back-to-top{position:fixed;bottom:90px;left:20px;background:var(--bp-pink);color:#fff;border:none;width:45px;height:45px;border-radius:50%;font-size:1.2rem;cursor:pointer;z-index:999;display:none;box-shadow:0 0 15px var(--bp-pink-glow);transition:all 0.3s ease;align-items:center;justify-content:center;}
+    #back-to-top.show{display:flex;}
+    #back-to-top:hover{transform:scale(1.1) translateY(-3px);}
+    #toast-container{position:fixed;top:20px;right:20px;z-index:10000;display:flex;flex-direction:column;gap:0.5rem;}
+    .toast{background:rgba(20,20,25,0.95);backdrop-filter:blur(10px);border:1px solid var(--bp-pink);border-radius:12px;padding:0.8rem 1.2rem;font-size:0.9rem;color:#fff;animation:toast-in 0.3s ease,toast-out 0.3s ease 2.7s forwards;max-width:300px;}
+    @keyframes toast-in{from{opacity:0;transform:translateX(30px);}to{opacity:1;transform:translateX(0);}}
+    @keyframes toast-out{from{opacity:1;}to{opacity:0;}}
+
+    /* Music player */
+    #music-player{position:fixed;bottom:20px;right:20px;background:var(--glass-bg);backdrop-filter:blur(15px);-webkit-backdrop-filter:blur(15px);border:1px solid var(--bp-pink);border-radius:15px;padding:15px;width:300px;box-shadow:0 10px 30px rgba(0,0,0,0.5);z-index:1000;display:flex;flex-direction:column;gap:10px;}
+    #music-player.collapsed #player-body{display:none;}
+    .player-toggle{text-align:center;cursor:pointer;color:var(--bp-pink);font-size:1.2rem;user-select:none;}
+    .player-info{text-align:center;}
+    .player-title{font-weight:700;font-size:0.85rem;color:var(--bp-pink);}
+    .player-track{font-size:0.8rem;color:#ccc;margin-top:2px;}
+    #yt-player{width:100%;height:0;}
+    .player-controls{display:flex;justify-content:center;gap:15px;}
+    .player-tracklist{max-height:100px;overflow-y:auto;font-size:0.75rem;color:#888;}
+    @media(max-width:600px){.stats-grid{grid-template-columns:repeat(2,1fr);}.guinness-grid,.yt-grid{grid-template-columns:1fr;}}
+  </style>
+</head>
+<body>
+
+  <div id="loading-screen">
+    <div class="loading-logo">BLACKPINK</div>
+    <div class="loading-bar"><div class="loading-fill"></div></div>
+  </div>
+
+  <div id="page-transition"></div>
+
+  <header class="hero" style="height:38vh;background-attachment:fixed;background-position:center;background-size:cover;">
+    <div class="hero-content">
+      <h1>🏆 Records</h1>
+      <p style="color:rgba(255,255,255,0.7);font-size:1.1rem;font-weight:300;letter-spacing:3px;margin-top:0.5rem;">Achievements That Shook The World</p>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <div class="text-center">
+      <a href="index.html" class="btn btn-glow" style="margin-bottom:1.5rem;">← Back to Home</a>
+    </div>
+
+    <!-- Animated Stats -->
+    <div class="stats-section">
+      <div class="sec-title">📊 <span>By The Numbers</span></div>
+      <div class="sec-divider"></div>
+      <div class="stats-grid">
+        <div class="stat-card" data-target="4200000000" data-suffix="+" data-display="4.2B+">
+          <div class="stat-icon">📺</div>
+          <div class="stat-number" data-counter>4.2B+</div>
+          <div class="stat-label">Total YouTube Views</div>
+        </div>
+        <div class="stat-card" data-target="100" data-suffix="M+" data-display="100M+">
+          <div class="stat-icon">📸</div>
+          <div class="stat-number" data-counter>100M+</div>
+          <div class="stat-label">Instagram Followers</div>
+        </div>
+        <div class="stat-card" data-target="3" data-suffix="" data-display="3">
+          <div class="stat-icon">💎</div>
+          <div class="stat-number" data-counter>3</div>
+          <div class="stat-label">MVs with 1B+ Views</div>
+        </div>
+        <div class="stat-card" data-target="40" data-suffix="+" data-display="40+">
+          <div class="stat-icon">✈️</div>
+          <div class="stat-number" data-counter>40+</div>
+          <div class="stat-label">Countries Toured</div>
+        </div>
+        <div class="stat-card" data-target="7" data-suffix="" data-display="7">
+          <div class="stat-icon">📖</div>
+          <div class="stat-number" data-counter>7</div>
+          <div class="stat-label">Guinness World Records</div>
+        </div>
+        <div class="stat-card" data-target="1" data-suffix="st" data-display="1st">
+          <div class="stat-icon">🎪</div>
+          <div class="stat-number" data-counter>1st</div>
+          <div class="stat-label">K-pop at Coachella</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Guinness Records -->
+    <div class="sec-title">🥇 <span>Guinness World Records</span></div>
+    <div class="sec-divider"></div>
+    <div class="guinness-grid">
+
+      <div class="guinness-card slide-left">
+        <div class="record-shine"></div>
+        <div class="gold-badge">🏅 Guinness World Record</div>
+        <div class="guinness-title">'How You Like That' — Most Viewed in 24hrs</div>
+        <div class="guinness-desc">Set the record for the most viewed YouTube music video within the first 24 hours of release, achieving over 86.3 million views. Also broke 3 separate Guinness Records simultaneously.</div>
+      </div>
+
+      <div class="guinness-card slide-right">
+        <div class="record-shine"></div>
+        <div class="gold-badge">🏅 Guinness World Record</div>
+        <div class="guinness-title">'Kill This Love' — Most Viewed in 24hrs</div>
+        <div class="guinness-desc">Previously held the record for the most viewed YouTube MV in 24 hours for a K-pop act, smashing records at the time of release in 2019 with 56.7M views in 24 hours.</div>
+      </div>
+
+      <div class="guinness-card slide-left">
+        <div class="record-shine"></div>
+        <div class="gold-badge">🏅 Guinness World Record</div>
+        <div class="guinness-title">First K-pop Group — 3 MVs with 1B+ Views</div>
+        <div class="guinness-desc">Became the first music group from South Korea — and first K-pop act of any kind — to have three separate music videos each surpass one billion views on YouTube.</div>
+      </div>
+
+      <div class="guinness-card slide-right">
+        <div class="record-shine"></div>
+        <div class="gold-badge">🏅 Guinness World Record</div>
+        <div class="guinness-title">Most Instagram Followers — Music Group</div>
+        <div class="guinness-desc">Held the Guinness record for the most followed music group on Instagram, surpassing 60 million followers on their official @blackpinkofficial account at the time of the record.</div>
+      </div>
+
+      <div class="guinness-card slide-left">
+        <div class="record-shine"></div>
+        <div class="gold-badge">🏅 Guinness World Record</div>
+        <div class="guinness-title">Most Subscribed YouTube Channel — Girl Group</div>
+        <div class="guinness-desc">Recognized as the most subscribed YouTube music channel for any girl group globally, with their official channel amassing tens of millions of subscribers worldwide.</div>
+      </div>
+
+    </div>
+
+    <!-- Billboard Milestones -->
+    <div class="sec-title">📈 <span>Billboard Milestones</span></div>
+    <div class="sec-divider"></div>
+    <div class="billboard-grid">
+
+      <div class="billboard-card">
+        <div class="bb-badge">Billboard Hot 100</div>
+        <div class="bb-title">First K-pop Girl Group on Hot 100</div>
+        <div class="bb-desc">BLACKPINK made history as the first K-pop girl group to chart on the legendary Billboard Hot 100, breaking barriers for Korean artists worldwide.</div>
+      </div>
+
+      <div class="billboard-card">
+        <div class="bb-badge">Billboard Hot 100</div>
+        <div class="bb-title">3 Songs Simultaneously on Hot 100</div>
+        <div class="bb-desc">Became the first K-pop act to simultaneously have three different songs chart on the Billboard Hot 100, cementing their global dominance.</div>
+      </div>
+
+      <div class="billboard-card">
+        <div class="bb-badge">Hot 100 Peak</div>
+        <div class="bb-title">'Pink Venom' Debuted at #22</div>
+        <div class="bb-desc">'Pink Venom' debuted at #22 on the Billboard Hot 100, marking a career-best chart position at the time and proving their ever-growing US fanbase.</div>
+      </div>
+
+    </div>
+
+    <!-- YouTube Milestones -->
+    <div class="sec-title">▶️ <span>YouTube Milestones</span></div>
+    <div class="sec-divider"></div>
+    <div class="yt-grid">
+
+      <div class="yt-card">
+        <div class="yt-icon">🎬</div>
+        <div class="yt-views">2.1B</div>
+        <div class="yt-song">DDU-DU DDU-DU</div>
+        <div class="yt-detail">Most viewed K-pop group MV ever</div>
+      </div>
+
+      <div class="yt-card">
+        <div class="yt-icon">🎬</div>
+        <div class="yt-views">1.7B</div>
+        <div class="yt-song">Kill This Love</div>
+        <div class="yt-detail">Former 24hr record holder</div>
+      </div>
+
+      <div class="yt-card">
+        <div class="yt-icon">🎬</div>
+        <div class="yt-views">1.5B</div>
+        <div class="yt-song">Boombayah</div>
+        <div class="yt-detail">The debut that started it all</div>
+      </div>
+
+      <div class="yt-card">
+        <div class="yt-icon">🎬</div>
+        <div class="yt-views">500M+</div>
+        <div class="yt-song">How You Like That</div>
+        <div class="yt-detail">Record time — Guinness certified</div>
+      </div>
+
+    </div>
+
+    <!-- Trophy Shelf Decorative Card -->
+    <div class="glass-card text-center" style="padding:2.5rem;border-color:rgba(201,168,76,0.3);background:linear-gradient(135deg,rgba(20,15,5,0.6),rgba(30,25,10,0.6));">
+      <div style="font-size:3rem;margin-bottom:1rem;">🏆🥇🎖️</div>
+      <h2 style="font-size:1.6rem;color:#F0D080;margin-bottom:1rem;">The Trophy Shelf Never Stops Growing</h2>
+      <p style="color:#aaa;max-width:600px;margin:0 auto;line-height:1.8;">
+        From rookie girl group to global superstars in under a decade — BLACKPINK's record-breaking legacy 
+        continues to expand with every release. With the Deadline era in full swing in 2026, 
+        the world is watching for the next milestone.
+      </p>
+    </div>
+
+  </main>
+
+  <footer>
+    <p>Created with 💖 by <a href="https://github.com/HemantTheCoder" target="_blank">Hemant</a></p>
+  </footer>
+
+  <button id="back-to-top" aria-label="Back to top">↑</button>
+  <div id="toast-container"></div>
+
+  <div id="music-player">
+    <div class="player-toggle" onclick="toggleMusicPlayer()"><span id="player-toggle-icon">▼</span></div>
+    <div id="player-body">
+      <div class="player-info">
+        <div class="player-title">🎵 BLACKPINK Music</div>
+        <div id="yt-track-name" class="player-track">Whistle</div>
+      </div>
+      <div id="yt-player-container"><div id="yt-player"></div></div>
+      <div class="player-controls">
+        <button class="ctrl-btn" onclick="ytPrev()">⏮</button>
+        <button class="ctrl-btn" id="yt-play-btn" onclick="ytPlayPause()">▶</button>
+        <button class="ctrl-btn" onclick="ytNext()">⏭</button>
+      </div>
+      <div class="player-tracklist" id="player-tracklist"></div>
+    </div>
+  </div>
+
+  <script>
+    window.addEventListener('load',()=>{setTimeout(()=>{document.getElementById('loading-screen').classList.add('hidden');},1900);});
+    const btt=document.getElementById('back-to-top');
+    window.addEventListener('scroll',()=>{btt.classList.toggle('show',window.scrollY>400);});
+    btt.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
+    function toggleMusicPlayer(){
+      const p=document.getElementById('music-player');
+      const i=document.getElementById('player-toggle-icon');
+      p.classList.toggle('collapsed');
+      i.textContent=p.classList.contains('collapsed')?'▲':'▼';
+    }
+
+    /* Animated counters */
+    const statCards=document.querySelectorAll('.stat-card');
+    const counterData=[
+      {display:'4.2B+',final:4.2,prefix:'',suffix:'B+',decimals:1},
+      {display:'100M+',final:100,prefix:'',suffix:'M+',decimals:0},
+      {display:'3',final:3,prefix:'',suffix:'',decimals:0},
+      {display:'40+',final:40,prefix:'',suffix:'+',decimals:0},
+      {display:'7',final:7,prefix:'',suffix:'',decimals:0},
+      {display:'1st',final:1,prefix:'',suffix:'st',decimals:0},
+    ];
+    const allReveal=document.querySelectorAll('.stat-card,.guinness-card,.billboard-card,.yt-card');
+    const obsReveal=new IntersectionObserver((entries)=>{
+      entries.forEach(entry=>{
+        if(entry.isIntersecting){
+          entry.target.classList.add('revealed');
+          obsReveal.unobserve(entry.target);
+        }
+      });
+    },{threshold:0.15,rootMargin:'0px 0px -30px 0px'});
+    allReveal.forEach((el,i)=>{el.style.transitionDelay=(i%3)*100+'ms';obsReveal.observe(el);});
+
+    /* Counter animation */
+    const counterObs=new IntersectionObserver((entries)=>{
+      entries.forEach(entry=>{
+        if(entry.isIntersecting){
+          const el=entry.target;
+          const idx=Array.from(statCards).indexOf(el);
+          if(idx<0)return;
+          const d=counterData[idx];
+          const numEl=el.querySelector('[data-counter]');
+          if(!numEl)return;
+          let start=0;const steps=60;const dur=1500;
+          const step=d.final/steps;let current=0;
+          const iv=setInterval(()=>{
+            current+=step;
+            if(current>=d.final){current=d.final;clearInterval(iv);}
+            const v=d.decimals>0?current.toFixed(d.decimals):Math.round(current);
+            numEl.textContent=d.prefix+v+d.suffix;
+          },dur/steps);
+          counterObs.unobserve(el);
+        }
+      });
+    },{threshold:0.5});
+    statCards.forEach(el=>counterObs.observe(el));
+
+    function showToast(msg){
+      const t=document.createElement('div');t.className='toast';t.textContent=msg;
+      document.getElementById('toast-container').appendChild(t);
+      setTimeout(()=>t.remove(),3100);
+    }
+    setTimeout(()=>showToast('🏆 BLACKPINK holds 7+ Guinness World Records!'),2500);
+  </script>
+</body>
+</html>

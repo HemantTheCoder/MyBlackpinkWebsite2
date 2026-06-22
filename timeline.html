@@ -1,0 +1,478 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="Description" content="BLACKPINK History Timeline - from debut in 2016 through the Deadline era in 2026. Every milestone, every achievement.">
+  <title>Timeline - Blackpink</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="script.js" defer></script>
+  <style>
+    #loading-screen{position:fixed;inset:0;background:#050508;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;transition:opacity 0.6s ease,visibility 0.6s ease;}
+    #loading-screen.hidden{opacity:0;visibility:hidden;pointer-events:none;}
+    .loading-logo{font-size:3rem;font-weight:900;letter-spacing:6px;background:linear-gradient(to right,#fff,var(--bp-pink),#fff);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:shine 2s linear infinite;}
+    .loading-bar{width:260px;height:4px;background:rgba(255,255,255,0.1);border-radius:4px;margin-top:2rem;overflow:hidden;}
+    .loading-fill{height:100%;width:0;background:linear-gradient(90deg,var(--bp-pink),#ff66b2);border-radius:4px;animation:load-progress 1.8s ease forwards;}
+    @keyframes load-progress{to{width:100%;}}
+    #page-transition{position:fixed;inset:0;background:var(--bp-pink);transform:scaleY(0);transform-origin:bottom;z-index:8888;pointer-events:none;}
+
+    /* ── Timeline Core ── */
+    .timeline-section{padding:2rem 0 4rem;}
+    .timeline-wrapper{
+      position:relative;max-width:900px;margin:0 auto;
+      padding:1rem 1rem 2rem;
+    }
+
+    /* Central glowing line */
+    .timeline-line{
+      position:absolute;left:50%;top:0;bottom:0;width:3px;
+      background:linear-gradient(180deg,transparent,var(--bp-pink) 5%,var(--bp-pink) 95%,transparent);
+      transform:translateX(-50%);
+      box-shadow:0 0 12px var(--bp-pink-glow),0 0 30px rgba(255,42,133,0.2);
+    }
+
+    /* ── Timeline Event ── */
+    .tl-event{
+      display:flex;align-items:flex-start;gap:0;
+      position:relative;margin-bottom:4rem;
+      width:100%;
+    }
+
+    /* Card side */
+    .tl-card{
+      width:calc(50% - 36px);
+      background:var(--glass-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+      border:1px solid var(--glass-border);border-radius:18px;padding:1.6rem;
+      box-shadow:0 8px 32px rgba(0,0,0,0.5);position:relative;
+      opacity:0;
+      transition:opacity 0.7s ease,transform 0.7s cubic-bezier(0.175,0.885,0.32,1.275),box-shadow 0.3s ease,border-color 0.3s ease;
+    }
+    .tl-card:hover{
+      box-shadow:0 16px 40px rgba(0,0,0,0.6),0 0 20px var(--bp-pink-glow);
+      border-color:var(--bp-pink);transform:scale(1.03)!important;
+    }
+
+    /* Card tail arrow */
+    .tl-card::after{
+      content:'';position:absolute;top:22px;
+      border:10px solid transparent;
+    }
+
+    /* Left side events */
+    .tl-event.left{flex-direction:row;}
+    .tl-event.left .tl-card{
+      margin-right:auto;
+      transform:translateX(-60px);
+    }
+    .tl-event.left .tl-card::after{
+      right:-20px;
+      border-left-color:var(--glass-border);
+    }
+    .tl-event.left.revealed .tl-card{
+      opacity:1;transform:translateX(0);
+    }
+
+    /* Right side events */
+    .tl-event.right{flex-direction:row-reverse;}
+    .tl-event.right .tl-card{
+      margin-left:auto;
+      transform:translateX(60px);
+    }
+    .tl-event.right .tl-card::after{
+      left:-20px;
+      border-right-color:var(--glass-border);
+    }
+    .tl-event.right.revealed .tl-card{
+      opacity:1;transform:translateX(0);
+    }
+
+    /* Center connector */
+    .tl-connector{
+      position:absolute;left:50%;top:18px;
+      transform:translateX(-50%);
+      width:24px;height:24px;
+      background:var(--bp-pink);border-radius:50%;
+      border:3px solid #0a0a0d;
+      box-shadow:0 0 0 3px var(--bp-pink),0 0 15px var(--bp-pink-glow),0 0 30px rgba(255,42,133,0.3);
+      z-index:2;
+      animation:pulse-dot 2s ease-in-out infinite;
+    }
+    @keyframes pulse-dot{
+      0%,100%{box-shadow:0 0 0 3px var(--bp-pink),0 0 15px var(--bp-pink-glow);}
+      50%{box-shadow:0 0 0 6px rgba(255,42,133,0.3),0 0 25px var(--bp-pink-glow),0 0 45px rgba(255,42,133,0.2);}
+    }
+
+    /* Year badge */
+    .tl-year{
+      display:inline-block;font-size:0.72rem;font-weight:800;letter-spacing:2px;
+      text-transform:uppercase;padding:4px 14px;border-radius:20px;margin-bottom:0.8rem;
+      background:linear-gradient(135deg,var(--bp-pink),#ff66b2);color:#fff;
+    }
+
+    .tl-title{font-size:1.1rem;font-weight:800;color:#fff;margin-bottom:0.5rem;line-height:1.3;}
+    .tl-desc{font-size:0.87rem;color:#bbb;line-height:1.7;}
+
+    /* Year label beside connector */
+    .tl-year-label{
+      position:absolute;left:50%;top:14px;transform:translateX(-50%);
+      margin-top:30px;font-size:0.7rem;font-weight:800;
+      color:rgba(255,42,133,0.6);letter-spacing:1px;z-index:1;
+    }
+
+    /* Section year markers */
+    .year-marker{
+      text-align:center;position:relative;margin:3rem 0 2rem;z-index:2;
+    }
+    .year-marker-inner{
+      display:inline-block;padding:0.5rem 2rem;border-radius:30px;
+      background:linear-gradient(135deg,rgba(255,42,133,0.2),rgba(255,102,178,0.1));
+      border:1px solid var(--bp-pink);font-size:1.4rem;font-weight:900;
+      letter-spacing:4px;color:var(--bp-pink);
+      box-shadow:0 0 20px var(--bp-pink-glow);
+    }
+
+    /* Decorative end cap */
+    .timeline-end{
+      text-align:center;padding:2rem 0 1rem;position:relative;z-index:2;
+    }
+    .timeline-end-inner{
+      display:inline-block;padding:1rem 2.5rem;border-radius:40px;
+      background:linear-gradient(135deg,var(--bp-pink),#ff66b2);
+      font-weight:800;font-size:1rem;letter-spacing:2px;color:#fff;
+      box-shadow:0 0 30px var(--bp-pink-glow);
+      animation:pulse-glow 2s ease-in-out infinite alternate;
+    }
+    @keyframes pulse-glow{
+      from{box-shadow:0 0 20px var(--bp-pink-glow);}
+      to{box-shadow:0 0 45px var(--bp-pink-glow),0 0 70px rgba(255,42,133,0.3);}
+    }
+
+    /* Back to top & toast */
+    #back-to-top{position:fixed;bottom:90px;left:20px;background:var(--bp-pink);color:#fff;border:none;width:45px;height:45px;border-radius:50%;font-size:1.2rem;cursor:pointer;z-index:999;display:none;box-shadow:0 0 15px var(--bp-pink-glow);transition:all 0.3s ease;align-items:center;justify-content:center;}
+    #back-to-top.show{display:flex;}
+    #back-to-top:hover{transform:scale(1.1) translateY(-3px);}
+    #toast-container{position:fixed;top:20px;right:20px;z-index:10000;display:flex;flex-direction:column;gap:0.5rem;}
+    .toast{background:rgba(20,20,25,0.95);backdrop-filter:blur(10px);border:1px solid var(--bp-pink);border-radius:12px;padding:0.8rem 1.2rem;font-size:0.9rem;color:#fff;animation:toast-in 0.3s ease,toast-out 0.3s ease 2.7s forwards;max-width:300px;}
+    @keyframes toast-in{from{opacity:0;transform:translateX(30px);}to{opacity:1;transform:translateX(0);}}
+    @keyframes toast-out{from{opacity:1;}to{opacity:0;}}
+
+    /* Music player */
+    #music-player{position:fixed;bottom:20px;right:20px;background:var(--glass-bg);backdrop-filter:blur(15px);-webkit-backdrop-filter:blur(15px);border:1px solid var(--bp-pink);border-radius:15px;padding:15px;width:300px;box-shadow:0 10px 30px rgba(0,0,0,0.5);z-index:1000;display:flex;flex-direction:column;gap:10px;}
+    #music-player.collapsed #player-body{display:none;}
+    .player-toggle{text-align:center;cursor:pointer;color:var(--bp-pink);font-size:1.2rem;user-select:none;}
+    .player-info{text-align:center;}
+    .player-title{font-weight:700;font-size:0.85rem;color:var(--bp-pink);}
+    .player-track{font-size:0.8rem;color:#ccc;margin-top:2px;}
+    #yt-player{width:100%;height:0;}
+    .player-controls{display:flex;justify-content:center;gap:15px;}
+    .player-tracklist{max-height:100px;overflow-y:auto;font-size:0.75rem;color:#888;}
+
+    /* Mobile: single column */
+    @media(max-width:700px){
+      .timeline-line{left:20px;}
+      .tl-event{flex-direction:column!important;padding-left:52px;}
+      .tl-event .tl-card{width:100%;transform:translateX(0)!important;}
+      .tl-event.left.revealed .tl-card,.tl-event.right.revealed .tl-card{transform:translateX(0)!important;opacity:1;}
+      .tl-connector{left:20px;}
+      .tl-card::after{display:none;}
+      .year-marker-inner{font-size:1rem;}
+    }
+  </style>
+</head>
+<body>
+
+  <div id="loading-screen">
+    <div class="loading-logo">BLACKPINK</div>
+    <div class="loading-bar"><div class="loading-fill"></div></div>
+  </div>
+
+  <div id="page-transition"></div>
+
+  <header class="hero" style="height:38vh;background-attachment:fixed;background-position:center;background-size:cover;">
+    <div class="hero-content">
+      <h1>⏳ Timeline</h1>
+      <p style="color:rgba(255,255,255,0.7);font-size:1.1rem;font-weight:300;letter-spacing:3px;margin-top:0.5rem;">From Debut to Deadline — A Decade of History</p>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <div class="text-center">
+      <a href="index.html" class="btn btn-glow" style="margin-bottom:1.5rem;">← Back to Home</a>
+    </div>
+
+    <div class="timeline-section">
+      <div class="timeline-wrapper">
+
+        <!-- Glowing line -->
+        <div class="timeline-line"></div>
+
+        <!-- ══════ 2016 ══════ -->
+        <div class="year-marker"><div class="year-marker-inner">2016</div></div>
+
+        <div class="tl-event left">
+          <div class="tl-connector"></div>
+          <div class="tl-card">
+            <div class="tl-year">Aug 2016</div>
+            <div class="tl-title">🌸 BLACKPINK Debuts</div>
+            <div class="tl-desc">YG Entertainment's new girl group makes their explosive debut with 'Whistle' and 'Boombayah'. The world instantly takes notice as both tracks dominate Korean charts.</div>
+          </div>
+        </div>
+
+        <div class="tl-event right">
+          <div class="tl-connector"></div>
+          <div class="tl-card">
+            <div class="tl-year">Nov 2016</div>
+            <div class="tl-title">🏆 1st Music Show Win</div>
+            <div class="tl-desc">BLACKPINK wins their first music show award with 'Playing With Fire' — an emotional milestone for the rookie group, proving they are not just a flash in the pan.</div>
+          </div>
+        </div>
+
+        <!-- ══════ 2018 ══════ -->
+        <div class="year-marker"><div class="year-marker-inner">2018</div></div>
+
+        <div class="tl-event left">
+          <div class="tl-connector"></div>
+          <div class="tl-card">
+            <div class="tl-year">Jun 2018</div>
+            <div class="tl-title">💜 Square Up Mini Album</div>
+            <div class="tl-desc">Release of their landmark 1st mini album featuring 'DDU-DU DDU-DU'. The MV breaks YouTube records immediately, becoming the fastest K-pop video to reach 100M views at the time.</div>
+          </div>
+        </div>
+
+        <div class="tl-event right">
+          <div class="tl-connector"></div>
+          <div class="tl-card">
+            <div class="tl-year">Nov 2018</div>
+            <div class="tl-title">💎 Jennie Solo Debut</div>
+            <div class="tl-desc">Jennie becomes the first BLACKPINK member to debut as a soloist with 'SOLO'. The track peaks at #1 on multiple Korean charts and showcases Jennie's iconic stage presence.</div>
+          </div>
+        </div>
+
+        <!-- ══════ 2019 ══════ -->
+        <div class="year-marker"><div class="year-marker-inner">2019</div></div>
+
+        <div class="tl-event left">
+          <div class="tl-connector"></div>
+          <div class="tl-card">
+            <div class="tl-year">Apr 2019</div>
+            <div class="tl-title">❤️ Kill This Love EP</div>
+            <div class="tl-desc">The 'Kill This Love' EP drops and sets a new YouTube 24-hour record for K-pop with 56.7M views. The title track becomes one of their most iconic anthems with its brass-heavy drop.</div>
+          </div>
+        </div>
+
+        <div class="tl-event right">
+          <div class="tl-connector"></div>
+          <div class="tl-card">
+            <div class="tl-year">Apr 2019</div>
+            <div class="tl-title">🎪 Coachella Performance</div>
+            <div class="tl-desc">BLACKPINK makes history as the first K-pop act ever to perform at Coachella Valley Music and Arts Festival, cementing their status as truly global superstars.</div>
+          </div>
+        </div>
+
+        <!-- ══════ 2020 ══════ -->
+        <div class="year-marker"><div class="year-marker-inner">2020</div></div>
+
+        <div class="tl-event left">
+          <div class="tl-connector"></div>
+          <div class="tl-card">
+            <div class="tl-year">Jan 2020</div>
+            <div class="tl-title">🎤 In Your Area — The Show</div>
+            <div class="tl-desc">BLACKPINK's first-ever solo concert experience, 'The Show', captivates fans as they perform with full production. A landmark moment ahead of the album era.</div>
+          </div>
+        </div>
+
+        <div class="tl-event right">
+          <div class="tl-connector"></div>
+          <div class="tl-card">
+            <div class="tl-year">Oct 2020</div>
+            <div class="tl-title">🌟 THE ALBUM Drops</div>
+            <div class="tl-desc">Their first full-length album debuts with 'Lovesick Girls' as title track. 'Ice Cream' (feat. Selena Gomez) becomes a global smash. 'How You Like That' breaks 3 Guinness World Records.</div>
+          </div>
+        </div>
+
+        <!-- ══════ 2021 ══════ -->
+        <div class="year-marker"><div class="year-marker-inner">2021</div></div>
+
+        <div class="tl-event left">
+          <div class="tl-connector"></div>
+          <div class="tl-card">
+            <div class="tl-year">Feb 2021</div>
+            <div class="tl-title">🌹 Rosé Solo Debut</div>
+            <div class="tl-desc">Rosé releases her debut solo album '-R-' featuring 'On The Ground' and 'Gone'. 'On The Ground' tops charts in multiple countries and showcases Rosé's soulful, emotional artistry.</div>
+          </div>
+        </div>
+
+        <div class="tl-event right">
+          <div class="tl-connector"></div>
+          <div class="tl-card">
+            <div class="tl-year">Sep 2021</div>
+            <div class="tl-title">👑 Lisa Solo Debut</div>
+            <div class="tl-desc">'Lalisa' and 'Money' break YouTube records simultaneously. 'Lalisa' becomes one of the fastest K-pop solos to hit 100M views. Lisa's charisma and dance prowess captivate the world.</div>
+          </div>
+        </div>
+
+        <!-- ══════ 2022 ══════ -->
+        <div class="year-marker"><div class="year-marker-inner">2022</div></div>
+
+        <div class="tl-event left">
+          <div class="tl-connector"></div>
+          <div class="tl-card">
+            <div class="tl-year">Sep 2022</div>
+            <div class="tl-title">🩷 Born Pink Era Begins</div>
+            <div class="tl-desc">BLACKPINK announces their highly-anticipated comeback with 'Pink Venom'. The pre-release single debuts at #22 on Billboard Hot 100, their highest chart position at the time.</div>
+          </div>
+        </div>
+
+        <div class="tl-event right">
+          <div class="tl-connector"></div>
+          <div class="tl-card">
+            <div class="tl-year">Oct 2022</div>
+            <div class="tl-title">🌍 Born Pink World Tour</div>
+            <div class="tl-desc">The Born Pink World Tour kicks off — the biggest K-pop girl group world tour at the time. BLACKPINK sells out stadiums across Asia, Europe, North America, and beyond.</div>
+          </div>
+        </div>
+
+        <!-- ══════ 2023 ══════ -->
+        <div class="year-marker"><div class="year-marker-inner">2023</div></div>
+
+        <div class="tl-event left">
+          <div class="tl-connector"></div>
+          <div class="tl-card">
+            <div class="tl-year">Mar 2023</div>
+            <div class="tl-title">🌸 Jisoo Solo Debut</div>
+            <div class="tl-desc">Jisoo drops 'Flower (꽃)', and the world collectively loses its mind. The song becomes an instant phenomenon, cementing Jisoo's status as a powerhouse solo artist under her label BLISSOO.</div>
+          </div>
+        </div>
+
+        <!-- ══════ 2024 ══════ -->
+        <div class="year-marker"><div class="year-marker-inner">2024</div></div>
+
+        <div class="tl-event left">
+          <div class="tl-connector"></div>
+          <div class="tl-card">
+            <div class="tl-year">Jun 2024</div>
+            <div class="tl-title">🎸 Lisa 'Rockstar'</div>
+            <div class="tl-desc">Lisa drops the banger 'Rockstar' with her new independent label LLOUD. The track goes viral overnight and shows a bolder, grittier side of Lisa as a solo artist.</div>
+          </div>
+        </div>
+
+        <div class="tl-event right">
+          <div class="tl-connector"></div>
+          <div class="tl-card">
+            <div class="tl-year">Oct 2024</div>
+            <div class="tl-title">🍎 Rosé & Bruno Mars — APT.</div>
+            <div class="tl-desc">Rosé collaborates with Bruno Mars on 'APT.' and the result is a global smash hit. The track tops charts in dozens of countries and becomes one of 2024's biggest songs worldwide.</div>
+          </div>
+        </div>
+
+        <div class="tl-event left">
+          <div class="tl-connector"></div>
+          <div class="tl-card">
+            <div class="tl-year">Nov 2024</div>
+            <div class="tl-title">✍️ Contracts Renewed!</div>
+            <div class="tl-desc">All four BLACKPINK members renew their group contracts with YG Entertainment, ending months of fan speculation. The renewal signals a new era of group activities while maintaining solo ventures.</div>
+          </div>
+        </div>
+
+        <!-- ══════ 2026 ══════ -->
+        <div class="year-marker"><div class="year-marker-inner">2026</div></div>
+
+        <div class="tl-event right">
+          <div class="tl-connector"></div>
+          <div class="tl-card">
+            <div class="tl-year">Jan 2026</div>
+            <div class="tl-title">⚡ JUMP — Pre-Release</div>
+            <div class="tl-desc">BLACKPINK drops 'JUMP' as a teaser to the new era, sending Blinks into a frenzy. The energetic pre-release single showcases a more mature, experimental sound from the group.</div>
+          </div>
+        </div>
+
+        <div class="tl-event left">
+          <div class="tl-connector"></div>
+          <div class="tl-card">
+            <div class="tl-year">Feb 2026</div>
+            <div class="tl-title">🌌 Deadline Era — 'GO' ft. Chris Martin</div>
+            <div class="tl-desc">'GO' drops from their 3rd mini album 'Deadline' — a historic EDM/techno anthem written by all four members alongside Coldplay's Chris Martin. A truly once-in-a-generation collab.</div>
+          </div>
+        </div>
+
+        <div class="tl-event right">
+          <div class="tl-connector"></div>
+          <div class="tl-card">
+            <div class="tl-year">2026</div>
+            <div class="tl-title">🗺️ Deadline World Tour</div>
+            <div class="tl-desc">The massively successful Deadline World Tour wraps, solidifying BLACKPINK as the biggest girl group on the planet. A decade after debut, they stand at the absolute peak of their powers.</div>
+          </div>
+        </div>
+
+        <!-- End cap -->
+        <div class="timeline-end">
+          <div class="timeline-end-inner">✨ The Story Continues... ✨</div>
+        </div>
+
+      </div>
+    </div><!-- /timeline-section -->
+
+  </main>
+
+  <footer>
+    <p>Created with 💖 by <a href="https://github.com/HemantTheCoder" target="_blank">Hemant</a></p>
+  </footer>
+
+  <button id="back-to-top" aria-label="Back to top">↑</button>
+  <div id="toast-container"></div>
+
+  <div id="music-player">
+    <div class="player-toggle" onclick="toggleMusicPlayer()"><span id="player-toggle-icon">▼</span></div>
+    <div id="player-body">
+      <div class="player-info">
+        <div class="player-title">🎵 BLACKPINK Music</div>
+        <div id="yt-track-name" class="player-track">Whistle</div>
+      </div>
+      <div id="yt-player-container"><div id="yt-player"></div></div>
+      <div class="player-controls">
+        <button class="ctrl-btn" onclick="ytPrev()">⏮</button>
+        <button class="ctrl-btn" id="yt-play-btn" onclick="ytPlayPause()">▶</button>
+        <button class="ctrl-btn" onclick="ytNext()">⏭</button>
+      </div>
+      <div class="player-tracklist" id="player-tracklist"></div>
+    </div>
+  </div>
+
+  <script>
+    window.addEventListener('load',()=>{setTimeout(()=>{document.getElementById('loading-screen').classList.add('hidden');},1900);});
+    const btt=document.getElementById('back-to-top');
+    window.addEventListener('scroll',()=>{btt.classList.toggle('show',window.scrollY>400);});
+    btt.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
+    function toggleMusicPlayer(){
+      const p=document.getElementById('music-player');
+      const i=document.getElementById('player-toggle-icon');
+      p.classList.toggle('collapsed');
+      i.textContent=p.classList.contains('collapsed')?'▲':'▼';
+    }
+
+    /* Timeline scroll-reveal */
+    const events=document.querySelectorAll('.tl-event');
+    const obsOpts={threshold:0.2,rootMargin:'0px 0px -40px 0px'};
+    const obs=new IntersectionObserver((entries)=>{
+      entries.forEach(entry=>{
+        if(entry.isIntersecting){
+          entry.target.classList.add('revealed');
+          obs.unobserve(entry.target);
+        }
+      });
+    },obsOpts);
+    events.forEach((el,i)=>{
+      el.style.transitionDelay=i*50+'ms';
+      obs.observe(el);
+    });
+
+    function showToast(msg){
+      const t=document.createElement('div');t.className='toast';t.textContent=msg;
+      document.getElementById('toast-container').appendChild(t);
+      setTimeout(()=>t.remove(),3100);
+    }
+    setTimeout(()=>showToast('📅 Scroll down to relive every BLACKPINK milestone!'),2500);
+  </script>
+</body>
+</html>

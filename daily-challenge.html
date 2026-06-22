@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="Description" content="One special BLACKPINK trivia question per day. Build your streak and become a Daily Champion!">
+  <title>Daily Challenge - Blackpink</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="script.js" defer></script>
+  <style>
+    /* ── Game Container ── */
+    .game-container {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 24px;
+      padding: 3.5rem 3rem;
+      max-width: 840px;
+      margin: 0 auto;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.7);
+      backdrop-filter: blur(16px);
+      position: relative;
+      overflow: hidden;
+    }
+    .game-container::before {
+      content: '';
+      position: absolute;
+      top: -70px; left: -70px;
+      width: 240px; height: 240px;
+      background: radial-gradient(circle, rgba(255,42,133,0.14), transparent 70%);
+      pointer-events: none;
+    }
+    .game-container::after {
+      content: '';
+      position: absolute;
+      bottom: -70px; right: -70px;
+      width: 240px; height: 240px;
+      background: radial-gradient(circle, rgba(168,85,247,0.12), transparent 70%);
+      pointer-events: none;
+    }
+
+    /* ── Screens ── */
+    #screen-play, #screen-done, #screen-complete { display: none; }
+
+    /* ── Streak Badge ── */
+    .streak-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: linear-gradient(135deg, rgba(255,165,0,0.2), rgba(255,100,0,0.1));
+      border: 1px solid rgba(255,165,0,0.4);
+      color: #ffb347;
+      padding: 0.6rem 1.8rem;
+      border-radius: 50px;
+      font-weight: 800;
+      font-size: 1.2rem;
+      box-shadow: 0 4px 15px rgba(255,165,0,0.2);
+      margin-bottom: 1.5rem;
+      letter-spacing: 0.5px;
+    }
+    .streak-badge .fire { font-size: 1.4rem; }
+
+    /* ── Date Badge ── */
+    .date-badge {
+      display: inline-block;
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.35);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 0.8rem;
+      font-weight: 600;
+    }
+
+    /* ── Daily Champion Crown ── */
+    .champion-banner {
+      background: linear-gradient(135deg, rgba(255,215,0,0.15), rgba(255,165,0,0.08));
+      border: 1px solid rgba(255,215,0,0.4);
+      border-radius: 16px;
+      padding: 1.2rem 2rem;
+      margin-bottom: 1.5rem;
+      animation: championGlow 2s ease-in-out infinite;
+    }
+    @keyframes championGlow {
+      0%,100% { box-shadow: 0 0 20px rgba(255,215,0,0.2); }
+      50%      { box-shadow: 0 0 40px rgba(255,215,0,0.4); }
+    }
+    .champion-banner h3 { font-size: 1.3rem; color: #ffd700; margin-bottom: 0.3rem; }
+    .champion-banner p  { font-size: 0.9rem; color: rgba(255,255,255,0.5); margin: 0; }
+
+    /* ── Question card ── */
+    .question-card {
+      background: rgba(255,42,133,0.05);
+      border: 1px solid rgba(255,42,133,0.18);
+      border-radius: 18px;
+      padding: 2rem 1.8rem;
+      margin: 1.5rem 0 2rem;
+      position: relative;
+    }
+    .question-card::before {
+      content: '❓';
+      position: absolute;
+      top: -14px; left: 50%;
+      transform: translateX(-50%);
+      font-size: 1.4rem;
+      background: #0a0a0d;
+      padding: 0 8px;
+    }
+    .q-label {
+      font-size: 0.75rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: rgba(255,42,133,0.7);
+      font-weight: 600;
+      margin-bottom: 0.8rem;
+    }
+    #dc-question {
+      font-size: 1.8rem;
+      line-height: 1.5;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    /* ── Options Grid ── */
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.2rem;
+    }
+    .option-btn {
+      background: rgba(255,255,255,0.04);
+      border: 2px solid rgba(255,255,255,0.1);
+      color: white;
+      padding: 1.4rem 1rem;
+      border-radius: 16px;
+      font-size: 1.05rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      font-family: 'Outfit', sans-serif;
+    }
+    .option-btn:hover:not(:disabled) {
+      background: rgba(255,42,133,0.15);
+      border-color: var(--bp-pink);
+      transform: translateY(-4px) scale(1.02);
+      box-shadow: 0 10px 25px var(--bp-pink-glow);
+    }
+    .option-btn.correct {
+      background: rgba(0,255,136,0.15) !important;
+      border-color: #00ff88 !important;
+      color: #00ff88 !important;
+      transform: scale(1.04) !important;
+      box-shadow: 0 0 30px rgba(0,255,136,0.35) !important;
+    }
+    .option-btn.wrong {
+      background: rgba(255,51,51,0.12) !important;
+      border-color: #ff4444 !important;
+      color: #ff4444 !important;
+      transform: scale(0.96) !important;
+    }
+    .option-btn:disabled { pointer-events: none; }
+
+    /* ── Countdown Timer ── */
+    .countdown-wrap {
+      background: rgba(0,0,0,0.4);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 18px;
+      padding: 1.8rem 2rem;
+      margin: 2rem 0;
+    }
+    .countdown-label { font-size: 0.8rem; letter-spacing: 3px; text-transform: uppercase; color: rgba(255,255,255,0.4); margin-bottom: 0.8rem; }
+    .countdown-digits {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      align-items: center;
+    }
+    .countdown-block {
+      background: rgba(255,42,133,0.12);
+      border: 1px solid rgba(255,42,133,0.25);
+      border-radius: 12px;
+      padding: 0.8rem 1rem;
+      min-width: 72px;
+      text-align: center;
+    }
+    .countdown-num { font-size: 2.5rem; font-weight: 900; color: var(--bp-pink); line-height: 1; }
+    .countdown-unit { font-size: 0.7rem; color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: 2px; }
+    .countdown-sep { font-size: 2rem; color: rgba(255,42,133,0.5); font-weight: 900; line-height: 1; padding-top: 0.4rem; }
+
+    /* ── Yesterday's Answer ── */
+    .yesterday-reveal {
+      background: rgba(168,85,247,0.08);
+      border: 1px solid rgba(168,85,247,0.25);
+      border-radius: 14px;
+      padding: 1.2rem 1.8rem;
+      margin-top: 1.5rem;
+      text-align: left;
+    }
+    .yesterday-reveal .ylbl { font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase; color: rgba(168,85,247,0.7); margin-bottom: 0.4rem; font-weight: 600; }
+    .yesterday-reveal .yq   { font-size: 1rem; color: rgba(255,255,255,0.6); margin-bottom: 0.4rem; }
+    .yesterday-reveal .ya   { font-size: 1.1rem; font-weight: 800; color: #a855f7; }
+
+    /* ── Personal Bests ── */
+    .pb-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+    .pb-stat {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 14px;
+      padding: 1.2rem;
+      text-align: center;
+    }
+    .pb-num { font-size: 2.2rem; font-weight: 900; color: var(--bp-pink); }
+    .pb-lbl { font-size: 0.8rem; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 1px; }
+
+    /* ── Completion screen ── */
+    .result-correct {
+      font-size: 5rem;
+      display: block;
+      margin: 1rem auto;
+      animation: popBig 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+    @keyframes popBig { from { transform: scale(0) rotate(-20deg); opacity: 0; } to { transform: scale(1) rotate(0); opacity: 1; } }
+
+    .fan-rank {
+      font-size: 2.3rem;
+      color: var(--bp-pink);
+      text-shadow: 0 0 30px var(--bp-pink-glow);
+      margin: 1rem 0 0.4rem;
+      font-weight: 900;
+      letter-spacing: 2px;
+    }
+
+    /* ── Lock screen ── */
+    .lock-icon { font-size: 5rem; display: block; margin: 0 auto 1rem; animation: pulse 2s ease-in-out infinite; }
+    @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.08)} }
+
+    /* ── Start screen ── */
+    .start-deco { font-size: 5rem; display: block; margin-bottom: 1rem; animation: floatDeco 3s ease-in-out infinite; }
+    @keyframes floatDeco { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
+
+    /* ── Feedback box ── */
+    .feedback-box {
+      padding: 1rem 1.5rem;
+      border-radius: 14px;
+      margin-top: 1.5rem;
+      font-size: 1.1rem;
+      font-weight: 700;
+      display: none;
+    }
+    .feedback-box.correct { background: rgba(0,255,136,0.12); border: 1px solid #00ff88; color: #00ff88; }
+    .feedback-box.wrong   { background: rgba(255,68,68,0.12); border: 1px solid #ff4444; color: #ff4444; }
+
+    @media (max-width: 600px) {
+      .options-grid { grid-template-columns: 1fr; }
+      .pb-grid { grid-template-columns: 1fr; }
+      .game-container { padding: 2rem 1.2rem; }
+      #dc-question { font-size: 1.4rem; }
+      .countdown-block { min-width: 56px; padding: 0.6rem; }
+      .countdown-num { font-size: 1.8rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="loading-screen">
+    <div class="loading-logo">BLACKPINK</div>
+    <div class="loading-bar"><div class="loading-fill"></div></div>
+  </div>
+
+  <div id="page-transition"></div>
+
+  <header class="hero" style="height: 35vh; background: radial-gradient(ellipse at 50% 40%, rgba(255,165,0,0.18) 0%, transparent 55%), radial-gradient(ellipse at 20% 70%, rgba(255,42,133,0.2) 0%, transparent 55%), radial-gradient(ellipse at 80% 30%, rgba(168,85,247,0.15) 0%, transparent 55%), linear-gradient(180deg, #0a0a0d 0%, #110d00 100%);">
+    <div class="hero-content">
+      <h1 style="font-size: 3.5rem; letter-spacing: 2px;">🔥 Daily Challenge</h1>
+      <p style="font-size: 1.2rem; color: rgba(255,255,255,0.65); margin-top: 0.5rem;">One question a day. Build your streak. Become a legend.</p>
+    </div>
+  </header>
+
+  <main class="container" style="padding-top: 3rem; padding-bottom: 5rem;">
+    <div class="text-center">
+      <a href="games.html" class="btn btn-glow" style="margin-bottom: 2.5rem;">← Back to Hub</a>
+    </div>
+
+    <div class="game-container" id="game-ui">
+
+      <!-- ══ START SCREEN ══ -->
+      <div id="screen-start">
+        <span class="start-deco">⚡</span>
+        <div class="date-badge" id="today-date-lbl">Loading…</div>
+        <h2 style="font-size: 2.8rem; font-weight: 900; margin-bottom: 0.8rem;">Today's Challenge</h2>
+        <p style="font-size: 1.15rem; color: rgba(255,255,255,0.55); margin-bottom: 1.5rem; max-width: 500px; margin-left:auto; margin-right:auto; line-height:1.7;">
+          One special BLACKPINK trivia question refreshes every day at midnight. Answer correctly to extend your 🔥 streak! Miss a day and it resets to zero.
+        </p>
+
+        <!-- Current streak display -->
+        <div class="streak-badge" id="start-streak-badge">
+          <span class="fire">🔥</span>
+          <span id="start-streak-num">0</span> Day Streak
+        </div>
+
+        <!-- Champion banner (shown if streak >= 7) -->
+        <div class="champion-banner" id="champion-banner" style="display:none;">
+          <h3>👑 Daily Champion!</h3>
+          <p>7+ day streak achieved — you're an absolute legend!</p>
+        </div>
+
+        <!-- Personal bests -->
+        <div class="pb-grid">
+          <div class="pb-stat">
+            <div class="pb-num" id="pb-streak">0</div>
+            <div class="pb-lbl">Current Streak</div>
+          </div>
+          <div class="pb-stat">
+            <div class="pb-num" id="pb-best">0</div>
+            <div class="pb-lbl">Best Streak 🏆</div>
+          </div>
+        </div>
+
+        <button class="btn btn-glow" style="font-size: 1.4rem; padding: 1.2rem 4rem;" onclick="startDailyChallenge()">Begin Challenge ▶</button>
+      </div>
+
+      <!-- ══ PLAY SCREEN ══ -->
+      <div id="screen-play">
+        <div class="date-badge" id="play-date-lbl"></div>
+        <div class="streak-badge" id="play-streak-badge">
+          <span class="fire">🔥</span>
+          <span id="play-streak-num">0</span> Day Streak
+        </div>
+        <div class="question-card">
+          <div class="q-label">Today's Question</div>
+          <p id="dc-question">Loading…</p>
+        </div>
+        <div class="options-grid" id="dc-options"></div>
+        <div class="feedback-box" id="dc-feedback"></div>
+      </div>
+
+      <!-- ══ COMPLETION SCREEN (just played) ══ -->
+      <div id="screen-complete">
+        <span class="result-correct" id="result-emoji">✅</span>
+        <h2 style="font-size:2.5rem; font-weight:900; margin-bottom:0.4rem;" id="result-title">Correct!</h2>
+        <p style="color:rgba(255,255,255,0.5); margin-bottom:0.5rem;" id="result-subtitle"></p>
+
+        <div class="streak-badge" style="margin: 1.5rem auto; display:inline-flex;">
+          <span class="fire">🔥</span>
+          <span id="result-streak">0</span> Day Streak!
+        </div>
+
+        <div class="champion-banner" id="result-champion" style="display:none;">
+          <h3>👑 Daily Champion Unlocked!</h3>
+          <p>You've answered correctly 7+ days in a row. Legendary!</p>
+        </div>
+
+        <div class="fan-rank" id="result-rank"></div>
+        <p style="color:rgba(255,255,255,0.45); font-size:0.95rem; margin-bottom:2rem;" id="result-best-msg"></p>
+
+        <div style="display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;">
+          <a href="games.html" class="btn btn-glow">🎮 More Games</a>
+          <a href="leaderboard.html" class="btn">🏆 Leaderboard</a>
+        </div>
+      </div>
+
+      <!-- ══ DONE SCREEN (already played today) ══ -->
+      <div id="screen-done">
+        <span class="lock-icon">🔒</span>
+        <h2 style="font-size: 2.5rem; font-weight: 900; margin-bottom: 0.5rem;">Come Back Tomorrow!</h2>
+        <p style="color:rgba(255,255,255,0.5); margin-bottom:0.5rem;">You've already completed today's challenge.</p>
+
+        <div class="streak-badge" style="margin: 1rem auto; display:inline-flex;">
+          <span class="fire">🔥</span>
+          <span id="done-streak">0</span> Day Streak
+        </div>
+
+        <div class="champion-banner" id="done-champion" style="display:none;">
+          <h3>👑 Daily Champion Status Active</h3>
+          <p>Keep answering daily to maintain your legendary status!</p>
+        </div>
+
+        <!-- Countdown to midnight -->
+        <div class="countdown-wrap">
+          <div class="countdown-label">Next challenge unlocks in</div>
+          <div class="countdown-digits">
+            <div class="countdown-block">
+              <div class="countdown-num" id="cd-hours">00</div>
+              <div class="countdown-unit">Hours</div>
+            </div>
+            <div class="countdown-sep">:</div>
+            <div class="countdown-block">
+              <div class="countdown-num" id="cd-mins">00</div>
+              <div class="countdown-unit">Mins</div>
+            </div>
+            <div class="countdown-sep">:</div>
+            <div class="countdown-block">
+              <div class="countdown-num" id="cd-secs">00</div>
+              <div class="countdown-unit">Secs</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Yesterday's answer -->
+        <div class="yesterday-reveal" id="yesterday-reveal" style="display:none;">
+          <div class="ylbl">Yesterday's Question</div>
+          <div class="yq" id="yesterday-q">—</div>
+          <div class="ya" id="yesterday-a">—</div>
+        </div>
+
+        <!-- Personal bests -->
+        <div class="pb-grid" style="margin-top:1.5rem;">
+          <div class="pb-stat">
+            <div class="pb-num" id="done-pb-streak">0</div>
+            <div class="pb-lbl">Current Streak</div>
+          </div>
+          <div class="pb-stat">
+            <div class="pb-num" id="done-pb-best">0</div>
+            <div class="pb-lbl">Best Streak 🏆</div>
+          </div>
+        </div>
+
+        <div style="margin-top: 2rem; display:flex; gap: 1rem; justify-content:center; flex-wrap:wrap;">
+          <a href="games.html" class="btn btn-glow">🎮 Other Games</a>
+          <a href="trivia.html" class="btn">🧠 Trivia Quiz</a>
+        </div>
+      </div>
+
+    </div><!-- /game-container -->
+  </main>
+
+  <footer>
+    <p>Created with 💖 by <a href="https://github.com/HemantTheCoder" target="_blank">Hemant</a></p>
+  </footer>
+
+  <button id="back-to-top" aria-label="Back to top">↑</button>
+  <div id="toast-container"></div>
+
+  <div id="music-player">
+    <div class="player-toggle" onclick="toggleMusicPlayer()">
+      <span id="player-toggle-icon">▼</span>
+    </div>
+    <div id="player-body">
+      <div class="player-info">
+        <div class="player-title">🎵 BLACKPINK Music</div>
+        <div id="yt-track-name" class="player-track">Whistle</div>
+      </div>
+      <div id="yt-player-container">
+        <div id="yt-player"></div>
+      </div>
+      <div class="player-controls">
+        <button class="ctrl-btn" onclick="ytPrev()">⏮</button>
+        <button class="ctrl-btn" id="yt-play-btn" onclick="ytPlayPause()">▶</button>
+        <button class="ctrl-btn" onclick="ytNext()">⏭</button>
+      </div>
+      <div class="player-tracklist" id="player-tracklist"></div>
+    </div>
+  </div>
+
+  <script>
+  // ══════════════════════════════════════════
+  //  DAILY POOL (30 questions)
+  // ══════════════════════════════════════════
+  const dailyPool = [
+    { q: "What year did BLACKPINK officially debut?", opts: ["2015", "2016", "2017", "2018"], ans: 1 },
+    { q: "What is the name of BLACKPINK's fandom?", opts: ["Reveluvs", "Once", "Blinks", "Midzy"], ans: 2 },
+    { q: "Which member launched her own solo agency called 'LLOUD'?", opts: ["Jisoo", "Jennie", "Ros\u00e9", "Lisa"], ans: 3 },
+    { q: "Which member made her solo debut with the album '-R-'?", opts: ["Jisoo", "Jennie", "Ros\u00e9", "Lisa"], ans: 2 },
+    { q: "Who is the oldest member of BLACKPINK?", opts: ["Jisoo", "Jennie", "Ros\u00e9", "Lisa"], ans: 0 },
+    { q: "Which member is known as the 'Human Chanel'?", opts: ["Jisoo", "Jennie", "Ros\u00e9", "Lisa"], ans: 1 },
+    { q: "What is Lisa's massive 2024 hit single?", opts: ["Money", "Rockstar", "Lalisa", "Shoong"], ans: 1 },
+    { q: "Ros\u00e9's 'APT.' features which artist?", opts: ["Selena Gomez", "Lady Gaga", "Bruno Mars", "The Weeknd"], ans: 2 },
+    { q: "Which member established 'BLISSOO'?", opts: ["Jisoo", "Jennie", "Ros\u00e9", "Lisa"], ans: 0 },
+    { q: "Jennie's solo label is called?", opts: ["ODD ATELIER (OA)", "BLISSOO", "LLOUD", "THEBLACKLABEL"], ans: 0 },
+    { q: "Which member starred in the zombie drama 'Influenza'?", opts: ["Jisoo", "Jennie", "Ros\u00e9", "Lisa"], ans: 0 },
+    { q: "What was BLACKPINK's debut double single?", opts: ["Whistle & Boombayah", "Playing With Fire & Stay", "As If It's Your Last & Forever Young", "DDU-DU DDU-DU & Really"], ans: 0 },
+    { q: "Which member was born in Thailand?", opts: ["Jisoo", "Jennie", "Ros\u00e9", "Lisa"], ans: 3 },
+    { q: "Which member grew up in Australia?", opts: ["Jisoo", "Jennie", "Ros\u00e9", "Lisa"], ans: 2 },
+    { q: "What 2026 title track features Chris Martin?", opts: ["Ready For Love", "GO", "Shut Down", "Pink Venom"], ans: 1 },
+    { q: "Who collaborated with BLACKPINK on 'Ice Cream'?", opts: ["Dua Lipa", "Cardi B", "Selena Gomez", "Lady Gaga"], ans: 2 },
+    { q: "What was BLACKPINK's Netflix documentary called?", opts: ["Light Up The Sky", "The Movie", "Blackpink Diaries", "Born Pink Memories"], ans: 0 },
+    { q: "Which of these is NOT a BLACKPINK song?", opts: ["See U Later", "Hope Not", "Love Dive", "Crazy Over You"], ans: 2 },
+    { q: "BLACKPINK first performed at Coachella in what year?", opts: ["2018", "2019", "2020", "2022"], ans: 1 },
+    { q: "What is the name of BLACKPINK's 2026 mini-album?", opts: ["Born Pink", "The Album", "Deadline", "Square Up"], ans: 2 },
+    { q: "Which BLACKPINK MV was the first K-pop group video to hit 1B views?", opts: ["Boombayah", "As If It's Your Last", "DDU-DU DDU-DU", "Kill This Love"], ans: 2 },
+    { q: "Jisoo's debut solo single is?", opts: ["Flower", "All Eyes On Me", "Snowdrop", "Bloom"], ans: 0 },
+    { q: "Which label does Ros\u00e9 solo work under?", opts: ["LLOUD", "BLISSOO", "THEBLACKLABEL", "ODD ATELIER"], ans: 2 },
+    { q: "Lisa's solo debut mini-album is named?", opts: ["Money", "Lalisa", "Rockstar", "Mantra"], ans: 1 },
+    { q: "BLACKPINK's official fandom color is?", opts: ["Pink & Purple", "Black & Pink", "Red & Black", "White & Pink"], ans: 1 },
+    { q: "Which YG trainee system did BLACKPINK go through?", opts: ["JYP", "SM", "YG", "HYBE"], ans: 2 },
+    { q: "'See U Later' is from which era?", opts: ["Square One", "Square Up", "Kill This Love", "The Album"], ans: 1 },
+    { q: "What song did BLACKPINK perform as headliners at 2022 Coachella?", opts: ["How You Like That", "Pink Venom", "Lovesick Girls", "Kill This Love"], ans: 0 },
+    { q: "Which member is the youngest?", opts: ["Jisoo", "Jennie", "Ros\u00e9", "Lisa"], ans: 3 },
+    { q: "What does BLACKPINK's name represent?", opts: ["Two contrasting colors", "Pink is pretty, Black is powerful", "Both cute and deadly", "Korean aesthetic"], ans: 2 }
+  ];
+
+  // ══════════════════════════════════════════
+  //  HELPERS
+  // ══════════════════════════════════════════
+  function getTodayString() {
+    return new Date().toDateString();
+  }
+
+  // Seeded pseudo-random using date string
+  function seededRandom(seed) {
+    let h = 0;
+    for (let i = 0; i < seed.length; i++) {
+      h = Math.imul(31, h) + seed.charCodeAt(i) | 0;
+    }
+    h = h >>> 0;
+    return (h % 1000) / 1000;
+  }
+
+  function getDailyQuestion() {
+    const seed = getTodayString();
+    const idx = Math.floor(seededRandom(seed) * dailyPool.length);
+    return { ...dailyPool[idx], idx };
+  }
+
+  function getYesterdayQuestion() {
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    const seed = yesterday.toDateString();
+    const idx = Math.floor(seededRandom(seed) * dailyPool.length);
+    return { ...dailyPool[idx], idx };
+  }
+
+  function pad2(n) { return String(n).padStart(2, '0'); }
+
+  // ══════════════════════════════════════════
+  //  STATE
+  // ══════════════════════════════════════════
+  function getState() {
+    return {
+      streak:    parseInt(localStorage.getItem('dailyStreak') || '0'),
+      bestStreak:parseInt(localStorage.getItem('dailyBestStreak') || '0'),
+      lastDate:  localStorage.getItem('lastDailyDate') || '',
+      completed: localStorage.getItem('dailyCompleted') === 'true'
+    };
+  }
+
+  function updateStreak(won) {
+    const today = getTodayString();
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    const yStr = yesterday.toDateString();
+
+    let { streak, bestStreak, lastDate } = getState();
+
+    // Check if streak is intact
+    if (lastDate === yStr) {
+      // continuing streak
+      if (won) streak += 1;
+      else streak = 0;
+    } else if (lastDate === today) {
+      // already played (shouldn't reach here but safeguard)
+    } else {
+      // missed at least one day
+      streak = won ? 1 : 0;
+    }
+
+    if (streak > bestStreak) bestStreak = streak;
+
+    localStorage.setItem('dailyStreak', streak);
+    localStorage.setItem('dailyBestStreak', bestStreak);
+    localStorage.setItem('lastDailyDate', today);
+    localStorage.setItem('dailyCompleted', 'true');
+
+    return { streak, bestStreak };
+  }
+
+  // ══════════════════════════════════════════
+  //  COUNTDOWN
+  // ══════════════════════════════════════════
+  let countdownInterval = null;
+
+  function startCountdown() {
+    function tick() {
+      const now = new Date();
+      const midnight = new Date();
+      midnight.setHours(24, 0, 0, 0);
+      const diff = midnight - now;
+      if (diff <= 0) { location.reload(); return; }
+      const h = Math.floor(diff / 3600000);
+      const m = Math.floor((diff % 3600000) / 60000);
+      const s = Math.floor((diff % 60000) / 1000);
+      document.getElementById('cd-hours').textContent = pad2(h);
+      document.getElementById('cd-mins').textContent  = pad2(m);
+      document.getElementById('cd-secs').textContent  = pad2(s);
+    }
+    tick();
+    countdownInterval = setInterval(tick, 1000);
+  }
+
+  // ══════════════════════════════════════════
+  //  INIT — decide which screen to show
+  // ══════════════════════════════════════════
+  document.addEventListener('DOMContentLoaded', function() {
+    initDailyChallenge();
+  });
+
+  function initDailyChallenge() {
+    const today = getTodayString();
+    const { streak, bestStreak, lastDate, completed } = getState();
+
+    // Check if streak broke (last play was not yesterday or today)
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    const yStr = yesterday.toDateString();
+    let displayStreak = streak;
+    if (lastDate && lastDate !== today && lastDate !== yStr) {
+      // Streak broke
+      displayStreak = 0;
+      localStorage.setItem('dailyStreak', 0);
+    }
+
+    // Update date labels
+    document.getElementById('today-date-lbl').textContent = today;
+
+    // Update start screen stats
+    document.getElementById('start-streak-num').textContent = displayStreak;
+    document.getElementById('pb-streak').textContent = displayStreak;
+    document.getElementById('pb-best').textContent   = bestStreak;
+    if (displayStreak >= 7) document.getElementById('champion-banner').style.display = 'block';
+
+    if (completed && lastDate === today) {
+      // Already played today → show lock screen
+      showDoneScreen(displayStreak, bestStreak);
+    } else {
+      // Show start screen
+      document.getElementById('screen-start').style.display = 'block';
+    }
+  }
+
+  // ══════════════════════════════════════════
+  //  START CHALLENGE
+  // ══════════════════════════════════════════
+  window.startDailyChallenge = function() {
+    const q = getDailyQuestion();
+    const { streak } = getState();
+
+    document.getElementById('screen-start').style.display = 'none';
+    document.getElementById('screen-play').style.display  = 'block';
+
+    document.getElementById('play-date-lbl').textContent  = getTodayString();
+    document.getElementById('play-streak-num').textContent = streak;
+
+    document.getElementById('dc-question').textContent = q.q;
+    document.getElementById('dc-feedback').style.display = 'none';
+
+    const container = document.getElementById('dc-options');
+    container.innerHTML = '';
+    q.opts.forEach((opt, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'option-btn';
+      btn.innerHTML = '<span style="opacity:0.4;font-size:0.85rem;margin-right:0.5rem">' + String.fromCharCode(65+i) + '</span> ' + opt;
+      btn.onclick = () => answerDaily(i, q.ans, btn, q);
+      container.appendChild(btn);
+    });
+  };
+
+  function answerDaily(selected, correct, btnEl, qData) {
+    const buttons = document.querySelectorAll('#dc-options .option-btn');
+    buttons.forEach(b => b.disabled = true);
+
+    const isCorrect = selected === correct;
+    const feedback  = document.getElementById('dc-feedback');
+
+    if (isCorrect) {
+      btnEl.classList.add('correct');
+      feedback.textContent = '🎉 Correct! Amazing — you really know your BLACKPINK!';
+      feedback.className = 'feedback-box correct';
+    } else {
+      btnEl.classList.add('wrong');
+      buttons[correct].classList.add('correct');
+      feedback.textContent = '❌ Not quite! The correct answer was: ' + qData.opts[correct];
+      feedback.className = 'feedback-box wrong';
+    }
+    feedback.style.display = 'block';
+
+    setTimeout(() => {
+      const { streak, bestStreak } = updateStreak(isCorrect);
+      showCompleteScreen(isCorrect, streak, bestStreak, qData.opts[correct]);
+    }, 1400);
+  }
+
+  // ══════════════════════════════════════════
+  //  COMPLETION SCREEN
+  // ══════════════════════════════════════════
+  function showCompleteScreen(won, streak, bestStreak, correctAnswer) {
+    document.getElementById('screen-play').style.display     = 'none';
+    document.getElementById('screen-complete').style.display = 'block';
+
+    document.getElementById('result-emoji').textContent   = won ? '✅' : '❌';
+    document.getElementById('result-title').textContent   = won ? 'Correct! Well done!' : 'Not Quite!';
+    document.getElementById('result-subtitle').textContent = won
+      ? 'You answered today\'s challenge correctly!'
+      : 'The correct answer was: ' + correctAnswer;
+
+    document.getElementById('result-streak').textContent = streak;
+
+    if (streak >= 7) document.getElementById('result-champion').style.display = 'block';
+
+    // Fan rank by streak
+    let rank = 'Dedicated Blink';
+    if (streak >= 30)     rank = '🏆 BLACKPINK Legend';
+    else if (streak >= 14) rank = '👑 Super Blink';
+    else if (streak >= 7)  rank = '💖 Daily Champion';
+    else if (streak >= 3)  rank = '🔥 On a Roll!';
+    else if (streak === 0) rank = '🌸 Keep Trying!';
+    document.getElementById('result-rank').textContent = rank;
+
+    const prevBest = parseInt(localStorage.getItem('dailyBestStreak') || '0');
+    document.getElementById('result-best-msg').textContent =
+      bestStreak > 0 ? 'Personal best: ' + bestStreak + ' day streak 🏆' : '';
+  }
+
+  // ══════════════════════════════════════════
+  //  DONE SCREEN (already played)
+  // ══════════════════════════════════════════
+  function showDoneScreen(streak, bestStreak) {
+    document.getElementById('screen-start').style.display = 'none';
+    document.getElementById('screen-done').style.display  = 'block';
+
+    document.getElementById('done-streak').textContent    = streak;
+    document.getElementById('done-pb-streak').textContent = streak;
+    document.getElementById('done-pb-best').textContent   = bestStreak;
+
+    if (streak >= 7) document.getElementById('done-champion').style.display = 'block';
+
+    startCountdown();
+
+    // Show yesterday's answer
+    const yq = getYesterdayQuestion();
+    const yReveal = document.getElementById('yesterday-reveal');
+    if (yq) {
+      document.getElementById('yesterday-q').textContent = yq.q;
+      document.getElementById('yesterday-a').textContent = '✅ ' + yq.opts[yq.ans];
+      yReveal.style.display = 'block';
+    }
+  }
+  </script>
+
+</body>
+</html>

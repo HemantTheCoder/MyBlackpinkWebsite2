@@ -1,0 +1,571 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="Description" content="Create beautiful BLACKPINK lyric quote cards. Pick a member, choose a lyric, and download your custom card as a PNG!">
+  <title>Lyric Quote Card Generator - Blackpink</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="script.js" defer></script>
+  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+  <style>
+    .qg-wrapper {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2.5rem;
+      align-items: start;
+      margin-top: 2.5rem;
+    }
+    @media (max-width: 900px) { .qg-wrapper { grid-template-columns: 1fr; } }
+
+    .step-label {
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--bp-pink);
+      margin-bottom: 0.6rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .step-label .step-num {
+      width: 22px; height: 22px;
+      background: var(--bp-pink);
+      color: #fff;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.65rem; font-weight: 800;
+      flex-shrink: 0;
+    }
+
+    .member-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      margin-bottom: 0;
+    }
+    .member-btn {
+      position: relative;
+      background: var(--glass-bg);
+      border: 2px solid rgba(255,42,133,0.15);
+      border-radius: 18px;
+      padding: 0;
+      cursor: pointer;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .member-btn:hover { border-color: var(--bp-pink); transform: translateY(-4px); box-shadow: 0 12px 30px rgba(255,42,133,0.25); }
+    .member-btn.active { border-color: var(--bp-pink); box-shadow: 0 0 0 3px rgba(255,42,133,0.35), 0 12px 30px rgba(255,42,133,0.3); }
+    .member-btn.active::after {
+      content: '✓';
+      position: absolute; top: 8px; right: 10px;
+      background: var(--bp-pink); color: #fff;
+      font-size: 0.65rem; font-weight: 800;
+      width: 20px; height: 20px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      line-height: 20px; text-align: center;
+    }
+    .member-btn img { width: 100%; aspect-ratio: 3/4; object-fit: cover; object-position: top center; display: block; border-radius: 16px 16px 0 0; }
+    .member-btn-name { font-weight: 800; font-size: 0.85rem; padding: 0.55rem 0; letter-spacing: 0.05em; color: #fff; }
+
+    .member-btn[data-member="jisoo"]:hover, .member-btn[data-member="jisoo"].active { border-color: #E8B4C8; box-shadow: 0 0 0 3px rgba(232,180,200,0.3), 0 12px 30px rgba(232,180,200,0.25); }
+    .member-btn[data-member="jennie"]:hover, .member-btn[data-member="jennie"].active { border-color: #C9A84C; box-shadow: 0 0 0 3px rgba(201,168,76,0.3), 0 12px 30px rgba(201,168,76,0.25); }
+    .member-btn[data-member="rose"]:hover, .member-btn[data-member="rose"].active { border-color: #E8736C; box-shadow: 0 0 0 3px rgba(232,115,108,0.3), 0 12px 30px rgba(232,115,108,0.25); }
+    .member-btn[data-member="lisa"]:hover, .member-btn[data-member="lisa"].active { border-color: #8B5CF6; box-shadow: 0 0 0 3px rgba(139,92,246,0.3), 0 12px 30px rgba(139,92,246,0.25); }
+
+    .lyric-select-wrap { position: relative; }
+    .lyric-select {
+      width: 100%;
+      background: rgba(15,15,20,0.8);
+      border: 2px solid rgba(255,42,133,0.25);
+      border-radius: 14px;
+      color: #fff;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.95rem;
+      padding: 0.85rem 2.5rem 0.85rem 1rem;
+      appearance: none;
+      cursor: pointer;
+      transition: border-color 0.3s;
+      outline: none;
+    }
+    .lyric-select:focus { border-color: var(--bp-pink); }
+    .lyric-select option { background: #111116; color: #fff; }
+    .lyric-select-wrap::after {
+      content: '\25BE';
+      position: absolute; right: 1rem; top: 50%;
+      transform: translateY(-50%);
+      color: var(--bp-pink); pointer-events: none; font-size: 1rem;
+    }
+
+    .action-row { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 1rem; }
+    .action-btn {
+      flex: 1; min-width: 120px;
+      font-size: 0.85rem;
+      padding: 0.75rem 1rem;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      gap: 0.4rem;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: none;
+    }
+    .btn-download { background: linear-gradient(135deg, var(--bp-pink), #a8005c); color: #fff; box-shadow: 0 4px 15px rgba(255,42,133,0.3); }
+    .btn-download:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(255,42,133,0.5); }
+    .btn-copy { background: rgba(255,42,133,0.12); color: var(--bp-pink); border: 2px solid rgba(255,42,133,0.35) !important; }
+    .btn-copy:hover { background: rgba(255,42,133,0.22); transform: translateY(-2px); }
+    .btn-shuffle { background: rgba(255,255,255,0.06); color: #fff; border: 2px solid rgba(255,255,255,0.15) !important; }
+    .btn-shuffle:hover { background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.3) !important; transform: translateY(-2px); }
+
+    .preview-panel { display: flex; flex-direction: column; align-items: center; gap: 1rem; position: sticky; top: 2rem; }
+
+    #quote-card {
+      width: 100%;
+      max-width: 400px;
+      aspect-ratio: 1 / 1;
+      border-radius: 24px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      position: relative; overflow: hidden;
+      padding: 2rem; text-align: center;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.05);
+      transition: background 0.5s ease;
+      background: linear-gradient(135deg, #1a0014 0%, #0a0a1a 100%);
+      animation: cardPulse 4s ease-in-out infinite;
+    }
+    @keyframes cardPulse {
+      0%, 100% { box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.05), 0 0 30px rgba(255,42,133,0.05); }
+      50%       { box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.05), 0 0 60px rgba(255,42,133,0.15); }
+    }
+
+    .sparkle-layer { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+    .sparkle {
+      position: absolute; border-radius: 50%; opacity: 0;
+      animation: twinkle var(--dur, 2.5s) var(--delay, 0s) infinite ease-in-out;
+    }
+    @keyframes twinkle {
+      0%, 100% { opacity: 0; transform: scale(0.5); }
+      50%       { opacity: 0.9; transform: scale(1.4); }
+    }
+
+    .card-glow-orb {
+      position: absolute; width: 220px; height: 220px; border-radius: 50%;
+      filter: blur(60px); opacity: 0.25;
+      top: 50%; left: 50%; transform: translate(-50%, -50%);
+      pointer-events: none; transition: background 0.5s;
+    }
+    .card-corner {
+      position: absolute; width: 28px; height: 28px;
+      border-color: rgba(255,255,255,0.15); border-style: solid; z-index: 2;
+    }
+    .card-corner.tl { top: 14px; left: 14px; border-width: 2px 0 0 2px; border-radius: 4px 0 0 0; }
+    .card-corner.tr { top: 14px; right: 14px; border-width: 2px 2px 0 0; border-radius: 0 4px 0 0; }
+    .card-corner.bl { bottom: 14px; left: 14px; border-width: 0 0 2px 2px; border-radius: 0 0 0 4px; }
+    .card-corner.br { bottom: 14px; right: 14px; border-width: 0 2px 2px 0; border-radius: 0 0 4px 0; }
+
+    .member-photo-ring {
+      position: relative; z-index: 2;
+      width: 54px; height: 54px; border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.3);
+      overflow: hidden; margin-bottom: 0.75rem;
+      box-shadow: 0 0 0 3px rgba(255,255,255,0.08);
+      transition: border-color 0.5s;
+    }
+    .member-photo-ring img { width: 100%; height: 100%; object-fit: cover; object-position: top center; }
+
+    .card-member-name {
+      position: relative; z-index: 2;
+      font-size: 0.75rem; font-weight: 800;
+      letter-spacing: 0.25em; text-transform: uppercase;
+      opacity: 0.85; margin-bottom: 0.5rem; transition: color 0.5s;
+    }
+    .card-emoji {
+      position: relative; z-index: 2; font-size: 2rem; margin-bottom: 0.8rem;
+      animation: floatEmoji 3s ease-in-out infinite;
+    }
+    @keyframes floatEmoji { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
+
+    .card-divider {
+      width: 40px; height: 2px; border-radius: 2px;
+      margin: 0 auto 1rem; transition: background 0.5s; position: relative; z-index: 2;
+    }
+    .card-lyric {
+      position: relative; z-index: 2;
+      font-size: 1.1rem; font-weight: 600; line-height: 1.6;
+      color: #fff; text-shadow: 0 2px 12px rgba(0,0,0,0.6);
+      margin-bottom: 1rem; font-style: italic;
+      padding: 0 0.5rem;
+    }
+    @keyframes lyricFadeIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:none} }
+    .lyric-animate { animation: lyricFadeIn 0.45s ease forwards; }
+
+    .card-song {
+      position: relative; z-index: 2;
+      font-size: 0.7rem; font-weight: 800;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      padding: 0.3rem 0.85rem; border-radius: 20px;
+      background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+      margin-bottom: 0.5rem; transition: color 0.5s, border-color 0.5s;
+    }
+    .card-footer {
+      position: absolute; bottom: 1rem; left: 0; right: 0; z-index: 2;
+      font-size: 0.6rem; font-weight: 600; letter-spacing: 0.1em;
+      text-transform: uppercase; color: rgba(255,255,255,0.35); text-align: center;
+    }
+    .card-placeholder-hint {
+      position: relative; z-index: 2;
+      color: rgba(255,255,255,0.3); font-size: 0.9rem; font-style: italic;
+    }
+
+    .hint-bar {
+      background: rgba(255,42,133,0.08); border: 1px solid rgba(255,42,133,0.2);
+      border-radius: 12px; padding: 0.75rem 1rem;
+      font-size: 0.82rem; color: var(--text-muted);
+      margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.6rem;
+    }
+
+    .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .reveal.visible { opacity: 1; transform: none; }
+
+    @keyframes toastIn { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:none} }
+  </style>
+</head>
+<body>
+
+  <div id="loading-screen">
+    <div class="loading-logo">BLACKPINK</div>
+    <div class="loading-bar"><div class="loading-fill"></div></div>
+  </div>
+
+  <div id="page-transition"></div>
+
+  <header class="hero" style="height:35vh; background:linear-gradient(135deg,#1a0014 0%,#0a0a1a 50%,#14000a 100%); display:flex; align-items:center; justify-content:center;">
+    <div class="hero-content">
+      <h1>✨ Lyric Quote Generator</h1>
+      <p style="color:rgba(255,255,255,0.65);font-size:1rem;margin-top:0.5rem;text-align:center;">
+        Pick a member &bull; Choose a lyric &bull; Download your card
+      </p>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <div class="text-center">
+      <a href="index.html" class="btn btn-glow" style="margin-bottom:2rem;display:inline-block;">&#8592; Back to Home</a>
+    </div>
+
+    <div class="hint-bar reveal">
+      <span style="font-size:1.1rem;">&#128161;</span>
+      <span>Select a member below, then pick a lyric from the dropdown. Hit <strong>Shuffle</strong> for a surprise combo!</span>
+    </div>
+
+    <div class="qg-wrapper">
+
+      <!-- CONTROLS -->
+      <div class="controls-panel">
+
+        <div class="glass-card reveal" style="padding:1.5rem;margin-bottom:1.5rem;border-radius:20px;">
+          <div class="step-label"><div class="step-num">1</div> Choose a Member</div>
+          <div class="member-grid">
+            <button class="member-btn" data-member="jisoo" onclick="selectMember('jisoo')" aria-label="Select Jisoo">
+              <img src="Jisoo.webp" alt="Jisoo" loading="lazy">
+              <div class="member-btn-name">JISOO &#127800;</div>
+            </button>
+            <button class="member-btn" data-member="jennie" onclick="selectMember('jennie')" aria-label="Select Jennie">
+              <img src="Jennie.webp" alt="Jennie" loading="lazy">
+              <div class="member-btn-name">JENNIE &#128081;</div>
+            </button>
+            <button class="member-btn" data-member="rose" onclick="selectMember('rose')" aria-label="Select Rose">
+              <img src="Rose.webp" alt="Rose" loading="lazy">
+              <div class="member-btn-name">ROS&#201; &#127801;</div>
+            </button>
+            <button class="member-btn" data-member="lisa" onclick="selectMember('lisa')" aria-label="Select Lisa">
+              <img src="Lisa.webp" alt="Lisa" loading="lazy">
+              <div class="member-btn-name">LISA &#128156;</div>
+            </button>
+          </div>
+        </div>
+
+        <div class="glass-card reveal" style="padding:1.5rem;margin-bottom:1.5rem;border-radius:20px;">
+          <div class="step-label"><div class="step-num">2</div> Choose a Lyric</div>
+          <div class="lyric-select-wrap">
+            <select class="lyric-select" id="lyric-select" onchange="updateLyric()" aria-label="Select a lyric">
+              <option value="">&#8212; Select a member first &#8212;</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="glass-card reveal" style="padding:1.5rem;border-radius:20px;">
+          <div class="step-label"><div class="step-num">3</div> Create &amp; Share</div>
+          <div class="action-row">
+            <button class="action-btn btn-download" onclick="downloadCard()">&#11015; Download PNG</button>
+            <button class="action-btn btn-copy"     onclick="copyLyric()">&#128203; Copy Lyric</button>
+            <button class="action-btn btn-shuffle"  onclick="shuffleCard()">&#128256; Shuffle</button>
+          </div>
+        </div>
+
+      </div><!-- /controls -->
+
+      <!-- PREVIEW -->
+      <div class="preview-panel reveal">
+        <div class="step-label" style="align-self:flex-start;"><div class="step-num">4</div> Live Preview</div>
+
+        <div id="quote-card">
+          <div class="sparkle-layer" id="sparkle-layer"></div>
+          <div class="card-glow-orb" id="card-glow-orb"></div>
+          <div class="card-corner tl"></div>
+          <div class="card-corner tr"></div>
+          <div class="card-corner bl"></div>
+          <div class="card-corner br"></div>
+
+          <div class="member-photo-ring" id="card-member-photo" style="display:none;">
+            <img id="card-member-img" src="" alt="member">
+          </div>
+          <div class="card-member-name" id="card-member-name" style="display:none;"></div>
+          <div class="card-emoji"       id="card-emoji"        style="display:none;"></div>
+          <div class="card-divider"     id="card-divider"      style="display:none;"></div>
+          <div class="card-lyric"       id="card-lyric"        style="display:none;"></div>
+          <div class="card-song"        id="card-song"         style="display:none;"></div>
+
+          <div class="card-placeholder-hint" id="card-placeholder">
+            <div style="font-size:2.5rem;margin-bottom:1rem;">&#127925;</div>
+            <div>Your quote card will<br>appear here &#10024;</div>
+          </div>
+
+          <div class="card-footer">blinks.wiki &bull; @blackpinkofficial</div>
+        </div>
+
+        <p style="font-size:0.75rem;color:rgba(255,255,255,0.3);text-align:center;">
+          Preview auto-updates as you select options
+        </p>
+      </div>
+
+    </div><!-- /qg-wrapper -->
+
+  </main>
+
+  <footer>
+    <p>Created with &#128150; by <a href="https://github.com/HemantTheCoder" target="_blank">Hemant</a></p>
+  </footer>
+
+  <button id="back-to-top" aria-label="Back to top">&#8593;</button>
+  <div id="toast-container"></div>
+
+  <div id="music-player">
+    <div class="player-toggle" onclick="toggleMusicPlayer()">
+      <span id="player-toggle-icon">&#9660;</span>
+    </div>
+    <div id="player-body">
+      <div class="player-info">
+        <div class="player-title">&#127925; BLACKPINK Music</div>
+        <div id="yt-track-name" class="player-track">Whistle</div>
+      </div>
+      <div id="yt-player-container">
+        <div id="yt-player"></div>
+      </div>
+      <div class="player-controls">
+        <button class="ctrl-btn" onclick="ytPrev()">&#9198;</button>
+        <button class="ctrl-btn" id="yt-play-btn" onclick="ytPlayPause()">&#9654;</button>
+        <button class="ctrl-btn" onclick="ytNext()">&#9197;</button>
+      </div>
+      <div class="player-tracklist" id="player-tracklist"></div>
+    </div>
+  </div>
+
+  <script>
+    const memberLyrics = {
+      jisoo: [
+        { song: 'Flower',         lyric: "I'm right here. \uAF43\uC774 \uD53C\uC5C8\uC2B5\uB2C8\uB2E4" },
+        { song: 'All Eyes On Me', lyric: "All eyes on me, when I walk in" },
+        { song: 'Kill This Love', lyric: "I'll say it loud, I say it bold, I'm done" },
+        { song: 'Lovesick Girls', lyric: "We were born to be alone, lovesick girls" },
+        { song: 'Pink Venom',     lyric: "My pink venom, my pink poison" },
+        { song: 'Snowdrop OST',   lyric: "Even if I can't see, I know you're there" }
+      ],
+      jennie: [
+        { song: 'SOLO',           lyric: "I'll be your girl, but I'm staying solo" },
+        { song: 'Mantra',         lyric: "I'm the one, the only one, my own" },
+        { song: 'DDU-DU DDU-DU',  lyric: "We keep runnin' cause we know we're trouble" },
+        { song: 'How You Like That', lyric: "Look at you now, look at me" },
+        { song: 'You & Me',       lyric: "You and me, and nobody else" },
+        { song: 'Kick It',        lyric: "We don't run, we don't hide" }
+      ],
+      rose: [
+        { song: 'On The Ground',  lyric: "All this time I was finding myself, all the answers were on the ground" },
+        { song: 'Gone',           lyric: "I'm already gone, already gone" },
+        { song: 'APT.',           lyric: "APT, APT, \uC544\uD30C\uD2B8, APT" },
+        { song: 'Hard To Love',   lyric: "I know that I'm hard to love" },
+        { song: 'Whistle',        lyric: "Boy you know you got that thang" },
+        { song: 'Lovesick Girls', lyric: "In this world, no one ever understood me" }
+      ],
+      lisa: [
+        { song: 'Lalisa',         lyric: "Lalisa, Lalisa, you know who I am" },
+        { song: 'Money',          lyric: "I need all my girls to feel that power" },
+        { song: 'Rockstar',       lyric: "I was born to be a rockstar" },
+        { song: 'Boombayah',      lyric: "Feeling good, feeling great, feeling everything" },
+        { song: 'Shut Down',      lyric: "Shut down the city!" },
+        { song: 'Pink Venom',     lyric: "I'll be your Cleopatra" }
+      ]
+    };
+
+    const memberThemes = {
+      jisoo:  { gradient: 'linear-gradient(135deg,#1a0a14 0%,#2d1022 100%)', accent: '#E8B4C8', glow: 'rgba(232,180,200,0.5)', emoji: '\uD83C\uDF38', photo: 'Jisoo.webp',  label: 'JISOO'  },
+      jennie: { gradient: 'linear-gradient(135deg,#1a1200 0%,#2d2000 100%)', accent: '#C9A84C', glow: 'rgba(201,168,76,0.5)',  emoji: '\uD83D\uDC51', photo: 'Jennie.webp', label: 'JENNIE' },
+      rose:   { gradient: 'linear-gradient(135deg,#1a0808 0%,#2d1010 100%)', accent: '#E8736C', glow: 'rgba(232,115,108,0.5)',emoji: '\uD83C\uDF39', photo: 'Rose.webp',   label: 'ROS\u00C9'  },
+      lisa:   { gradient: 'linear-gradient(135deg,#0a0520 0%,#150a35 100%)', accent: '#8B5CF6', glow: 'rgba(139,92,246,0.5)',  emoji: '\uD83D\uDC9C', photo: 'Lisa.webp',   label: 'LISA'   }
+    };
+
+    let currentMember = null;
+    let currentLyricIndex = -1;
+
+    function buildSparkles(accent) {
+      const layer = document.getElementById('sparkle-layer');
+      layer.innerHTML = '';
+      for (let i = 0; i < 28; i++) {
+        const s = document.createElement('div');
+        s.className = 'sparkle';
+        const size = (Math.random() * 3 + 1.5).toFixed(1);
+        s.style.cssText = 'left:' + (Math.random()*100).toFixed(1) + '%;top:' + (Math.random()*100).toFixed(1) + '%;width:' + size + 'px;height:' + size + 'px;background:' + (i % 3 === 0 ? accent : '#fff') + ';--dur:' + (Math.random()*2+1.5).toFixed(2) + 's;--delay:' + (Math.random()*2).toFixed(2) + 's;';
+        layer.appendChild(s);
+      }
+    }
+
+    function renderCard() {
+      if (!currentMember || currentLyricIndex < 0) return;
+      const theme = memberThemes[currentMember];
+      const entry = memberLyrics[currentMember][currentLyricIndex];
+      const card  = document.getElementById('quote-card');
+
+      card.style.background = theme.gradient;
+
+      document.getElementById('card-glow-orb').style.background = theme.glow;
+      buildSparkles(theme.accent);
+
+      const pw = document.getElementById('card-member-photo');
+      const pi = document.getElementById('card-member-img');
+      pw.style.display = 'block';
+      pw.style.borderColor = theme.accent;
+      pi.src = theme.photo;
+      pi.onerror = () => { pw.style.display = 'none'; };
+
+      const ne = document.getElementById('card-member-name');
+      ne.style.display = 'block';
+      ne.textContent = theme.label;
+      ne.style.color = theme.accent;
+
+      const ee = document.getElementById('card-emoji');
+      ee.style.display = 'block';
+      ee.textContent = theme.emoji;
+
+      const de = document.getElementById('card-divider');
+      de.style.display = 'block';
+      de.style.background = theme.accent;
+
+      const le = document.getElementById('card-lyric');
+      le.style.display = 'block';
+      le.classList.remove('lyric-animate');
+      void le.offsetWidth;
+      le.classList.add('lyric-animate');
+      le.textContent = '\u201C' + entry.lyric + '\u201D';
+
+      const se = document.getElementById('card-song');
+      se.style.display = 'block';
+      se.textContent = '\u266B ' + entry.song;
+      se.style.color = theme.accent;
+      se.style.borderColor = theme.accent + '55';
+
+      document.getElementById('card-placeholder').style.display = 'none';
+    }
+
+    function selectMember(member) {
+      currentMember = member;
+      currentLyricIndex = 0;
+      document.querySelectorAll('.member-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.member === member);
+      });
+      const sel = document.getElementById('lyric-select');
+      sel.innerHTML = '';
+      memberLyrics[member].forEach((entry, i) => {
+        const opt = document.createElement('option');
+        opt.value = i;
+        const preview = entry.lyric.length > 36 ? entry.lyric.substring(0,36) + '\u2026' : entry.lyric;
+        opt.textContent = entry.song + ' \u2014 "' + preview + '"';
+        sel.appendChild(opt);
+      });
+      sel.value = '0';
+      renderCard();
+    }
+
+    function updateLyric() {
+      const idx = parseInt(document.getElementById('lyric-select').value, 10);
+      if (isNaN(idx) || !currentMember) return;
+      currentLyricIndex = idx;
+      renderCard();
+    }
+
+    function shuffleCard() {
+      const members = Object.keys(memberLyrics);
+      const rm = members[Math.floor(Math.random() * members.length)];
+      const ri = Math.floor(Math.random() * memberLyrics[rm].length);
+      selectMember(rm);
+      document.getElementById('lyric-select').value = ri;
+      currentLyricIndex = ri;
+      renderCard();
+      bpToast('\uD83D\uDD00 Random quote loaded!');
+    }
+
+    function downloadCard() {
+      if (!currentMember || currentLyricIndex < 0) { bpToast('\u26A0\uFE0F Select a member and lyric first!'); return; }
+      if (typeof html2canvas === 'undefined') { bpToast('\u26A0\uFE0F html2canvas not loaded yet.'); return; }
+      bpToast('\u23F3 Generating your card\u2026');
+      const card = document.getElementById('quote-card');
+      html2canvas(card, { scale: 2, useCORS: true, allowTaint: true, backgroundColor: null, logging: false })
+        .then(canvas => {
+          const a = document.createElement('a');
+          a.download = 'blackpink-quote-' + currentMember + '-' + Date.now() + '.png';
+          a.href = canvas.toDataURL('image/png');
+          a.click();
+          bpToast('\u2705 Card downloaded!');
+        })
+        .catch(() => bpToast('\u274C Download failed. Try again.'));
+    }
+
+    function copyLyric() {
+      if (!currentMember || currentLyricIndex < 0) { bpToast('\u26A0\uFE0F Select a member and lyric first!'); return; }
+      const e = memberLyrics[currentMember][currentLyricIndex];
+      const t = '\u201C' + e.lyric + '\u201D \u2014 ' + e.song + ' \u00B7 BLACKPINK';
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(t).then(() => bpToast('\uD83D\uDCCB Lyric copied to clipboard!'));
+      } else {
+        const ta = document.createElement('textarea');
+        ta.value = t; ta.style.cssText = 'position:fixed;opacity:0;';
+        document.body.appendChild(ta); ta.select();
+        document.execCommand('copy'); document.body.removeChild(ta);
+        bpToast('\uD83D\uDCCB Lyric copied to clipboard!');
+      }
+    }
+
+    function bpToast(msg) {
+      const c = document.getElementById('toast-container');
+      if (!c) return;
+      const t = document.createElement('div');
+      t.textContent = msg;
+      t.style.cssText = 'background:rgba(20,20,28,0.95);border:1px solid rgba(255,42,133,0.4);color:#fff;padding:0.75rem 1.25rem;border-radius:12px;font-size:0.88rem;font-family:Outfit,sans-serif;margin-top:0.5rem;animation:toastIn 0.35s ease;backdrop-filter:blur(10px);box-shadow:0 8px 24px rgba(0,0,0,0.4);';
+      c.appendChild(t);
+      setTimeout(() => { t.style.opacity='0'; t.style.transition='opacity 0.4s'; setTimeout(()=>t.remove(),400); }, 3000);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const io = new IntersectionObserver(entries => {
+        entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+      }, { threshold: 0.1 });
+      document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+      buildSparkles('#ff2a85');
+    });
+  </script>
+</body>
+</html>
