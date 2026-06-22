@@ -8,7 +8,6 @@
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="pages.css">
   <script src="script.js" defer></script>
-  
 </head>
 <body>
 
@@ -41,100 +40,27 @@
 
     <div class="game-container" id="game-ui">
 
-      <!-- ══ START SCREEN ══ -->
-      <div id="screen-start">
-        <span class="start-deco">⚡</span>
-        <div class="date-badge" id="today-date-lbl">Loading…</div>
-        <h2 style="font-size: 2.8rem; font-weight: 900; margin-bottom: 0.8rem;">Today's Challenge</h2>
-        <p style="font-size: 1.15rem; color: rgba(255,255,255,0.55); margin-bottom: 1.5rem; max-width: 500px; margin-left:auto; margin-right:auto; line-height:1.7;">
-          One special BLACKPINK trivia question refreshes every day at midnight. Answer correctly to extend your 🔥 streak! Miss a day and it resets to zero.
-        </p>
-
-        <!-- Current streak display -->
-        <div class="streak-badge" id="start-streak-badge">
-          <span class="fire">🔥</span>
-          <span id="start-streak-num">0</span> Day Streak
-        </div>
-
-        <!-- Champion banner (shown if streak >= 7) -->
-        <div class="champion-banner" id="champion-banner" style="display:none;">
-          <h3>👑 Daily Champion!</h3>
-          <p>7+ day streak achieved — you're an absolute legend!</p>
-        </div>
-
-        <!-- Personal bests -->
-        <div class="pb-grid">
-          <div class="pb-stat">
-            <div class="pb-num" id="pb-streak">0</div>
-            <div class="pb-lbl">Current Streak</div>
-          </div>
-          <div class="pb-stat">
-            <div class="pb-num" id="pb-best">0</div>
-            <div class="pb-lbl">Best Streak 🏆</div>
-          </div>
-        </div>
-
-        <button class="btn btn-glow" style="font-size: 1.4rem; padding: 1.2rem 4rem;" onclick="startDaily()">Begin Challenge ▶</button>
-      </div>
-
-      <!-- ══ PLAY SCREEN ══ -->
-      <div id="screen-play">
-        <div class="date-badge" id="play-date-lbl"></div>
-        <div class="streak-badge" id="play-streak-badge">
-          <span class="fire">🔥</span>
-          <span id="play-streak-num">0</span> Day Streak
-        </div>
-        <div class="question-card">
-          <div class="q-label">Today's Question</div>
-          <p id="daily-question">Loading…</p>
-        </div>
-        <div class="options-grid" id="dc-options"></div>
-        <div class="feedback-box" id="dc-feedback"></div>
-      </div>
-
-      <!-- ══ COMPLETION SCREEN (just played) ══ -->
-      <div id="screen-complete">
-        <span class="result-correct" id="result-emoji">✅</span>
-        <h2 style="font-size:2.5rem; font-weight:900; margin-bottom:0.4rem;" id="result-title">Correct!</h2>
-        <p style="color:rgba(255,255,255,0.5); margin-bottom:0.5rem;" id="result-subtitle"></p>
-
-        <div class="streak-badge" style="margin: 1.5rem auto; display:inline-flex;">
-          <span class="fire">🔥</span>
-          <span id="result-streak">0</span> Day Streak!
-        </div>
-
-        <div class="champion-banner" id="result-champion" style="display:none;">
-          <h3>👑 Daily Champion Unlocked!</h3>
-          <p>You've answered correctly 7+ days in a row. Legendary!</p>
-        </div>
-
-        <div class="fan-rank" id="result-rank"></div>
-        <p style="color:rgba(255,255,255,0.45); font-size:0.95rem; margin-bottom:2rem;" id="result-best-msg"></p>
-
-        <div style="display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;">
-          <a href="games.html" class="btn btn-glow">🎮 More Games</a>
-          <a href="leaderboard.html" class="btn">🏆 Leaderboard</a>
-        </div>
-      </div>
-
-      <!-- ══ DONE SCREEN (already played today) ══ -->
-      <div id="screen-done">
+      <!-- ══ LOCK SCREEN (already played today) ══ -->
+      <div id="daily-lock" style="display:none;">
         <span class="lock-icon">🔒</span>
         <h2 style="font-size: 2.5rem; font-weight: 900; margin-bottom: 0.5rem;">Come Back Tomorrow!</h2>
-        <p style="color:rgba(255,255,255,0.5); margin-bottom:0.5rem;">You've already completed today's challenge.</p>
-
+        <p style="color:rgba(255,255,255,0.5); margin-bottom:1rem;">You've already completed today's challenge.</p>
         <div class="streak-badge" style="margin: 1rem auto; display:inline-flex;">
           <span class="fire">🔥</span>
-          <span id="done-streak">0</span> Day Streak
+          <span id="daily-streak">0</span> Day Streak
         </div>
-
-        <div class="champion-banner" id="done-champion" style="display:none;">
+        <div class="champion-banner" id="daily-champion-badge" style="display:none;">
           <h3>👑 Daily Champion Status Active</h3>
           <p>Keep answering daily to maintain your legendary status!</p>
         </div>
-
+        <div class="pb-grid" style="margin-top:1.5rem;">
+          <div class="pb-stat">
+            <div class="pb-num" id="daily-best-streak">0</div>
+            <div class="pb-lbl">Best Streak 🏆</div>
+          </div>
+        </div>
         <!-- Countdown to midnight -->
-        <div class="countdown-wrap">
+        <div class="countdown-wrap" style="margin-top:1.5rem;">
           <div class="countdown-label">Next challenge unlocks in</div>
           <div class="countdown-digits">
             <div class="countdown-block">
@@ -153,29 +79,49 @@
             </div>
           </div>
         </div>
-
-        <!-- Yesterday's answer -->
-        <div class="yesterday-reveal" id="yesterday-reveal" style="display:none;">
-          <div class="ylbl">Yesterday's Question</div>
-          <div class="yq" id="yesterday-q">—</div>
-          <div class="ya" id="yesterday-a">—</div>
-        </div>
-
-        <!-- Personal bests -->
-        <div class="pb-grid" style="margin-top:1.5rem;">
-          <div class="pb-stat">
-            <div class="pb-num" id="done-pb-streak">0</div>
-            <div class="pb-lbl">Current Streak</div>
-          </div>
-          <div class="pb-stat">
-            <div class="pb-num" id="done-pb-best">0</div>
-            <div class="pb-lbl">Best Streak 🏆</div>
-          </div>
-        </div>
-
         <div style="margin-top: 2rem; display:flex; gap: 1rem; justify-content:center; flex-wrap:wrap;">
           <a href="games.html" class="btn btn-glow">🎮 Other Games</a>
           <a href="trivia.html" class="btn">🧠 Trivia Quiz</a>
+        </div>
+      </div>
+
+      <!-- ══ GAME SCREEN ══ -->
+      <div id="daily-game">
+        <span class="start-deco">⚡</span>
+        <div class="date-badge" id="today-date-lbl">Loading…</div>
+        <h2 style="font-size: 2.8rem; font-weight: 900; margin-bottom: 0.8rem;">Today's Challenge</h2>
+        <p style="font-size: 1.15rem; color: rgba(255,255,255,0.55); margin-bottom: 1.5rem; max-width: 500px; margin-left:auto; margin-right:auto; line-height:1.7;">
+          One special BLACKPINK trivia question refreshes every day at midnight. Answer correctly to extend your 🔥 streak!
+        </p>
+        <div class="streak-badge" id="start-streak-badge">
+          <span class="fire">🔥</span>
+          <span id="start-streak-num">0</span> Day Streak
+        </div>
+        <div class="question-card" style="margin-top:2rem;">
+          <div class="q-label">Today's Question</div>
+          <p id="daily-question-text">Loading…</p>
+        </div>
+        <div class="options-grid" id="daily-options"></div>
+        <div class="feedback-box" id="dc-feedback"></div>
+      </div>
+
+      <!-- ══ RESULT SCREEN ══ -->
+      <div id="daily-result" style="display:none;">
+        <span class="result-correct" id="result-emoji">✅</span>
+        <h2 style="font-size:2.5rem; font-weight:900; margin-bottom:0.4rem;" id="daily-result-text">Correct!</h2>
+        <p style="color:rgba(255,255,255,0.5); margin-bottom:0.5rem;" id="result-subtitle"></p>
+        <div class="streak-badge" style="margin: 1.5rem auto; display:inline-flex;">
+          <span class="fire">🔥</span>
+          <span id="daily-result-streak">0</span> Day Streak!
+        </div>
+        <div class="champion-banner" id="result-champion" style="display:none;">
+          <h3>👑 Daily Champion Unlocked!</h3>
+          <p>You've answered correctly 7+ days in a row. Legendary!</p>
+        </div>
+        <div class="fan-rank" id="daily-result-rank"></div>
+        <div style="display:flex; gap:1rem; justify-content:center; flex-wrap:wrap; margin-top:2rem;">
+          <a href="games.html" class="btn btn-glow">🎮 More Games</a>
+          <a href="leaderboard.html" class="btn">🏆 Leaderboard</a>
         </div>
       </div>
 
@@ -186,11 +132,6 @@
     <p>Created with 💖 by <a href="https://github.com/HemantTheCoder" target="_blank">Hemant</a></p>
   </footer>
 
-  
-
-  
-  <!-- Back to Top -->
-  
   <!-- Back to Top -->
   <button id="back-to-top" aria-label="Back to top">&#8593;</button>
 
