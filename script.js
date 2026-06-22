@@ -19,10 +19,15 @@ const ytPlaylist = [
   { title: "Ice Cream (ft. Selena Gomez)", artist: "BLACKPINK", videoId: "vjCZ0qYRDFQ" },
   { title: "Pink Venom", artist: "BLACKPINK", videoId: "gQlMMD8auMs" },
   { title: "Shut Down", artist: "BLACKPINK", videoId: "POe9SOEKotk" },
+  { title: "Typa Girl", artist: "BLACKPINK", videoId: "EofZqYjK9wE" },
+  { title: "SOLO", artist: "Jennie", videoId: "b73BI9eUkjM" },
+  { title: "Mantra", artist: "Jennie", videoId: "b1mXq-iH6yM" },
+  { title: "On The Ground", artist: "Rose", videoId: "VdOioq-I-Xw" },
   { title: "APT.", artist: "Rose ft. Bruno Mars", videoId: "ekr2nIex040" },
+  { title: "Lalisa", artist: "Lisa", videoId: "awkkyBH2zEo" },
   { title: "Rockstar", artist: "Lisa", videoId: "gdFRYP7PmkI" },
   { title: "FLOWER", artist: "Jisoo", videoId: "YudHcBIxlYw" },
-  { title: "Lalisa", artist: "Lisa", videoId: "awkkyBH2zEo" },
+  { title: "All Eyes On Me", artist: "Jisoo", videoId: "yJ95X6pYxQk" }
 ];
 
 let ytPlayer = null;
@@ -46,7 +51,7 @@ window.onYouTubeIframeAPIReady = function () {
     height: '170',
     width: '296',
     videoId: ytPlaylist[ytCurrentTrack].videoId,
-    playerVars: { autoplay: 0, modestbranding: 1, rel: 0, iv_load_policy: 3 },
+    playerVars: { autoplay: 1, modestbranding: 1, rel: 0, iv_load_policy: 3 },
     events: {
       onReady: function () {
         ytPlayerReady = true;
