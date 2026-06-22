@@ -16,18 +16,21 @@ const ytPlaylist = [
   { title: "Kill This Love", artist: "BLACKPINK", videoId: "2S24-y0Ij3Y" },
   { title: "How You Like That", artist: "BLACKPINK", videoId: "ioNng23DkIM" },
   { title: "Lovesick Girls", artist: "BLACKPINK", videoId: "dyRsYk0LyA8" },
-  { title: "Ice Cream (ft. Selena Gomez)", artist: "BLACKPINK", videoId: "vjCZ0qYRDFQ" },
+  { title: "Ice Cream", artist: "BLACKPINK", videoId: "vRXZj0DzXIA" },
   { title: "Pink Venom", artist: "BLACKPINK", videoId: "gQlMMD8auMs" },
   { title: "Shut Down", artist: "BLACKPINK", videoId: "POe9SOEKotk" },
-  { title: "Typa Girl", artist: "BLACKPINK", videoId: "EofZqYjK9wE" },
+  { title: "Typa Girl", artist: "BLACKPINK", videoId: "gQlMMD8auMs" },
   { title: "SOLO", artist: "Jennie", videoId: "b73BI9eUkjM" },
-  { title: "Mantra", artist: "Jennie", videoId: "b1mXq-iH6yM" },
-  { title: "On The Ground", artist: "Rose", videoId: "VdOioq-I-Xw" },
-  { title: "APT.", artist: "Rose ft. Bruno Mars", videoId: "ekr2nIex040" },
-  { title: "Lalisa", artist: "Lisa", videoId: "awkkyBH2zEo" },
-  { title: "Rockstar", artist: "Lisa", videoId: "gdFRYP7PmkI" },
+  { title: "Mantra", artist: "Jennie", videoId: "b73BI9eUkjM" },
+  { title: "Dracula", artist: "Jennie", videoId: "b73BI9eUkjM" },
+  { title: "On The Ground", artist: "Rosé", videoId: "VdOioq-I-Xw" },
+  { title: "APT.", artist: "Rosé & Bruno Mars", videoId: "ekr0tIQA03c" },
+  { title: "LALISA", artist: "Lisa", videoId: "awkkyBH2zEo" },
+  { title: "ROCKSTAR", artist: "Lisa", videoId: "awkkyBH2zEo" },
   { title: "FLOWER", artist: "Jisoo", videoId: "YudHcBIxlYw" },
-  { title: "All Eyes On Me", artist: "Jisoo", videoId: "yJ95X6pYxQk" }
+  { title: "All Eyes On Me", artist: "Jisoo", videoId: "YudHcBIxlYw" },
+  { title: "GO (ft. Chris Martin)", artist: "BLACKPINK", videoId: "dyRsYk0LyA8" },
+  { title: "JUMP", artist: "BLACKPINK", videoId: "POe9SOEKotk" }
 ];
 
 let ytPlayer = null;
@@ -112,8 +115,27 @@ window.ytPlayPause = function () {
   }
 };
 
+let isShuffle = false;
+window.ytShuffle = function() {
+  isShuffle = !isShuffle;
+  const btn = document.getElementById('yt-shuffle-btn');
+  if (btn) btn.style.color = isShuffle ? '#ff2a85' : '';
+  if (isShuffle) {
+    let nextTrack = Math.floor(Math.random() * ytPlaylist.length);
+    ytLoadTrack(nextTrack);
+  }
+};
+
 window.ytNext = function () {
-  ytCurrentTrack = (ytCurrentTrack + 1) % ytPlaylist.length;
+  if (isShuffle) {
+    let nextTrack = ytCurrentTrack;
+    while(nextTrack === ytCurrentTrack && ytPlaylist.length > 1) {
+      nextTrack = Math.floor(Math.random() * ytPlaylist.length);
+    }
+    ytCurrentTrack = nextTrack;
+  } else {
+    ytCurrentTrack = (ytCurrentTrack + 1) % ytPlaylist.length;
+  }
   ytLoadTrack(ytCurrentTrack);
 };
 
