@@ -8,7 +8,7 @@ if (loc.indexOf('http://') == 0 && !loc.includes('localhost') && !loc.includes('
 // YOUTUBE MUSIC PLAYER
 // =============================================
 const ytPlaylist = [
-  { title: "Whistle", artist: "BLACKPINK", videoId: "dISNgvVpSIM" },
+  { title: "Whistle", artist: "BLACKPINK", videoId: "dISNgvVpWlo" },
   { title: "Boombayah", artist: "BLACKPINK", videoId: "bwmSjveL3Lc" },
   { title: "Playing With Fire", artist: "BLACKPINK", videoId: "9pdj4iJD08s" },
   { title: "As If It's Your Last", artist: "BLACKPINK", videoId: "Amq-qlqbjYA" },
@@ -19,18 +19,18 @@ const ytPlaylist = [
   { title: "Ice Cream", artist: "BLACKPINK", videoId: "vRXZj0DzXIA" },
   { title: "Pink Venom", artist: "BLACKPINK", videoId: "gQlMMD8auMs" },
   { title: "Shut Down", artist: "BLACKPINK", videoId: "POe9SOEKotk" },
-  { title: "Typa Girl", artist: "BLACKPINK", videoId: "gQlMMD8auMs" },
+  { title: "Typa Girl", artist: "BLACKPINK", videoId: "UhxW9Njqqu0" },
   { title: "SOLO", artist: "Jennie", videoId: "b73BI9eUkjM" },
-  { title: "Mantra", artist: "Jennie", videoId: "b73BI9eUkjM" },
-  { title: "Dracula", artist: "Jennie", videoId: "b73BI9eUkjM" },
+  { title: "Mantra", artist: "Jennie", videoId: "bB3-CUMERIU" },
+  { title: "Dracula", artist: "Jennie", videoId: "0UPDBODtxzw" },
   { title: "On The Ground", artist: "Rosé", videoId: "VdOioq-I-Xw" },
   { title: "APT.", artist: "Rosé & Bruno Mars", videoId: "ekr0tIQA03c" },
   { title: "LALISA", artist: "Lisa", videoId: "awkkyBH2zEo" },
-  { title: "ROCKSTAR", artist: "Lisa", videoId: "awkkyBH2zEo" },
+  { title: "ROCKSTAR", artist: "Lisa", videoId: "hbcGx4MGUMg" },
   { title: "FLOWER", artist: "Jisoo", videoId: "YudHcBIxlYw" },
-  { title: "All Eyes On Me", artist: "Jisoo", videoId: "YudHcBIxlYw" },
-  { title: "GO (ft. Chris Martin)", artist: "BLACKPINK", videoId: "dyRsYk0LyA8" },
-  { title: "JUMP", artist: "BLACKPINK", videoId: "POe9SOEKotk" }
+  { title: "All Eyes On Me", artist: "Jisoo", videoId: "NuxAOC6RU9c" },
+  { title: "GO (ft. Chris Martin)", artist: "BLACKPINK", videoId: "2GJfWMYCWY0" },
+  { title: "JUMP", artist: "BLACKPINK", videoId: "CgCVZdcKcqY" }
 ];
 
 let ytPlayer = null;
