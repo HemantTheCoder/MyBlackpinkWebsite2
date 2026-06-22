@@ -7,216 +7,36 @@
   <title>Guess the Lyrics - Blackpink</title>
   <link rel="stylesheet" href="styles.css">
   <script src="script.js" defer></script>
-  <style>
-    .game-container {
-      background: var(--glass-bg);
-      border: 1px solid var(--glass-border);
-      border-radius: 24px;
-      padding: 3.5rem 3rem;
-      max-width: 860px;
-      margin: 0 auto;
-      text-align: center;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,42,133,0.08);
-      backdrop-filter: blur(16px);
-      position: relative;
-      overflow: hidden;
-    }
-    .game-container::before {
-      content: '';
-      position: absolute;
-      top: -60px; left: -60px;
-      width: 220px; height: 220px;
-      background: radial-gradient(circle, rgba(255,42,133,0.18) 0%, transparent 70%);
-      pointer-events: none;
-    }
-    .game-container::after {
-      content: '';
-      position: absolute;
-      bottom: -60px; right: -60px;
-      width: 220px; height: 220px;
-      background: radial-gradient(circle, rgba(168,85,247,0.15) 0%, transparent 70%);
-      pointer-events: none;
-    }
-    .score-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.8rem;
-      background: linear-gradient(135deg, rgba(255,42,133,0.25), rgba(168,85,247,0.15));
-      border: 1px solid rgba(255,42,133,0.4);
-      color: white;
-      padding: 0.6rem 1.8rem;
-      border-radius: 50px;
-      font-weight: 700;
-      font-size: 1.1rem;
-      box-shadow: 0 4px 15px rgba(255,42,133,0.25);
-      margin-bottom: 1.5rem;
-    }
-    .score-badge span { color: var(--bp-pink); font-size: 1.3rem; }
-    .progress-wrap {
-      width: 100%;
-      height: 6px;
-      background: rgba(255,255,255,0.08);
-      border-radius: 3px;
-      overflow: hidden;
-      margin: 1.2rem 0 2rem;
-    }
-    .progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--bp-pink), #a855f7);
-      border-radius: 3px;
-      transition: width 0.5s ease;
-      box-shadow: 0 0 8px var(--bp-pink-glow);
-    }
-    .lyric-card {
-      background: rgba(255,42,133,0.06);
-      border: 1px solid rgba(255,42,133,0.2);
-      border-radius: 18px;
-      padding: 2.2rem 2rem;
-      margin: 0 0 2.5rem;
-      position: relative;
-    }
-    .lyric-card::before {
-      content: '🎵';
-      position: absolute;
-      top: -14px; left: 50%;
-      transform: translateX(-50%);
-      font-size: 1.6rem;
-      background: #0a0a0d;
-      padding: 0 8px;
-    }
-    .lyric-label {
-      font-size: 0.8rem;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      color: rgba(255,42,133,0.7);
-      font-weight: 600;
-      margin-bottom: 1rem;
-    }
-    #lyric-text {
-      font-size: 1.9rem;
-      line-height: 1.6;
-      font-weight: 800;
-      font-style: italic;
-      color: #fff;
-      text-shadow: 0 2px 10px rgba(0,0,0,0.5);
-    }
-    .blank-word {
-      display: inline-block;
-      background: linear-gradient(135deg, var(--bp-pink), #a855f7);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      font-style: normal;
-      font-size: 2rem;
-      letter-spacing: 4px;
-      animation: blankPulse 1.5s ease-in-out infinite;
-    }
-    @keyframes blankPulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.4; }
-    }
-    .hint-text {
-      font-size: 0.9rem;
-      color: rgba(255,255,255,0.4);
-      margin-top: 0.8rem;
-    }
-    .hint-text em { color: var(--bp-pink); font-style: normal; font-weight: 700; }
-    .options-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1.2rem;
-    }
-    .option-btn {
-      background: rgba(255,255,255,0.04);
-      border: 2px solid rgba(255,255,255,0.1);
-      color: white;
-      padding: 1.4rem 1rem;
-      border-radius: 16px;
-      font-size: 1.1rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      backdrop-filter: blur(6px);
-      font-family: 'Outfit', sans-serif;
-      letter-spacing: 0.3px;
-    }
-    .option-btn:hover {
-      background: rgba(255,42,133,0.15);
-      border-color: var(--bp-pink);
-      transform: translateY(-4px) scale(1.02);
-      box-shadow: 0 10px 25px var(--bp-pink-glow);
-    }
-    .option-btn.correct {
-      background: rgba(0,255,136,0.15) !important;
-      border-color: #00ff88 !important;
-      color: #00ff88 !important;
-      transform: scale(1.04) !important;
-      box-shadow: 0 0 30px rgba(0,255,136,0.35) !important;
-    }
-    .option-btn.wrong {
-      background: rgba(255,51,51,0.15) !important;
-      border-color: #ff4444 !important;
-      color: #ff4444 !important;
-      transform: scale(0.96) !important;
-    }
-    .option-btn:disabled { pointer-events: none; }
-    .fan-rank {
-      font-size: 2.6rem;
-      color: var(--bp-pink);
-      text-shadow: 0 0 30px var(--bp-pink-glow);
-      margin: 1.5rem 0 0.5rem;
-      font-weight: 900;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-    }
-    .rank-desc { font-size: 1.1rem; color: rgba(255,255,255,0.6); margin-bottom: 2rem; }
-    .result-score-circle {
-      width: 140px; height: 140px;
-      border-radius: 50%;
-      background: conic-gradient(var(--bp-pink) 0%, var(--bp-pink) var(--pct,0%), rgba(255,255,255,0.08) var(--pct,0%));
-      display: flex; align-items: center; justify-content: center;
-      margin: 1rem auto 0;
-      box-shadow: 0 0 40px rgba(255,42,133,0.3);
-    }
-    .result-score-inner {
-      width: 110px; height: 110px;
-      border-radius: 50%;
-      background: #0a0a0d;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-    }
-    .result-score-num { font-size: 2.8rem; font-weight: 900; color: #fff; line-height: 1; }
-    .result-score-of { font-size: 1rem; color: rgba(255,255,255,0.4); }
-    .start-deco { font-size: 5rem; display: block; margin-bottom: 1rem; animation: floatDeco 3s ease-in-out infinite; }
-    @keyframes floatDeco { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
-    #game-active, #game-result { display: none; }
-    #leaderboard-msg { font-size: 1.1rem; margin-bottom: 1.5rem; display: none; font-weight: 700; }
-    .answer-reveal {
-      margin-top: 1rem;
-      padding: 0.8rem 1.4rem;
-      background: rgba(255,42,133,0.12);
-      border: 1px solid rgba(255,42,133,0.3);
-      border-radius: 10px;
-      font-size: 1rem;
-      color: rgba(255,255,255,0.8);
-      display: none;
-    }
-    .answer-reveal strong { color: var(--bp-pink); }
-    @media (max-width: 600px) {
-      .game-container { padding: 2.5rem 1.5rem; }
-      .options-grid { grid-template-columns: 1fr; }
-      #lyric-text { font-size: 1.4rem; }
-    }
-  </style>
+  
 </head>
 <body>
-
   <div id="loading-screen">
     <div class="loading-logo">BLACKPINK</div>
     <div class="loading-bar"><div class="loading-fill"></div></div>
   </div>
 
   <div id="page-transition"></div>
+
+
+  <!-- Loading Screen -->
+  
+  </div>
+
+  <!-- Page Transition Overlay -->
+  
+
+
+  <!-- Lightstick Canvas Background -->
+  <canvas id="lightstick-canvas"></canvas>
+
+  <!-- Era Toggle Button -->
+  <button id="era-toggle-btn" onclick="cycleEra()">&#x1F5A4; Original</button>
+
+
+  
+  </div>
+
+  
 
   <header class="hero" style="height: 35vh; background: radial-gradient(ellipse at 30% 50%, rgba(255,42,133,0.25) 0%, transparent 60%), radial-gradient(ellipse at 70% 50%, rgba(168,85,247,0.2) 0%, transparent 60%), linear-gradient(180deg, #0a0a0d 0%, #13051b 100%);">
     <div class="hero-content">
@@ -232,7 +52,7 @@
 
     <div class="game-container" id="game-ui">
 
-      <div id="game-start">
+      <div id="lyrics-start">
         <span class="start-deco">🎵</span>
         <h2 style="font-size: 2.8rem; font-weight: 900; margin-bottom: 1rem;">Fill in the Blank!</h2>
         <p style="font-size: 1.15rem; color: rgba(255,255,255,0.6); margin-bottom: 0.8rem; max-width: 520px; margin-left: auto; margin-right: auto; line-height: 1.7;">
@@ -255,32 +75,32 @@
         <button class="btn btn-glow" style="font-size: 1.4rem; padding: 1.2rem 4rem;" onclick="startLyricsGame()">Start Game ▶</button>
       </div>
 
-      <div id="game-active">
+      <div id="lyrics-active">
         <div class="score-badge">
-          Round <span id="q-counter">1</span>/10 &nbsp;|&nbsp; Score: <span id="score-text">0</span>
+          Round <span id="lyrics-q-counter">1</span>/10 &nbsp;|&nbsp; Score: <span id="lyrics-score-text">0</span>
         </div>
         <div class="progress-wrap">
           <div class="progress-fill" id="progress-fill" style="width:0%"></div>
         </div>
         <div class="lyric-card">
           <div class="lyric-label">Complete the lyric</div>
-          <p id="lyric-text">Loading…</p>
+          <p id="lyrics-question">Loading…</p>
           <div class="hint-text">Missing word: <em id="hint-letter">?</em></div>
         </div>
         <div id="answer-reveal" class="answer-reveal"></div>
-        <div class="options-grid" id="options-container"></div>
+        <div class="options-grid" id="lyrics-options"></div>
       </div>
 
-      <div id="game-result">
+      <div id="lyrics-result">
         <h2 style="font-size:2.5rem; font-weight:900; margin-bottom:0.5rem;">Game Over! 🎉</h2>
         <p style="color:rgba(255,255,255,0.5); margin-bottom:1rem;">Here's how you did:</p>
         <div class="result-score-circle" id="result-circle">
           <div class="result-score-inner">
-            <span class="result-score-num" id="final-score">0</span>
+            <span class="result-score-num" id="lyrics-final-score">0</span>
             <span class="result-score-of">/ 10</span>
           </div>
         </div>
-        <div class="fan-rank" id="fan-rank">Baby Blink</div>
+        <div class="fan-rank" id="lyrics-fan-rank">Baby Blink</div>
         <div class="rank-desc" id="rank-desc"></div>
         <p id="leaderboard-msg"></p>
         <div style="display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;">
@@ -296,135 +116,36 @@
     <p>Created with 💖 by <a href="https://github.com/HemantTheCoder" target="_blank">Hemant</a></p>
   </footer>
 
-  <button id="back-to-top" aria-label="Back to top">↑</button>
+  
+
+  <!-- Back to Top -->
+  <button id="back-to-top" aria-label="Back to top">&#8593;</button>
+
+  <!-- Toast Container -->
   <div id="toast-container"></div>
 
+  <!-- YouTube Music Player Widget -->
   <div id="music-player">
     <div class="player-toggle" onclick="toggleMusicPlayer()">
-      <span id="player-toggle-icon">▼</span>
+      <span class="player-toggle-label">&#127925; BLACKPINK Music</span>
+      <span id="player-toggle-icon">&#9660;</span>
     </div>
     <div id="player-body">
-      <div class="player-info">
-        <div class="player-title">🎵 BLACKPINK Music</div>
-        <div id="yt-track-name" class="player-track">Whistle</div>
+      <div class="player-track-info">
+        <div class="player-track-title" id="yt-track-name">Whistle</div>
+        <div class="player-track-artist" id="yt-track-artist">BLACKPINK</div>
       </div>
       <div id="yt-player-container">
         <div id="yt-player"></div>
       </div>
       <div class="player-controls">
-        <button class="ctrl-btn" onclick="ytPrev()">⏮</button>
-        <button class="ctrl-btn" id="yt-play-btn" onclick="ytPlayPause()">▶</button>
-        <button class="ctrl-btn" onclick="ytNext()">⏭</button>
+        <button class="ctrl-btn" onclick="ytPrev()" title="Previous">&#9198;</button>
+        <button class="ctrl-btn play-pause" id="yt-play-btn" onclick="ytPlayPause()" title="Play/Pause">&#9654;</button>
+        <button class="ctrl-btn" onclick="ytNext()" title="Next">&#9197;</button>
       </div>
       <div class="player-tracklist" id="player-tracklist"></div>
     </div>
   </div>
-
-  <script>
-  const lyricsData = [
-    { lyrics: "I'll ____ it loud, I say it bold, I'm done, I'm done", blanked: "SAY", song: "Kill This Love", opts: ["Kill This Love", "How You Like That", "Lovesick Girls", "Shut Down"] },
-    { lyrics: "Ddu-du ddu-du du, ddu-du ddu-du du, ddu-du ____", blanked: "DDU-DU", song: "DDU-DU DDU-DU", opts: ["DDU-DU DDU-DU", "Boombayah", "Pink Venom", "Whistle"] },
-    { lyrics: "나쁜 놈, 나쁜 놈, how you like ____", blanked: "THAT", song: "How You Like That", opts: ["How You Like That", "Ice Cream", "Pretty Savage", "Lovesick Girls"] },
-    { lyrics: "We were born to be ____, lovesick girls", blanked: "ALONE", song: "Lovesick Girls", opts: ["Lovesick Girls", "As If It's Your Last", "Stay", "Hope Not"] },
-    { lyrics: "Let you be the ____ to my rock-et", blanked: "FUEL", song: "Boombayah", opts: ["Boombayah", "Whistle", "Playing With Fire", "Stay"] },
-    { lyrics: "Boy you know you got that ____, whistle baby", blanked: "SWING", song: "Whistle", opts: ["Whistle", "Stay", "Boombayah", "As If It's Your Last"] },
-    { lyrics: "우리가 헤어지는 건 ____ 때문에", blanked: "우리", song: "Stay", opts: ["Stay", "Hope Not", "You Never Know", "Whistle"] },
-    { lyrics: "Ice cream, chillin' chillin', ____ on top", blanked: "DRIP", song: "Ice Cream", opts: ["Ice Cream", "As If It's Your Last", "Lovesick Girls", "Pretty Savage"] },
-    { lyrics: "Shut down the ____! BLACKPINK!", blanked: "CITY", song: "Shut Down", opts: ["Shut Down", "Pink Venom", "Typa Girl", "Yeah Yeah Yeah"] },
-    { lyrics: "My ____ venom, my pink poison", blanked: "PINK", song: "Pink Venom", opts: ["Pink Venom", "Shut Down", "Tally", "Hard To Love"] },
-    { lyrics: "우린 사랑이 ____ 아파도", blanked: "이별이라", song: "As If It's Your Last", opts: ["As If It's Your Last", "Forever Young", "See U Later", "Playing With Fire"] },
-    { lyrics: "I set fire to the ____, yeah I like it like that", blanked: "RAIN", song: "Playing With Fire", opts: ["Playing With Fire", "Stay", "Whistle", "As If It's Your Last"] },
-    { lyrics: "APT, APT, ____, APT", blanked: "APT", song: "APT.", opts: ["APT.", "Flower", "On The Ground", "Gone"] },
-    { lyrics: "I'm right here. Oh 꽃이 ____", blanked: "피었습니다", song: "Flower", opts: ["Flower", "Rockstar", "Mantra", "On The Ground"] },
-    { lyrics: "I'm a savage, ____ me wanna have it", blanked: "MAKE", song: "Pretty Savage", opts: ["Pretty Savage", "Lovesick Girls", "Typa Girl", "Kick It"] }
-  ];
-
-  const fanRanks = [
-    { min: 10, rank: "Ultimate Blink 👑", desc: "You know every single word! Absolute legend." },
-    { min:  8, rank: "Dedicated Stan 💖", desc: "You've been streaming non-stop. We see you!" },
-    { min:  5, rank: "Casual Listener 🎵", desc: "You know the hits! Keep listening and level up." },
-    { min:  0, rank: "Baby Blink 🌸",     desc: "Just getting started. BLACKPINK in your area!" }
-  ];
-
-  let lyricsPool = [];
-  let lyricsCurrentQ = 0;
-  let lyricsScore = 0;
-  const TOTAL_ROUNDS = 10;
-
-  window.startLyricsGame = function() {
-    lyricsPool = [...lyricsData].sort(() => 0.5 - Math.random()).slice(0, TOTAL_ROUNDS);
-    lyricsCurrentQ = 0;
-    lyricsScore = 0;
-    document.getElementById('game-start').style.display = 'none';
-    document.getElementById('game-result').style.display = 'none';
-    document.getElementById('game-active').style.display = 'block';
-    loadLyricsQuestion();
-  };
-
-  function loadLyricsQuestion() {
-    if (lyricsCurrentQ >= lyricsPool.length) { showLyricsResults(); return; }
-    const qData = lyricsPool[lyricsCurrentQ];
-    const pct = (lyricsCurrentQ / TOTAL_ROUNDS) * 100;
-    document.getElementById('q-counter').textContent = lyricsCurrentQ + 1;
-    document.getElementById('score-text').textContent = lyricsScore;
-    document.getElementById('progress-fill').style.width = pct + '%';
-    const lyricsHTML = qData.lyrics.replace('____', '<span class="blank-word">____</span>');
-    document.getElementById('lyric-text').innerHTML = '"' + lyricsHTML + '"';
-    document.getElementById('hint-letter').textContent = qData.blanked;
-    document.getElementById('answer-reveal').style.display = 'none';
-    const container = document.getElementById('options-container');
-    container.innerHTML = '';
-    const shuffled = [...qData.opts].sort(() => 0.5 - Math.random());
-    const correctIdx = shuffled.indexOf(qData.song);
-    shuffled.forEach((opt, i) => {
-      const btn = document.createElement('button');
-      btn.className = 'option-btn';
-      btn.innerHTML = '<span style="opacity:0.4;font-size:0.85rem;margin-right:0.5rem">' + String.fromCharCode(65+i) + '</span> ' + opt;
-      btn.onclick = () => selectLyricsAnswer(i, correctIdx, btn, qData.song);
-      container.appendChild(btn);
-    });
-  }
-
-  function selectLyricsAnswer(selectedIdx, correctIdx, btnEl, correctSong) {
-    const buttons = document.querySelectorAll('#options-container .option-btn');
-    buttons.forEach(b => b.disabled = true);
-    if (selectedIdx === correctIdx) {
-      btnEl.classList.add('correct');
-      lyricsScore++;
-    } else {
-      btnEl.classList.add('wrong');
-      buttons[correctIdx].classList.add('correct');
-      const rev = document.getElementById('answer-reveal');
-      rev.innerHTML = '✨ The answer was: <strong>' + correctSong + '</strong>';
-      rev.style.display = 'block';
-    }
-    document.getElementById('score-text').textContent = lyricsScore;
-    setTimeout(() => { lyricsCurrentQ++; loadLyricsQuestion(); }, 1200);
-  }
-
-  function showLyricsResults() {
-    document.getElementById('game-active').style.display = 'none';
-    document.getElementById('game-result').style.display = 'block';
-    document.getElementById('final-score').textContent = lyricsScore;
-    const pct = (lyricsScore / TOTAL_ROUNDS) * 100;
-    document.getElementById('result-circle').style.setProperty('--pct', pct + '%');
-    const rankData = fanRanks.find(r => lyricsScore >= r.min) || fanRanks[fanRanks.length - 1];
-    document.getElementById('fan-rank').textContent = rankData.rank;
-    document.getElementById('rank-desc').textContent = rankData.desc;
-    const prev = parseInt(localStorage.getItem('lyricsHighScore') || '0');
-    const msgEl = document.getElementById('leaderboard-msg');
-    msgEl.style.display = 'block';
-    if (lyricsScore > prev) {
-      localStorage.setItem('lyricsHighScore', lyricsScore);
-      msgEl.textContent = '🏆 New High Score Saved!';
-      msgEl.style.color = '#00ff88';
-    } else {
-      msgEl.textContent = 'Your best: ' + prev + '/10';
-      msgEl.style.color = 'rgba(255,255,255,0.5)';
-    }
-    document.getElementById('progress-fill').style.width = '100%';
-  }
-  </script>
 
 </body>
 </html>

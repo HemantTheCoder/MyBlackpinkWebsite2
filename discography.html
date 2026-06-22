@@ -7,133 +7,36 @@
   <title>Discography - Blackpink</title>
   <link rel="stylesheet" href="styles.css">
   <script src="script.js" defer></script>
-  <style>
-    #loading-screen {
-      position:fixed;inset:0;background:#050508;display:flex;flex-direction:column;
-      align-items:center;justify-content:center;z-index:9999;
-      transition:opacity 0.6s ease,visibility 0.6s ease;
-    }
-    #loading-screen.hidden{opacity:0;visibility:hidden;pointer-events:none;}
-    .loading-logo{
-      font-size:3rem;font-weight:900;letter-spacing:6px;
-      background:linear-gradient(to right,#fff,var(--bp-pink),#fff);
-      background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;
-      animation:shine 2s linear infinite;
-    }
-    .loading-bar{width:260px;height:4px;background:rgba(255,255,255,0.1);border-radius:4px;margin-top:2rem;overflow:hidden;}
-    .loading-fill{height:100%;width:0;background:linear-gradient(90deg,var(--bp-pink),#ff66b2);border-radius:4px;animation:load-progress 1.8s ease forwards;}
-    @keyframes load-progress{to{width:100%;}}
-    #page-transition{position:fixed;inset:0;background:var(--bp-pink);transform:scaleY(0);transform-origin:bottom;z-index:8888;pointer-events:none;}
-    .hero{height:38vh;}
-    .hero h1{font-size:clamp(2rem,6vw,4rem);margin-bottom:0.5rem;}
-    .hero-sub{color:rgba(255,255,255,0.7);font-size:1.1rem;font-weight:300;letter-spacing:3px;margin-top:0.5rem;}
-    .era-tabs{display:flex;flex-wrap:wrap;justify-content:center;gap:0.6rem;margin:2.5rem 0 3rem;}
-    .era-tab{
-      padding:10px 20px;border-radius:50px;font-size:0.85rem;font-weight:700;letter-spacing:1.5px;
-      text-transform:uppercase;cursor:pointer;border:1.5px solid rgba(255,42,133,0.3);
-      background:rgba(255,42,133,0.05);color:#ccc;font-family:'Outfit',sans-serif;
-      transition:all 0.3s cubic-bezier(0.175,0.885,0.32,1.275);user-select:none;
-    }
-    .era-tab:hover{border-color:var(--bp-pink);color:#fff;transform:translateY(-2px);}
-    .era-tab.active{
-      background:var(--bp-pink);color:#fff;border-color:var(--bp-pink);
-      box-shadow:0 0 20px var(--bp-pink-glow),0 0 40px rgba(255,42,133,0.3);
-      transform:translateY(-3px) scale(1.05);
-    }
-    .disco-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:2rem;margin-bottom:4rem;}
-    .era-card{
-      border-radius:20px;padding:0;overflow:hidden;position:relative;
-      background:var(--glass-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
-      border:1px solid var(--glass-border);box-shadow:0 8px 32px rgba(0,0,0,0.5);
-      opacity:0;transform:translateY(40px);
-      transition:opacity 0.6s ease,transform 0.6s cubic-bezier(0.175,0.885,0.32,1.275),box-shadow 0.4s ease,border-color 0.3s ease;
-    }
-    .era-card.revealed{opacity:1;transform:translateY(0);}
-    .era-card:hover{
-      transform:translateY(-10px) scale(1.02);
-      box-shadow:0 20px 50px rgba(0,0,0,0.6),0 0 30px var(--card-glow,var(--bp-pink-glow));
-      border-color:var(--card-accent,var(--bp-pink));
-    }
-    .era-card[data-era="SQUARE ONE"]{--card-accent:#ff2a85;--card-glow:rgba(255,42,133,0.5);}
-    .era-card[data-era="SQUARE TWO"]{--card-accent:#ff6b35;--card-glow:rgba(255,107,53,0.5);}
-    .era-card[data-era="SQUARE UP"]{--card-accent:#c471ed;--card-glow:rgba(196,113,237,0.5);}
-    .era-card[data-era="KILL THIS LOVE"]{--card-accent:#f44;--card-glow:rgba(255,68,68,0.5);}
-    .era-card[data-era="THE ALBUM"]{--card-accent:#ffd700;--card-glow:rgba(255,215,0,0.5);}
-    .era-card[data-era="BORN PINK"]{--card-accent:#ff69b4;--card-glow:rgba(255,105,180,0.5);}
-    .era-card[data-era="DEADLINE"]{--card-accent:#00d4ff;--card-glow:rgba(0,212,255,0.5);}
-    .era-card[data-era="SOLOS"]{--card-accent:#a78bfa;--card-glow:rgba(167,139,250,0.5);}
-    .card-banner{height:8px;background:linear-gradient(90deg,var(--card-accent,var(--bp-pink)),transparent);}
-    .card-body{padding:1.8rem;}
-    .era-badge{
-      display:inline-flex;align-items:center;gap:0.5rem;padding:4px 14px;border-radius:30px;
-      font-size:0.72rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;
-      background:rgba(255,255,255,0.06);border:1px solid var(--card-accent,var(--bp-pink));
-      color:var(--card-accent,var(--bp-pink));margin-bottom:1rem;
-    }
-    .type-badge{
-      font-size:0.68rem;padding:3px 10px;border-radius:20px;
-      background:var(--card-accent,var(--bp-pink));color:#000;font-weight:800;
-      letter-spacing:1px;text-transform:uppercase;display:inline-block;margin-left:0.5rem;vertical-align:middle;
-    }
-    .card-title{font-size:1.4rem;font-weight:800;color:#fff;margin-bottom:0.3rem;letter-spacing:0.5px;}
-    .card-year{color:var(--card-accent,var(--bp-pink));font-size:0.9rem;font-weight:600;margin-bottom:1rem;}
-    .track-list{list-style:none;padding:0;margin:1rem 0 1.5rem;}
-    .track-list li{
-      padding:0.4rem 0;border-bottom:1px solid rgba(255,255,255,0.05);
-      font-size:0.9rem;color:#ccc;display:flex;align-items:center;gap:0.5rem;transition:color 0.2s;
-    }
-    .track-list li:last-child{border-bottom:none;}
-    .track-list li:hover{color:var(--card-accent,var(--bp-pink));}
-    .track-num{color:var(--card-accent,var(--bp-pink));font-size:0.75rem;font-weight:700;min-width:20px;}
-    .spotify-btn{
-      display:flex;align-items:center;justify-content:center;gap:0.6rem;
-      width:100%;padding:10px;border-radius:30px;font-size:0.85rem;font-weight:700;
-      letter-spacing:1px;text-transform:uppercase;border:1.5px solid #1db954;
-      color:#1db954 !important;background:rgba(29,185,84,0.08);text-decoration:none;transition:all 0.3s ease;
-    }
-    .spotify-btn:hover{background:#1db954;color:#000 !important;box-shadow:0 0 20px rgba(29,185,84,0.5);transform:translateY(-2px);}
-    .era-card.hidden{display:none;}
-    #back-to-top{
-      position:fixed;bottom:90px;left:20px;background:var(--bp-pink);color:#fff;border:none;
-      width:45px;height:45px;border-radius:50%;font-size:1.2rem;cursor:pointer;z-index:999;
-      display:none;box-shadow:0 0 15px var(--bp-pink-glow);transition:all 0.3s ease;
-      align-items:center;justify-content:center;
-    }
-    #back-to-top.show{display:flex;}
-    #back-to-top:hover{transform:scale(1.1) translateY(-3px);}
-    #toast-container{position:fixed;top:20px;right:20px;z-index:10000;display:flex;flex-direction:column;gap:0.5rem;}
-    .toast{
-      background:rgba(20,20,25,0.95);backdrop-filter:blur(10px);border:1px solid var(--bp-pink);
-      border-radius:12px;padding:0.8rem 1.2rem;font-size:0.9rem;color:#fff;
-      animation:toast-in 0.3s ease,toast-out 0.3s ease 2.7s forwards;max-width:300px;
-    }
-    @keyframes toast-in{from{opacity:0;transform:translateX(30px);}to{opacity:1;transform:translateX(0);}}
-    @keyframes toast-out{from{opacity:1;}to{opacity:0;}}
-    #music-player{
-      position:fixed;bottom:20px;right:20px;background:var(--glass-bg);backdrop-filter:blur(15px);
-      -webkit-backdrop-filter:blur(15px);border:1px solid var(--bp-pink);border-radius:15px;
-      padding:15px;width:300px;box-shadow:0 10px 30px rgba(0,0,0,0.5);z-index:1000;
-      display:flex;flex-direction:column;gap:10px;
-    }
-    #music-player.collapsed #player-body{display:none;}
-    .player-toggle{text-align:center;cursor:pointer;color:var(--bp-pink);font-size:1.2rem;user-select:none;}
-    .player-info{text-align:center;}
-    .player-title{font-weight:700;font-size:0.85rem;color:var(--bp-pink);}
-    .player-track{font-size:0.8rem;color:#ccc;margin-top:2px;}
-    #yt-player{width:100%;height:0;}
-    .player-controls{display:flex;justify-content:center;gap:15px;}
-    .player-tracklist{max-height:100px;overflow-y:auto;font-size:0.75rem;color:#888;}
-    @media(max-width:600px){.disco-grid{grid-template-columns:1fr;}.era-tab{font-size:0.75rem;padding:8px 14px;}}
-  </style>
+  
 </head>
 <body>
-
   <div id="loading-screen">
     <div class="loading-logo">BLACKPINK</div>
     <div class="loading-bar"><div class="loading-fill"></div></div>
   </div>
 
   <div id="page-transition"></div>
+
+
+  <!-- Loading Screen -->
+  
+  </div>
+
+  <!-- Page Transition Overlay -->
+  
+
+
+  <!-- Lightstick Canvas Background -->
+  <canvas id="lightstick-canvas"></canvas>
+
+  <!-- Era Toggle Button -->
+  <button id="era-toggle-btn" onclick="cycleEra()">&#x1F5A4; Original</button>
+
+
+  
+  </div>
+
+  
 
   <header class="hero" style="background-attachment:fixed;background-position:center;background-size:cover;">
     <div class="hero-content">
@@ -144,9 +47,24 @@
 
   <main class="container">
 
-    <div class="text-center">
-      <a href="index.html" class="btn btn-glow" style="margin-bottom:1.5rem;">← Back to Home</a>
-    </div>
+    <!-- Navigation Buttons -->
+    <nav class="btn-group">
+      <a href="index.html" class="btn">&#127968; Home</a>
+      <a href="aboutmembers.html" class="btn">&#127915; Members</a>
+      <a href="discography.html" class="btn">&#127925; Discography</a>
+      <a href="timeline.html" class="btn">&#9203; Timeline</a>
+      <a href="records.html" class="btn">&#127942; Records</a>
+      <a href="gallery.html" class="btn">&#128247; Gallery</a>
+      <a href="worldtour.html" class="btn">&#127758; World Tour</a>
+      <a href="videos.html" class="btn">&#127909; Videos</a>
+      <a href="games.html" class="btn">&#127918; Games</a>
+      <a href="quote-generator.html" class="btn">&#128172; Quote Generator</a>
+      <a href="aboutme.html" class="btn">&#129492; About Me!</a>
+    </nav>
+
+
+
+    
 
     <div class="era-tabs" id="era-tabs">
       <button class="era-tab active" data-filter="ALL">✦ ALL</button>
@@ -352,65 +270,36 @@
     <p>Created with 💖 by <a href="https://github.com/HemantTheCoder" target="_blank">Hemant</a></p>
   </footer>
 
-  <button id="back-to-top" aria-label="Back to top">↑</button>
+  
+
+  <!-- Back to Top -->
+  <button id="back-to-top" aria-label="Back to top">&#8593;</button>
+
+  <!-- Toast Container -->
   <div id="toast-container"></div>
 
+  <!-- YouTube Music Player Widget -->
   <div id="music-player">
-    <div class="player-toggle" onclick="toggleMusicPlayer()"><span id="player-toggle-icon">▼</span></div>
+    <div class="player-toggle" onclick="toggleMusicPlayer()">
+      <span class="player-toggle-label">&#127925; BLACKPINK Music</span>
+      <span id="player-toggle-icon">&#9660;</span>
+    </div>
     <div id="player-body">
-      <div class="player-info">
-        <div class="player-title">🎵 BLACKPINK Music</div>
-        <div id="yt-track-name" class="player-track">Whistle</div>
+      <div class="player-track-info">
+        <div class="player-track-title" id="yt-track-name">Whistle</div>
+        <div class="player-track-artist" id="yt-track-artist">BLACKPINK</div>
       </div>
-      <div id="yt-player-container"><div id="yt-player"></div></div>
+      <div id="yt-player-container">
+        <div id="yt-player"></div>
+      </div>
       <div class="player-controls">
-        <button class="ctrl-btn" onclick="ytPrev()">⏮</button>
-        <button class="ctrl-btn" id="yt-play-btn" onclick="ytPlayPause()">▶</button>
-        <button class="ctrl-btn" onclick="ytNext()">⏭</button>
+        <button class="ctrl-btn" onclick="ytPrev()" title="Previous">&#9198;</button>
+        <button class="ctrl-btn play-pause" id="yt-play-btn" onclick="ytPlayPause()" title="Play/Pause">&#9654;</button>
+        <button class="ctrl-btn" onclick="ytNext()" title="Next">&#9197;</button>
       </div>
       <div class="player-tracklist" id="player-tracklist"></div>
     </div>
   </div>
 
-  <script>
-    window.addEventListener('load',()=>{setTimeout(()=>{document.getElementById('loading-screen').classList.add('hidden');},1900);});
-    const btt=document.getElementById('back-to-top');
-    window.addEventListener('scroll',()=>{btt.classList.toggle('show',window.scrollY>400);});
-    btt.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
-    function toggleMusicPlayer(){
-      const p=document.getElementById('music-player');
-      const i=document.getElementById('player-toggle-icon');
-      p.classList.toggle('collapsed');
-      i.textContent=p.classList.contains('collapsed')?'▲':'▼';
-    }
-    const tabs=document.querySelectorAll('.era-tab');
-    const cards=document.querySelectorAll('.era-card');
-    tabs.forEach(tab=>{
-      tab.addEventListener('click',()=>{
-        tabs.forEach(t=>t.classList.remove('active'));
-        tab.classList.add('active');
-        const f=tab.dataset.filter;
-        cards.forEach(c=>{
-          if(f==='ALL'||c.dataset.era===f){c.classList.remove('hidden');}
-          else{c.classList.add('hidden');}
-        });
-      });
-    });
-    const obs=new IntersectionObserver((entries)=>{
-      entries.forEach(entry=>{
-        if(entry.isIntersecting){
-          entry.target.classList.add('revealed');
-          obs.unobserve(entry.target);
-        }
-      });
-    },{threshold:0.1,rootMargin:'0px 0px -30px 0px'});
-    cards.forEach((c,i)=>{c.style.transitionDelay=(i%4)*80+'ms';obs.observe(c);});
-    function showToast(msg){
-      const t=document.createElement('div');t.className='toast';t.textContent=msg;
-      document.getElementById('toast-container').appendChild(t);
-      setTimeout(()=>t.remove(),3100);
-    }
-    setTimeout(()=>showToast('🎵 Filter by era using the tabs above!'),2500);
-  </script>
 </body>
 </html>
