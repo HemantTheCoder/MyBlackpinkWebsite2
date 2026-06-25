@@ -1906,7 +1906,10 @@ let currentBpmInterval = null;
 function initLightstickMode() {
   if (document.getElementById('hammer-bong-btn')) return;
   
-  const bpBongSVG = `<img src="assets/lightstick_dark.png" alt="Lightstick" style="width: 150%; height: 150%; max-height: 400px; object-fit: contain; pointer-events: none; filter: drop-shadow(0 0 25px rgba(255,42,133,1)) contrast(1.2); mix-blend-mode: screen;" />`;
+  const bpBongSVG = `<div style="position:relative; width: 100%; height: 100%; display:flex; justify-content:center; align-items:center;">
+      <div style="position:absolute; width: 120px; height: 120px; top: 20%; border-radius: 50%; background: radial-gradient(circle, rgba(255,42,133,0.8) 0%, rgba(255,42,133,0) 70%); filter: blur(15px); z-index: 1;"></div>
+      <img src="assets/lightstick_dark.png" alt="Lightstick" style="width: 150%; height: 150%; max-height: 400px; object-fit: contain; pointer-events: none; filter: contrast(1.2); mix-blend-mode: screen; position: relative; z-index: 2;" />
+    </div>`;
   
   const btn = document.createElement('button');
   btn.id = 'hammer-bong-btn';
@@ -1963,13 +1966,13 @@ function injectLightstickStyles() {
   const style = document.createElement('style');
   style.id = 'ls-sync-styles';
   style.innerHTML = `
-    @keyframes bpmSyncPulse {
-      0%, 100% { transform: scale(1) rotate(0deg); filter: drop-shadow(0 0 10px var(--bp-pink)) brightness(1); }
-      20% { transform: scale(1.15) rotate(5deg); filter: drop-shadow(0 0 50px var(--bp-pink)) brightness(1.8); }
-      50% { transform: scale(1) rotate(-5deg); filter: drop-shadow(0 0 20px var(--bp-pink)) brightness(1.2); }
+        @keyframes bpmSyncPulse {
+      0% { transform: scale(1) rotate(-15deg); filter: brightness(1.1); }
+      50% { transform: scale(1.05) rotate(15deg); filter: brightness(1.5); }
+      100% { transform: scale(1) rotate(-15deg); filter: brightness(1.1); }
     }
-    .ls-sync-active { animation: bpmSyncPulse var(--bpm-duration, 0.5s) ease-in-out infinite; }
-    .ls-sync-manual { transform: scale(1.3) rotate(20deg) !important; filter: drop-shadow(0 0 80px var(--bp-pink)) brightness(2.5) !important; transition: all 0.1s ease-out !important; }
+    .ls-sync-active { animation: bpmSyncPulse var(--bpm-duration, 1s) ease-in-out infinite; }
+    .ls-sync-manual { transform: scale(1.15) rotate(20deg) !important; filter: brightness(2) !important; transition: all 0.1s ease-out !important; }
   `;
   document.head.appendChild(style);
 }
