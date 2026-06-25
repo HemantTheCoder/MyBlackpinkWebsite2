@@ -1906,56 +1906,7 @@ let currentBpmInterval = null;
 function initLightstickMode() {
   if (document.getElementById('hammer-bong-btn')) return;
   
-  const bpBongSVG = `
-<svg viewBox="0 0 200 200" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <linearGradient id="handleGrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#111" /><stop offset="50%" stop-color="#333" /><stop offset="100%" stop-color="#0a0a0a" /></linearGradient>
-    <radialGradient id="pinkGrad" cx="30%" cy="30%" r="70%"><stop offset="0%" stop-color="#ff85c0" /><stop offset="40%" stop-color="#ff2a85" /><stop offset="100%" stop-color="#a8005c" /></radialGradient>
-    <radialGradient id="buttonGrad" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#ff2a85" /><stop offset="100%" stop-color="#7a0035" /></radialGradient>
-    <linearGradient id="baseGrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#ff2a85" /><stop offset="50%" stop-color="#ff85c0" /><stop offset="100%" stop-color="#a8005c" /></linearGradient>
-    <filter id="glow"><feGaussianBlur stdDeviation="3" result="coloredBlur"/><feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-  </defs>
-  <rect x="88" y="160" width="24" height="25" rx="4" fill="url(#baseGrad)"/>
-  <rect x="90" y="60" width="20" height="110" rx="6" fill="url(#handleGrad)"/>
-  <line x1="90" y1="80" x2="110" y2="80" stroke="#111" stroke-width="2"/>
-  <line x1="90" y1="100" x2="110" y2="100" stroke="#111" stroke-width="2"/>
-  <line x1="90" y1="120" x2="110" y2="120" stroke="#111" stroke-width="2"/>
-  <line x1="90" y1="140" x2="110" y2="140" stroke="#111" stroke-width="2"/>
-  <rect x="86" y="55" width="28" height="12" rx="4" fill="#111"/>
-  <path d="M 88,60 C 88,40 20,20 20,60 C 20,100 88,80 88,60 Z" fill="url(#pinkGrad)"/>
-  <path d="M 112,60 C 112,40 180,20 180,60 C 180,100 112,80 112,60 Z" fill="url(#pinkGrad)"/>
-  <circle cx="100" cy="60" r="14" fill="#000"/>
-  <circle cx="100" cy="60" r="10" fill="url(#buttonGrad)" filter="url(#glow)"/>
-  <line x1="100" y1="53" x2="100" y2="60" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
-</svg>`;
-
-  // Inject Toggle Button
-  const btn = document.createElement('button');
-  btn.id = 'hammer-bong-btn';
-  btn.className = 'hammer-bong-btn';
-  btn.innerHTML = bpBongSVG;
-  btn.title = 'Concert Mode';
-  btn.onclick = toggleLightstickMode;
-  document.body.appendChild(btn);
-
-  // Inject Overlay
-  const overlay = document.createElement('div');
-  overlay.id = 'lightstick-overlay';
-  overlay.className = 'lightstick-overlay';
-  overlay.innerHTML = `
-    <div class="virtual-lightstick" id="virtual-lightstick" style="width: 250px; height: 250px; display:flex; justify-content:center; align-items:center; filter: drop-shadow(0 0 10px var(--bp-pink)); transition: transform 0.15s, filter 0.15s; pointer-events: none; z-index: 5;">
-      ${bpBongSVG}
-    </div>
-    
-    <div style="z-index:10; position:absolute; bottom: 15%; display:flex; gap:1rem; flex-direction:column; align-items:center;">
-      <p style="color:rgba(255,255,255,0.7); font-weight:700; text-transform:uppercase; letter-spacing:0.1em; text-shadow:0 2px 10px rgba(255,42,133,0.5);">Syncing to: <span id="sync-track-name" style="color:var(--bp-pink);">Waiting...</span></p>
-      
-      <div style="display:flex; gap:1rem;">
-        <button class="btn btn-glow" onclick="triggerFanchant()">🎤 Fanchant</button>
-        <button class="btn btn-glow" onclick="toggleLightstickMode()">Exit Concert Mode</button>
-      </div>
-    </div>
-  `;
+  const bpBongSVG = `<img src="assets/lightstick_dark.png" alt="Lightstick" style="width: 150%; height: 150%; max-height: 400px; object-fit: contain; pointer-events: none; filter: drop-shadow(0 0 25px rgba(255,42,133,1)) contrast(1.2); mix-blend-mode: screen;" />`;
   
   // Add interactive click to cheer
   overlay.addEventListener('click', (e) => {
