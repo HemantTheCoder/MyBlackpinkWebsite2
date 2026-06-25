@@ -1908,6 +1908,32 @@ function initLightstickMode() {
   
   const bpBongSVG = `<img src="assets/lightstick_dark.png" alt="Lightstick" style="width: 150%; height: 150%; max-height: 400px; object-fit: contain; pointer-events: none; filter: drop-shadow(0 0 25px rgba(255,42,133,1)) contrast(1.2); mix-blend-mode: screen;" />`;
   
+  const btn = document.createElement('button');
+  btn.id = 'hammer-bong-btn';
+  btn.className = 'hammer-bong-btn';
+  btn.innerHTML = '🔨'; 
+  btn.title = 'Concert Mode';
+  btn.onclick = toggleLightstickMode;
+  document.body.appendChild(btn);
+
+  const overlay = document.createElement('div');
+  overlay.id = 'lightstick-overlay';
+  overlay.className = 'lightstick-overlay';
+  overlay.innerHTML = `
+    <div class="virtual-lightstick" id="virtual-lightstick" style="width: 350px; height: 350px; display:flex; justify-content:center; align-items:center; z-index: 5; pointer-events: none; transition: transform 0.05s ease-out, filter 0.05s ease-out;">
+      ${bpBongSVG}
+    </div>
+    
+    <div style="z-index:10; position:absolute; bottom: 15%; display:flex; gap:1rem; flex-direction:column; align-items:center;">
+      <p style="color:rgba(255,255,255,0.7); font-weight:700; text-transform:uppercase; letter-spacing:0.1em; text-shadow:0 2px 10px rgba(255,42,133,0.5);">Syncing to: <span id="sync-track-name" style="color:var(--bp-pink);">Waiting...</span></p>
+      
+      <div style="display:flex; gap:1rem;">
+        <button class="btn btn-glow" onclick="triggerFanchant()">🎤 Fanchant</button>
+        <button class="btn btn-glow" onclick="toggleLightstickMode()">Exit Concert Mode</button>
+      </div>
+    </div>
+  `;
+  
   // Add interactive click to cheer
   overlay.addEventListener('click', (e) => {
     if (e.target.tagName !== 'BUTTON') {
