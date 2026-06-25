@@ -136,101 +136,129 @@
       <p>Click any photo to open in full view 💜 Use arrow keys to navigate</p>
     </div>
 
-    <div class="filter-bar reveal">
-      <button class="filter-btn active" data-filter="all">✨ ALL</button>
-      <button class="filter-btn" data-filter="jisoo">🌸 JISOO</button>
-      <button class="filter-btn" data-filter="jennie">🐻 JENNIE</button>
-      <button class="filter-btn" data-filter="rose">🌹 ROSÉ</button>
-      <button class="filter-btn" data-filter="lisa">🐥 LISA</button>
-      <button class="filter-btn" data-filter="group">👑 GROUP</button>
+    <div class="filter-bar reveal" style="display:flex; flex-wrap:wrap; gap:1rem; justify-content:center;">
+      <button class="filter-btn btn btn-glow active" data-filter="all" style="padding:0.75rem 2rem;">✨ ALL</button>
+      <button class="filter-btn btn" data-filter="jisoo" style="padding:0.75rem 2rem;">🐰 JISOO</button>
+      <button class="filter-btn btn" data-filter="jennie" style="padding:0.75rem 2rem;">🐻 JENNIE</button>
+      <button class="filter-btn btn" data-filter="rose" style="padding:0.75rem 2rem;">🌹 ROSÉ</button>
+      <button class="filter-btn btn" data-filter="lisa" style="padding:0.75rem 2rem;">🐥 LISA</button>
+      <button class="filter-btn btn" data-filter="group" style="padding:0.75rem 2rem;">👑 GROUP</button>
     </div>
 
     <div class="results-count">Showing <span id="count-num">12</span> photos</div>
 
     <div class="masonry-grid" id="masonry-grid">
 
-      <div class="photo-card" data-member="group" data-label="BLACKPINK THE GAME" data-index="0">
-        <img src="blackpinkgroup.jpg" alt="BLACKPINK THE GAME" loading="lazy"
+      <div class="photo-card" data-member="group" data-label="Coachella 2023" data-index="0">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/4/4b/Blackpink_2022_Coachella_5.jpg" alt="Coachella 2023" loading="lazy"
           onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
-        <div class="photo-placeholder grad-group" style="display:none;"><div class="ph-icon">✨✨</div><div class="ph-name">BLACKPINK</div><div class="ph-sub">BLACKPINK THE GAME</div></div>
-        <div class="card-overlay"><div class="card-zoom-icon">✨</div><div class="card-member-tag">BLACKPINK</div><div class="card-label">BLACKPINK THE GAME</div></div>
+        <div class="photo-placeholder grad-group" style="display:none;"><div class="ph-icon">✨✨</div><div class="ph-name">BLACKPINK</div><div class="ph-sub">Coachella 2023</div></div>
+        <div class="card-overlay"><div class="card-zoom-icon">✨</div><div class="card-member-tag">BLACKPINK</div><div class="card-label">Coachella 2023</div></div>
       </div>
 
-      <div class="photo-card" data-member="group" data-label="BORN PINK Era" data-index="1">
-        <img src="blackpinkgroup.webp" alt="BORN PINK Era" loading="lazy"
+      <div class="photo-card" data-member="group" data-label="PUBG Collaboration" data-index="1">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/1/1a/Blackpink_PUBG_210321.jpg" alt="PUBG Collaboration" loading="lazy"
           onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
-        <div class="photo-placeholder grad-group" style="display:none;"><div class="ph-icon">✨✨</div><div class="ph-name">BLACKPINK</div><div class="ph-sub">BORN PINK Era</div></div>
-        <div class="card-overlay"><div class="card-zoom-icon">✨</div><div class="card-member-tag">BLACKPINK</div><div class="card-label">BORN PINK Era</div></div>
+        <div class="photo-placeholder grad-group" style="display:none;"><div class="ph-icon">✨✨</div><div class="ph-name">BLACKPINK</div><div class="ph-sub">PUBG Collaboration</div></div>
+        <div class="card-overlay"><div class="card-zoom-icon">✨</div><div class="card-member-tag">BLACKPINK</div><div class="card-label">PUBG Collaboration</div></div>
       </div>
 
-      <div class="photo-card" data-member="jisoo" data-label="JISOO - FLOWER" data-index="2">
-        <img src="Jisoo.webp" alt="JISOO - FLOWER" loading="lazy"
+      <div class="photo-card" data-member="group" data-label="MTV VMAs" data-index="2">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/9/94/BLACKPINK_at_the_2019_MTV_Video_Music_Awards.png" alt="MTV VMAs" loading="lazy"
           onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
-        <div class="photo-placeholder grad-jisoo" style="display:none;"><div class="ph-icon">✨</div><div class="ph-name">JISOO</div><div class="ph-sub">JISOO - FLOWER</div></div>
-        <div class="card-overlay"><div class="card-zoom-icon">✨</div><div class="card-member-tag">JISOO</div><div class="card-label">JISOO - FLOWER</div></div>
+        <div class="photo-placeholder grad-group" style="display:none;"><div class="ph-icon">✨✨</div><div class="ph-name">BLACKPINK</div><div class="ph-sub">MTV VMAs</div></div>
+        <div class="card-overlay"><div class="card-zoom-icon">✨</div><div class="card-member-tag">BLACKPINK</div><div class="card-label">MTV VMAs</div></div>
       </div>
 
-      <div class="photo-card" data-member="jennie" data-label="JENNIE - SOLO" data-index="3">
-        <img src="Jennie.webp" alt="JENNIE - SOLO" loading="lazy"
+      <div class="photo-card" data-member="group" data-label="BORN PINK Showcase" data-index="3">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/7/7b/220916_BLACKPINK_-_BORN_PINK_-_JISOO_LISA_JENNIE_ROSE_%281%29.jpg" alt="BORN PINK Showcase" loading="lazy"
           onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
-        <div class="photo-placeholder grad-jennie" style="display:none;"><div class="ph-icon">✨</div><div class="ph-name">JENNIE</div><div class="ph-sub">JENNIE - SOLO</div></div>
-        <div class="card-overlay"><div class="card-zoom-icon">✨</div><div class="card-member-tag">JENNIE</div><div class="card-label">JENNIE - SOLO</div></div>
+        <div class="photo-placeholder grad-group" style="display:none;"><div class="ph-icon">✨✨</div><div class="ph-name">BLACKPINK</div><div class="ph-sub">BORN PINK Showcase</div></div>
+        <div class="card-overlay"><div class="card-zoom-icon">✨</div><div class="card-member-tag">BLACKPINK</div><div class="card-label">BORN PINK Showcase</div></div>
       </div>
 
-      <div class="photo-card" data-member="rose" data-label="ROSÉ - R" data-index="4">
-        <img src="Rose.webp" alt="ROSÉ - R" loading="lazy"
+      <div class="photo-card" data-member="jisoo" data-label="Cannes Film Festival" data-index="4">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/a/af/JISOO_at_the_2023_Cannes_Film_Festival.jpg" alt="Cannes Film Festival" loading="lazy"
           onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
-        <div class="photo-placeholder grad-rose" style="display:none;"><div class="ph-icon">✨</div><div class="ph-name">ROSE</div><div class="ph-sub">ROSÉ - R</div></div>
-        <div class="card-overlay"><div class="card-zoom-icon">✨</div><div class="card-member-tag">ROSE</div><div class="card-label">ROSÉ - R</div></div>
+        <div class="photo-placeholder grad-jisoo" style="display:none;"><div class="ph-icon">✨</div><div class="ph-name">JISOO</div><div class="ph-sub">Cannes Film Festival</div></div>
+        <div class="card-overlay"><div class="card-zoom-icon">✨</div><div class="card-member-tag">JISOO</div><div class="card-label">Cannes Film Festival</div></div>
       </div>
 
-      <div class="photo-card" data-member="lisa" data-label="LISA - LALISA" data-index="5">
-        <img src="Lisa.webp" alt="LISA - LALISA" loading="lazy"
+      <div class="photo-card" data-member="jisoo" data-label="Jisoo PUBG" data-index="5">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/8/87/Jisoo_from_BLACKPINK_PUBG_210321_%28cropped%29.jpg" alt="Jisoo PUBG" loading="lazy"
           onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
-        <div class="photo-placeholder grad-lisa" style="display:none;"><div class="ph-icon">✨</div><div class="ph-name">LISA</div><div class="ph-sub">LISA - LALISA</div></div>
-        <div class="card-overlay"><div class="card-zoom-icon">✨</div><div class="card-member-tag">LISA</div><div class="card-label">LISA - LALISA</div></div>
+        <div class="photo-placeholder grad-jisoo" style="display:none;"><div class="ph-icon">✨</div><div class="ph-name">JISOO</div><div class="ph-sub">Jisoo PUBG</div></div>
+        <div class="card-overlay"><div class="card-zoom-icon">✨</div><div class="card-member-tag">JISOO</div><div class="card-label">Jisoo PUBG</div></div>
       </div>
 
-      <div class="photo-card" data-member="group" data-label="THE ALBUM Era" data-index="6">
-        <img src="blackpinkgroup.jpg" alt="THE ALBUM Era" loading="lazy"
+      <div class="photo-card" data-member="jisoo" data-label="Incheon Airport" data-index="6">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/7/73/Jisoo_at_Incheon_Airport%2C_heading_to_London_on_September_13%2C_2019_%282%29.jpg" alt="Incheon Airport" loading="lazy"
           onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
-        <div class="photo-placeholder grad-group" style="display:none;"><div class="ph-icon">✨✨</div><div class="ph-name">BLACKPINK</div><div class="ph-sub">THE ALBUM Era</div></div>
-        <div class="card-overlay"><div class="card-zoom-icon">✨</div><div class="card-member-tag">BLACKPINK</div><div class="card-label">THE ALBUM Era</div></div>
+        <div class="photo-placeholder grad-jisoo" style="display:none;"><div class="ph-icon">✨</div><div class="ph-name">JISOO</div><div class="ph-sub">Incheon Airport</div></div>
+        <div class="card-overlay"><div class="card-zoom-icon">✨</div><div class="card-member-tag">JISOO</div><div class="card-label">Incheon Airport</div></div>
       </div>
 
-      <div class="photo-card" data-member="jisoo" data-label="JISOO - BLISSOO" data-index="7">
-        <img src="Jisoo.webp" alt="JISOO - BLISSOO" loading="lazy"
+      <div class="photo-card" data-member="jennie" data-label="SOLO MV" data-index="7">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/2/22/Jennie_Kim_-_%27SOLO%27_MV.jpg" alt="SOLO MV" loading="lazy"
           onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
-        <div class="photo-placeholder grad-jisoo" style="display:none;"><div class="ph-icon">✨</div><div class="ph-name">JISOO</div><div class="ph-sub">JISOO - BLISSOO</div></div>
-        <div class="card-overlay"><div class="card-zoom-icon">✨</div><div class="card-member-tag">JISOO</div><div class="card-label">JISOO - BLISSOO</div></div>
+        <div class="photo-placeholder grad-jennie" style="display:none;"><div class="ph-icon">✨</div><div class="ph-name">JENNIE</div><div class="ph-sub">SOLO MV</div></div>
+        <div class="card-overlay"><div class="card-zoom-icon">✨</div><div class="card-member-tag">JENNIE</div><div class="card-label">SOLO MV</div></div>
       </div>
 
-      <div class="photo-card" data-member="jennie" data-label="JENNIE - ODD ATELIER" data-index="8">
-        <img src="Jennie.webp" alt="JENNIE - ODD ATELIER" loading="lazy"
+      <div class="photo-card" data-member="jennie" data-label="Jennie PUBG" data-index="8">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Jennie_Kim_from_BLACKPINK_PUBG_210321_%28cropped%29.jpg" alt="Jennie PUBG" loading="lazy"
           onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
-        <div class="photo-placeholder grad-jennie" style="display:none;"><div class="ph-icon">✨</div><div class="ph-name">JENNIE</div><div class="ph-sub">JENNIE - ODD ATELIER</div></div>
-        <div class="card-overlay"><div class="card-zoom-icon">✨</div><div class="card-member-tag">JENNIE</div><div class="card-label">JENNIE - ODD ATELIER</div></div>
+        <div class="photo-placeholder grad-jennie" style="display:none;"><div class="ph-icon">✨</div><div class="ph-name">JENNIE</div><div class="ph-sub">Jennie PUBG</div></div>
+        <div class="card-overlay"><div class="card-zoom-icon">✨</div><div class="card-member-tag">JENNIE</div><div class="card-label">Jennie PUBG</div></div>
       </div>
 
-      <div class="photo-card" data-member="rose" data-label="ROSÉ - THEBLACKLABEL" data-index="9">
-        <img src="Rose.webp" alt="ROSÉ - THEBLACKLABEL" loading="lazy"
+      <div class="photo-card" data-member="jennie" data-label="MTV VMAs" data-index="9">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/b/bd/220828_JENNIE_at_MTV_Video_Music_Awards.jpg" alt="MTV VMAs" loading="lazy"
           onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
-        <div class="photo-placeholder grad-rose" style="display:none;"><div class="ph-icon">✨</div><div class="ph-name">ROSE</div><div class="ph-sub">ROSÉ - THEBLACKLABEL</div></div>
-        <div class="card-overlay"><div class="card-zoom-icon">✨</div><div class="card-member-tag">ROSE</div><div class="card-label">ROSÉ - THEBLACKLABEL</div></div>
+        <div class="photo-placeholder grad-jennie" style="display:none;"><div class="ph-icon">✨</div><div class="ph-name">JENNIE</div><div class="ph-sub">MTV VMAs</div></div>
+        <div class="card-overlay"><div class="card-zoom-icon">✨</div><div class="card-member-tag">JENNIE</div><div class="card-label">MTV VMAs</div></div>
       </div>
 
-      <div class="photo-card" data-member="lisa" data-label="LISA - LLOUD" data-index="10">
-        <img src="Lisa.webp" alt="LISA - LLOUD" loading="lazy"
+      <div class="photo-card" data-member="rose" data-label="Rose Solo" data-index="10">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/4/4b/Ros%C3%A9_BLACKPINK.jpg" alt="Rose Solo" loading="lazy"
           onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
-        <div class="photo-placeholder grad-lisa" style="display:none;"><div class="ph-icon">✨</div><div class="ph-name">LISA</div><div class="ph-sub">LISA - LLOUD</div></div>
-        <div class="card-overlay"><div class="card-zoom-icon">✨</div><div class="card-member-tag">LISA</div><div class="card-label">LISA - LLOUD</div></div>
+        <div class="photo-placeholder grad-rose" style="display:none;"><div class="ph-icon">✨</div><div class="ph-name">ROSE</div><div class="ph-sub">Rose Solo</div></div>
+        <div class="card-overlay"><div class="card-zoom-icon">✨</div><div class="card-member-tag">ROSE</div><div class="card-label">Rose Solo</div></div>
       </div>
 
-      <div class="photo-card" data-member="group" data-label="DEADLINE Era" data-index="11">
-        <img src="blackpinkgroup.webp" alt="DEADLINE Era" loading="lazy"
+      <div class="photo-card" data-member="rose" data-label="Rimowa Event" data-index="11">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/d/da/Blackpink_Ros%C3%A9_Rimowa_1.jpg" alt="Rimowa Event" loading="lazy"
           onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
-        <div class="photo-placeholder grad-group" style="display:none;"><div class="ph-icon">✨✨</div><div class="ph-name">BLACKPINK</div><div class="ph-sub">DEADLINE Era</div></div>
-        <div class="card-overlay"><div class="card-zoom-icon">✨</div><div class="card-member-tag">BLACKPINK</div><div class="card-label">DEADLINE Era</div></div>
+        <div class="photo-placeholder grad-rose" style="display:none;"><div class="ph-icon">✨</div><div class="ph-name">ROSE</div><div class="ph-sub">Rimowa Event</div></div>
+        <div class="card-overlay"><div class="card-zoom-icon">✨</div><div class="card-member-tag">ROSE</div><div class="card-label">Rimowa Event</div></div>
+      </div>
+
+      <div class="photo-card" data-member="rose" data-label="MTV VMAs" data-index="12">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/7/76/220828_ROSE_at_MTV_Video_Music_Awards.jpg" alt="MTV VMAs" loading="lazy"
+          onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+        <div class="photo-placeholder grad-rose" style="display:none;"><div class="ph-icon">✨</div><div class="ph-name">ROSE</div><div class="ph-sub">MTV VMAs</div></div>
+        <div class="card-overlay"><div class="card-zoom-icon">✨</div><div class="card-member-tag">ROSE</div><div class="card-label">MTV VMAs</div></div>
+      </div>
+
+      <div class="photo-card" data-member="lisa" data-label="Bulgari Event" data-index="13">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/8/8a/20240314_Lisa_Manoban_07.jpg" alt="Bulgari Event" loading="lazy"
+          onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+        <div class="photo-placeholder grad-lisa" style="display:none;"><div class="ph-icon">✨</div><div class="ph-name">LISA</div><div class="ph-sub">Bulgari Event</div></div>
+        <div class="card-overlay"><div class="card-zoom-icon">✨</div><div class="card-member-tag">LISA</div><div class="card-label">Bulgari Event</div></div>
+      </div>
+
+      <div class="photo-card" data-member="lisa" data-label="MTV VMAs" data-index="14">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/7/77/Lalisa_Manoban_at_the_2022_VMAs.jpg" alt="MTV VMAs" loading="lazy"
+          onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+        <div class="photo-placeholder grad-lisa" style="display:none;"><div class="ph-icon">✨</div><div class="ph-name">LISA</div><div class="ph-sub">MTV VMAs</div></div>
+        <div class="card-overlay"><div class="card-zoom-icon">✨</div><div class="card-member-tag">LISA</div><div class="card-label">MTV VMAs</div></div>
+      </div>
+
+      <div class="photo-card" data-member="lisa" data-label="Lisa PUBG" data-index="15">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/3/3f/Lisa_from_BLACKPINK_PUBG_210321_%28cropped%29.jpg" alt="Lisa PUBG" loading="lazy"
+          onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+        <div class="photo-placeholder grad-lisa" style="display:none;"><div class="ph-icon">✨</div><div class="ph-name">LISA</div><div class="ph-sub">Lisa PUBG</div></div>
+        <div class="card-overlay"><div class="card-zoom-icon">✨</div><div class="card-member-tag">LISA</div><div class="card-label">Lisa PUBG</div></div>
       </div>
 
     </div>
