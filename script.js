@@ -417,6 +417,27 @@ async function navigateTo(url, push) {
     const newFooter = doc.querySelector('footer');
     if (currentFooter && newFooter) currentFooter.outerHTML = newFooter.outerHTML;
 
+    document.querySelectorAll('style.page-style').forEach(s => s.remove());
+    doc.querySelectorAll('style').forEach(s => {
+      const newStyle = document.createElement('style');
+      newStyle.className = 'page-style';
+      newStyle.textContent = s.textContent;
+      document.head.appendChild(newStyle);
+    });
+
+    document.querySelectorAll('script.page-script').forEach(s => s.remove());
+    doc.querySelectorAll('script:not([src])').forEach(s => {
+      if (s.textContent.includes('IntersectionObserver') || s.textContent.includes('INJECTED') || s.textContent.includes('tl-card') || s.textContent.includes('lightbox')) {
+        const newScript = document.createElement('script');
+        newScript.className = 'page-script';
+        let code = s.textContent;
+        code = code.replace(/document\.addEventListener\(['"]DOMContentLoaded['"],\s*function\s*\(\)\s*\{/, '');
+        code = code.replace(/\}\);?\s*$/, '');
+        newScript.textContent = code;
+        document.body.appendChild(newScript);
+      }
+    });
+
     document.title = doc.title;
     if (push) window.history.pushState({}, '', url);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -431,6 +452,7 @@ async function navigateTo(url, push) {
     eraIdx = parseInt(localStorage.getItem(ERA_KEY) || '0');
     applyEra();
 
+    if (document.querySelector('.stat-card[data-display]')) initRecords();
     if (document.getElementById('game-start') && document.getElementById('question-text')) initTriviaGame();
     if (document.getElementById('board')) initPuzzle();
     if (document.getElementById('daily-question-text')) initDailyChallenge();
