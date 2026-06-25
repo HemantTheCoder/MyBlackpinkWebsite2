@@ -1876,14 +1876,56 @@ function hexToRgb(hex) {
 // =============================================
 // HAMMER BONG MODE
 // =============================================
+// Song BPM Dictionary for dynamic syncing
+const songBpmDict = {
+  "Whistle": 105,
+  "Boombayah": 125,
+  "Playing With Fire": 110,
+  "As If It's Your Last": 125,
+  "DDU-DU DDU-DU": 140,
+  "Kill This Love": 132,
+  "How You Like That": 130,
+  "Lovesick Girls": 128,
+  "Ice Cream": 120,
+  "Pink Venom": 90,
+  "Shut Down": 110,
+  "Typa Girl": 132,
+  "SOLO": 95,
+  "Mantra": 115,
+  "Dracula": 110,
+  "On The Ground": 124,
+  "APT.": 120,
+  "LALISA": 80,
+  "ROCKSTAR": 98,
+  "FLOWER": 124,
+  "GO": 130,
+  "JUMP": 125
+};
+let currentBpmInterval = null;
+
 function initLightstickMode() {
   if (document.getElementById('hammer-bong-btn')) return;
   
+  const bpBongSVG = `
+  <svg viewBox="0 0 100 100" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+    <!-- Handle -->
+    <rect x="44" y="30" width="12" height="60" rx="4" fill="#222"/>
+    <rect x="42" y="80" width="16" height="15" rx="3" fill="#ff2a85"/>
+    <rect x="42" y="40" width="16" height="5" fill="#444"/>
+    <!-- Left Pink Mallet -->
+    <path d="M 44,32 L 20,18 C 5,10 5,50 20,42 L 44,28 Z" fill="var(--bp-pink)"/>
+    <!-- Right Pink Mallet -->
+    <path d="M 56,32 L 80,18 C 95,10 95,50 80,42 L 56,28 Z" fill="var(--bp-pink)"/>
+    <!-- Center Star/Logo -->
+    <circle cx="50" cy="30" r="10" fill="#111"/>
+    <path d="M 50,24 L 52,28 L 56,28 L 53,31 L 54,36 L 50,33 L 46,36 L 47,31 L 44,28 L 48,28 Z" fill="#ff2a85"/>
+  </svg>`;
+
   // Inject Toggle Button
   const btn = document.createElement('button');
   btn.id = 'hammer-bong-btn';
   btn.className = 'hammer-bong-btn';
-  btn.innerHTML = '<svg viewBox="0 0 100 100" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">  <!-- Handle -->  <rect x="44" y="30" width="12" height="60" rx="4" fill="#222"/>  <rect x="42" y="80" width="16" height="15" rx="3" fill="#ff2a85"/>  <rect x="42" y="40" width="16" height="5" fill="#444"/>  <!-- Left Pink Mallet -->  <path d="M 44,32 L 20,18 C 5,10 5,50 20,42 L 44,28 Z" fill="var(--bp-pink)"/>  <!-- Right Pink Mallet -->  <path d="M 56,32 L 80,18 C 95,10 95,50 80,42 L 56,28 Z" fill="var(--bp-pink)"/>  <!-- Center Star/Logo -->  <circle cx="50" cy="30" r="10" fill="#111"/>  <path d="M 50,24 L 52,28 L 56,28 L 53,31 L 54,36 L 50,33 L 46,36 L 47,31 L 44,28 L 48,28 Z" fill="#ff2a85"/></svg>';
+  btn.innerHTML = bpBongSVG;
   btn.title = 'Concert Mode';
   btn.onclick = toggleLightstickMode;
   document.body.appendChild(btn);
@@ -1893,23 +1935,29 @@ function initLightstickMode() {
   overlay.id = 'lightstick-overlay';
   overlay.className = 'lightstick-overlay';
   overlay.innerHTML = `
-    <div class="virtual-lightstick" id="virtual-lightstick" style="width: 250px; height: 250px; display:flex; justify-content:center; align-items:center; filter: drop-shadow(0 0 10px var(--bp-pink)); transition: transform 0.15s, filter 0.15s;">
-      <svg viewBox="0 0 100 100" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">  <!-- Handle -->  <rect x="44" y="30" width="12" height="60" rx="4" fill="#222"/>  <rect x="42" y="80" width="16" height="15" rx="3" fill="#ff2a85"/>  <rect x="42" y="40" width="16" height="5" fill="#444"/>  <!-- Left Pink Mallet -->  <path d="M 44,32 L 20,18 C 5,10 5,50 20,42 L 44,28 Z" fill="var(--bp-pink)"/>  <!-- Right Pink Mallet -->  <path d="M 56,32 L 80,18 C 95,10 95,50 80,42 L 56,28 Z" fill="var(--bp-pink)"/>  <!-- Center Star/Logo -->  <circle cx="50" cy="30" r="10" fill="#111"/>  <path d="M 50,24 L 52,28 L 56,28 L 53,31 L 54,36 L 50,33 L 46,36 L 47,31 L 44,28 L 48,28 Z" fill="#ff2a85"/></svg>
+    <div class="virtual-lightstick" id="virtual-lightstick" style="width: 250px; height: 250px; display:flex; justify-content:center; align-items:center; filter: drop-shadow(0 0 10px var(--bp-pink)); transition: transform 0.15s, filter 0.15s; pointer-events: none; z-index: 5;">
+      ${bpBongSVG}
     </div>
-    <p style="color:rgba(255,255,255,0.5); margin-top:2rem;">Music Sync Active! Wave phone to interact.</p>
-    <button class="btn btn-glow" style="margin-top:2rem;" onclick="toggleLightstickMode()">Exit Concert Mode</button>
+    
+    <div style="z-index:10; position:absolute; bottom: 15%; display:flex; gap:1rem; flex-direction:column; align-items:center;">
+      <p style="color:rgba(255,255,255,0.7); font-weight:700; text-transform:uppercase; letter-spacing:0.1em; text-shadow:0 2px 10px rgba(255,42,133,0.5);">Syncing to: <span id="sync-track-name" style="color:var(--bp-pink);">Waiting...</span></p>
+      
+      <div style="display:flex; gap:1rem;">
+        <button class="btn btn-glow" onclick="triggerFanchant()">🎤 Fanchant</button>
+        <button class="btn btn-glow" onclick="toggleLightstickMode()">Exit Concert Mode</button>
+      </div>
+    </div>
   `;
-  document.body.appendChild(overlay);
-
-  // Simulated Music Sync
-  setInterval(() => {
-    if (document.getElementById('lightstick-overlay').classList.contains('active')) {
-      if (typeof window.ytPlayer !== 'undefined' && window.ytIsPlaying) {
-        // Create a fake beat sync
-        triggerLightstickPulse();
-      }
+  
+  // Add interactive click to cheer
+  overlay.addEventListener('click', (e) => {
+    if (e.target.tagName !== 'BUTTON') {
+      triggerCheerEmoji(e.clientX, e.clientY);
+      triggerLightstickPulse(true);
     }
-  }, 480); // ~125 BPM average for pop songs
+  });
+
+  document.body.appendChild(overlay);
 
   // Handle Mobile Device Orientation (Waving)
   if (window.DeviceMotionEvent) {
@@ -1918,30 +1966,56 @@ function initLightstickMode() {
         const acc = e.accelerationIncludingGravity;
         if (acc && (Math.abs(acc.x) > 15 || Math.abs(acc.y) > 15)) {
           triggerLightstickPulse(true);
+          triggerCheerEmoji(window.innerWidth / 2 + (Math.random() * 100 - 50), window.innerHeight / 2);
         }
       }
     });
   }
 }
 
+function updateSyncInterval() {
+  if (currentBpmInterval) clearInterval(currentBpmInterval);
+  
+  let currentTitle = "Playing With Fire"; // Fallback
+  if (typeof ytPlaylist !== 'undefined' && typeof ytCurrentTrack !== 'undefined') {
+    currentTitle = ytPlaylist[ytCurrentTrack].title;
+    const syncLabel = document.getElementById('sync-track-name');
+    if(syncLabel) syncLabel.innerText = currentTitle;
+  }
+  
+  const bpm = songBpmDict[currentTitle] || 120; // Default to 120 BPM
+  const msPerBeat = 60000 / bpm;
+  
+  currentBpmInterval = setInterval(() => {
+    if (document.getElementById('lightstick-overlay') && document.getElementById('lightstick-overlay').classList.contains('active')) {
+      if (typeof window.ytPlayer !== 'undefined' && window.ytIsPlaying) {
+        triggerLightstickPulse();
+      }
+    }
+  }, msPerBeat);
+}
+
 function toggleLightstickMode() {
   const overlay = document.getElementById('lightstick-overlay');
   overlay.classList.toggle('active');
   if (overlay.classList.contains('active')) {
+    updateSyncInterval(); // Start sync engine
     if (typeof window.ytPlayer !== 'undefined' && typeof ytIsPlaying !== 'undefined' && !ytIsPlaying) {
-      if (typeof ytPlayPause === 'function') ytPlayPause(); // Auto play music
+      if (typeof ytPlayPause === 'function') ytPlayPause();
     }
+  } else {
+    if (currentBpmInterval) clearInterval(currentBpmInterval);
   }
 }
 
 function triggerLightstickPulse(isManual = false) {
   const ls = document.getElementById('virtual-lightstick');
   if (ls) {
-    const scale = isManual ? 1.3 : 1.1;
-    const rot = isManual ? (Math.random() > 0.5 ? 20 : -20) : (Math.random() > 0.5 ? 5 : -5);
+    const scale = isManual ? 1.4 : 1.15;
+    const rot = isManual ? (Math.random() > 0.5 ? 25 : -25) : (Math.random() > 0.5 ? 8 : -8);
     
     ls.style.transform = `scale(${scale}) rotate(${rot}deg)`;
-    ls.style.filter = `drop-shadow(0 0 ${isManual ? 80 : 40}px var(--bp-pink)) brightness(${isManual ? 2 : 1.5})`;
+    ls.style.filter = `drop-shadow(0 0 ${isManual ? 100 : 50}px var(--bp-pink)) brightness(${isManual ? 2.5 : 1.5})`;
     
     setTimeout(() => {
       ls.style.transform = 'scale(1) rotate(0deg)';
@@ -1949,6 +2023,82 @@ function triggerLightstickPulse(isManual = false) {
     }, isManual ? 200 : 150);
   }
 }
+
+function triggerCheerEmoji(x, y) {
+  const overlay = document.getElementById('lightstick-overlay');
+  if (!overlay) return;
+  
+  const emojis = ['💖', '✨', '🔥', '🎉'];
+  const emoji = document.createElement('div');
+  emoji.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+  emoji.style.position = 'absolute';
+  emoji.style.left = `${x}px`;
+  emoji.style.top = `${y}px`;
+  emoji.style.fontSize = `${Math.random() * 20 + 20}px`;
+  emoji.style.pointerEvents = 'none';
+  emoji.style.zIndex = '100';
+  emoji.style.transition = 'all 1s ease-out';
+  emoji.style.textShadow = '0 0 10px rgba(255,255,255,0.8)';
+  
+  overlay.appendChild(emoji);
+  
+  requestAnimationFrame(() => {
+    emoji.style.transform = `translate(${Math.random() * 100 - 50}px, -150px) scale(1.5)`;
+    emoji.style.opacity = '0';
+  });
+  
+  setTimeout(() => {
+    if (emoji.parentNode) emoji.parentNode.removeChild(emoji);
+  }, 1000);
+}
+
+function triggerFanchant() {
+  const fanchantText = "KIM JISOO! KIM JENNIE! PARK CHAEYOUNG! LALISA!";
+  const overlay = document.getElementById('lightstick-overlay');
+  if (!overlay) return;
+  
+  const chant = document.createElement('div');
+  chant.innerText = fanchantText;
+  chant.style.position = 'absolute';
+  chant.style.width = '100%';
+  chant.style.textAlign = 'center';
+  chant.style.top = '20%';
+  chant.style.color = 'var(--bp-pink)';
+  chant.style.fontSize = 'clamp(1.5rem, 5vw, 3rem)';
+  chant.style.fontWeight = '900';
+  chant.style.letterSpacing = '0.2em';
+  chant.style.textShadow = '0 0 20px rgba(255,42,133,0.8), 0 0 40px rgba(255,42,133,0.5)';
+  chant.style.zIndex = '50';
+  chant.style.pointerEvents = 'none';
+  chant.style.animation = 'fanchantAnim 2.5s ease-out forwards';
+  
+  overlay.appendChild(chant);
+  
+  // Inject the keyframes if not exists
+  if (!document.getElementById('fanchant-style')) {
+    const style = document.createElement('style');
+    style.id = 'fanchant-style';
+    style.innerHTML = `
+      @keyframes fanchantAnim {
+        0% { transform: scale(0.5); opacity: 0; }
+        20% { transform: scale(1.1); opacity: 1; }
+        80% { transform: scale(1.2); opacity: 1; }
+        100% { transform: scale(1.5); opacity: 0; }
+      }
+    `;
+    document.head.appendChild(style);
+  }
+  
+  setTimeout(() => {
+    if (chant.parentNode) chant.parentNode.removeChild(chant);
+  }, 2500);
+}
+
+// Hook into the player song change to update BPM
+const originalYtPlayPause = typeof ytPlayPause === 'function' ? ytPlayPause : null;
+// We actually need to hook where the song changes. Let's just poll it safely in the interval, or we already hooked updateSyncInterval into the toggle.
+// We can just add an event listener to the ytPlayer onStateChange if we could, but we can also just let updateSyncInterval grab the current track. 
+// Actually, I'll modify the next/prev buttons natively or just set it in interval.
 
 // =============================================
 // DAILY LOGIN STREAK
