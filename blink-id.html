@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blink ID Generator — Blackpink Wiki</title>
+  <link rel="stylesheet" href="styles.css?v=20260625">
+  <script src="script.js?v=20260625" defer></script>
+</head>
+<body>
+
+  <div id="page-transition"></div>
+
+  <header class="hero">
+    <div class="hero-content">
+      <h1>🪪 Blink ID</h1>
+      <p class="hero-sub">Generate your official BLINK membership card.</p>
+    </div>
+  </header>
+
+  <main class="container">
+    <nav class="btn-group">
+      <a href="index.html?v=20260625" class="btn">&#127968; Home</a>
+      <a href="blink-id.html?v=20260625" class="btn active">🪪 Blink ID</a>
+      <a href="vault.html?v=20260625" class="btn">🔒 Vault</a>
+    </nav>
+
+    <section class="glass-card" style="max-width: 800px; margin: 0 auto; text-align: center;">
+      <h2 style="margin-bottom: 2rem;">Create Your Card</h2>
+      
+      <div style="display: flex; flex-direction: column; gap: 1rem; max-width: 400px; margin: 0 auto 2rem;">
+        <input type="text" id="id-name" placeholder="Your Name" style="padding: 1rem; border-radius: 10px; border: none; background: rgba(255,255,255,0.1); color: white; font-size: 1.2rem; text-align: center;">
+        
+        <select id="id-year" style="padding: 1rem; border-radius: 10px; border: none; background: rgba(255,255,255,0.1); color: white; font-size: 1.2rem; text-align: center;">
+          <option value="2016" style="color:black;">Blink Since 2016</option>
+          <option value="2017" style="color:black;">Blink Since 2017</option>
+          <option value="2018" style="color:black;">Blink Since 2018</option>
+          <option value="2019" style="color:black;">Blink Since 2019</option>
+          <option value="2020" style="color:black;">Blink Since 2020</option>
+          <option value="2021" style="color:black;">Blink Since 2021</option>
+          <option value="2022" style="color:black;">Blink Since 2022</option>
+          <option value="2023" style="color:black;">Blink Since 2023</option>
+          <option value="2024" style="color:black;">Blink Since 2024</option>
+          <option value="2025" style="color:black;">Blink Since 2025</option>
+          <option value="2026" style="color:black;">Blink Since 2026</option>
+        </select>
+
+        <button class="btn btn-glow" onclick="generateID()" style="margin-top: 1rem;">Generate ID</button>
+      </div>
+
+      <canvas id="id-canvas" width="600" height="350" style="max-width: 100%; border-radius: 20px; box-shadow: 0 0 30px var(--bp-pink-glow); display: none; margin: 0 auto;"></canvas>
+
+      <button id="download-btn" class="btn" style="margin-top: 2rem; display: none;" onclick="downloadID()">Download Card</button>
+
+    </section>
+
+  </main>
+
+  <script class="page-script">
+    function generateID() {
+      const canvas = document.getElementById('id-canvas');
+      const ctx = canvas.getContext('2d');
+      const name = document.getElementById('id-name').value || 'BLINK';
+      const year = document.getElementById('id-year').value;
+      const bias = localStorage.getItem('blink_bias') || 'OT4';
+
+      canvas.style.display = 'block';
+      document.getElementById('download-btn').style.display = 'inline-block';
+
+      // Background Gradient
+      const grad = ctx.createLinearGradient(0, 0, 600, 350);
+      grad.addColorStop(0, '#111');
+      grad.addColorStop(1, '#222');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, 600, 350);
+
+      // Accent Overlay (Based on Bias)
+      const accent = ctx.createLinearGradient(0, 0, 600, 350);
+      accent.addColorStop(0, 'transparent');
+      let accentColor = '#FF7698';
+      if(bias === 'JISOO') accentColor = '#ff2a2a';
+      if(bias === 'JENNIE') accentColor = '#4a90e2';
+      if(bias === 'ROSE') accentColor = '#ffb6c1';
+      if(bias === 'LISA') accentColor = '#f1c40f';
+      
+      accent.addColorStop(1, accentColor);
+      ctx.fillStyle = accent;
+      ctx.globalAlpha = 0.3;
+      ctx.fillRect(0, 0, 600, 350);
+      ctx.globalAlpha = 1;
+
+      // Draw Grid / Tech lines
+      ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+      ctx.lineWidth = 1;
+      for(let i=0; i<600; i+=20) { ctx.beginPath(); ctx.moveTo(i,0); ctx.lineTo(i,350); ctx.stroke(); }
+      for(let i=0; i<350; i+=20) { ctx.beginPath(); ctx.moveTo(0,i); ctx.lineTo(600,i); ctx.stroke(); }
+
+      // Text Elements
+      ctx.fillStyle = '#fff';
+      ctx.font = 'bold 30px Arial';
+      ctx.textAlign = 'left';
+      ctx.fillText('OFFICIAL BLINK ID', 40, 60);
+
+      ctx.fillStyle = accentColor;
+      ctx.font = 'bold 20px Arial';
+      ctx.fillText('GLOBAL MEMBERSHIP', 40, 90);
+
+      // Line separator
+      ctx.beginPath();
+      ctx.moveTo(40, 120);
+      ctx.lineTo(560, 120);
+      ctx.strokeStyle = accentColor;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // Details
+      ctx.fillStyle = 'rgba(255,255,255,0.6)';
+      ctx.font = '16px Arial';
+      ctx.fillText('NAME', 40, 170);
+      ctx.fillStyle = '#fff';
+      ctx.font = 'bold 36px Arial';
+      ctx.fillText(name.toUpperCase(), 40, 210);
+
+      ctx.fillStyle = 'rgba(255,255,255,0.6)';
+      ctx.font = '16px Arial';
+      ctx.fillText('STATUS', 40, 260);
+      ctx.fillStyle = '#fff';
+      ctx.font = 'bold 24px Arial';
+      ctx.fillText('BLINK SINCE ' + year, 40, 290);
+
+      ctx.fillStyle = 'rgba(255,255,255,0.6)';
+      ctx.font = '16px Arial';
+      ctx.fillText('BIAS', 350, 260);
+      ctx.fillStyle = accentColor;
+      ctx.font = 'bold 24px Arial';
+      ctx.fillText(bias, 350, 290);
+
+      // Logo placeholder (geometric)
+      ctx.fillStyle = 'rgba(255,255,255,0.1)';
+      ctx.fillRect(430, 40, 130, 60);
+      ctx.fillStyle = '#fff';
+      ctx.font = 'bold 16px Arial';
+      ctx.textAlign = 'center';
+      ctx.fillText('BLACKPINK', 495, 75);
+
+      // Holographic corner stamp
+      ctx.beginPath();
+      ctx.arc(520, 270, 40, 0, 2 * Math.PI);
+      ctx.fillStyle = 'rgba(255, 118, 152, 0.2)';
+      ctx.fill();
+      ctx.strokeStyle = accentColor;
+      ctx.stroke();
+    }
+
+    function downloadID() {
+      const canvas = document.getElementById('id-canvas');
+      const link = document.createElement('a');
+      link.download = 'Blink-ID-' + (document.getElementById('id-name').value || 'Card') + '.png';
+      link.href = canvas.toDataURL();
+      link.click();
+    }
+  </script>
+</body>
+</html>

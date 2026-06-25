@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blink Vault — Blackpink Wiki</title>
+  <link rel="stylesheet" href="styles.css?v=20260625">
+  <script src="script.js?v=20260625" defer></script>
+  <style>
+    .vault-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+    .vault-item {
+      position: relative;
+      border-radius: 15px;
+      overflow: hidden;
+      aspect-ratio: 1;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    }
+    .vault-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.2;
+      filter: blur(10px);
+      transition: all 0.5s ease;
+    }
+    .vault-item.unlocked img {
+      opacity: 1;
+      filter: blur(0);
+    }
+    .vault-lock {
+      position: absolute;
+      font-size: 3rem;
+      text-shadow: 0 0 15px var(--bp-pink);
+    }
+    .vault-item.unlocked .vault-lock {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="page-transition"></div>
+
+  <header class="hero">
+    <div class="hero-content">
+      <h1>🔒 Blink Vault</h1>
+      <p class="hero-sub">Keep your login streak to unlock exclusive content!</p>
+    </div>
+  </header>
+
+  <main class="container">
+    <nav class="btn-group">
+      <a href="index.html?v=20260625" class="btn">&#127968; Home</a>
+      <a href="blink-id.html?v=20260625" class="btn">🪪 Blink ID</a>
+      <a href="vault.html?v=20260625" class="btn active">🔒 Vault</a>
+    </nav>
+
+    <section class="glass-card text-center" style="max-width: 800px; margin: 0 auto;">
+      <h2>Your Current Streak</h2>
+      <div id="streak-counter" style="font-size: 4rem; color: var(--bp-pink); text-shadow: 0 0 20px var(--bp-pink-glow); font-weight: bold; margin: 1rem 0;">0 Days</div>
+      <p style="opacity: 0.8; font-size: 1.2rem;">Come back every day to increase your streak.</p>
+      
+      <div class="vault-grid" id="vault-grid">
+        <!-- Locked/Unlocked items injected via JS -->
+      </div>
+    </section>
+
+  </main>
+
+  <script class="page-script">
+    function renderVault() {
+      const streak = parseInt(localStorage.getItem('blink_streak') || '0');
+      document.getElementById('streak-counter').textContent = streak + ' Days';
+      
+      const grid = document.getElementById('vault-grid');
+      
+      // Exclusive YouTube thumbnails / Images to unlock
+      const rewards = [
+        { days: 1, url: 'https://img.youtube.com/vi/bwmSjveL3Lc/maxresdefault.jpg', title: 'Boombayah Era' },
+        { days: 2, url: 'https://img.youtube.com/vi/9pdj4iJD08s/maxresdefault.jpg', title: 'Playing With Fire' },
+        { days: 3, url: 'https://img.youtube.com/vi/vRXZj0DzXIA/maxresdefault.jpg', title: 'Ice Cream Concept' },
+        { days: 5, url: 'https://img.youtube.com/vi/329xwH8_G6g/maxresdefault.jpg', title: 'Dance Practice' },
+        { days: 7, url: 'https://upload.wikimedia.org/wikipedia/commons/4/4b/Blackpink_2022_Coachella_5.jpg', title: 'Coachella VIP' }
+      ];
+
+      let html = '';
+      rewards.forEach(r => {
+        const unlocked = streak >= r.days;
+        html += \`
+          <div class="vault-item \${unlocked ? 'unlocked' : ''}" title="\${unlocked ? r.title : 'Unlocks at ' + r.days + ' Days'}">
+            <img src="\${r.url}" alt="\${r.title}">
+            <div class="vault-lock">\${unlocked ? '' : '🔒<div style="font-size:1rem;margin-top:10px;">Requires ' + r.days + ' Days</div>'}</div>
+          </div>
+        \`;
+      });
+      grid.innerHTML = html;
+    }
+    renderVault();
+  </script>
+</body>
+</html>

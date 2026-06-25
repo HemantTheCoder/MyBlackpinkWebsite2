@@ -331,6 +331,10 @@ function initScrollReveal() {
 // SPA ROUTING
 // =============================================
 document.addEventListener('DOMContentLoaded', function () {
+  initBiasEngine();
+    initLightstickMode();
+  initLightstickMode();
+  initDailyStreak();
   initAll();
 });
 
@@ -342,6 +346,7 @@ function initAll() {
   initPetalRain();
   initLightstickCanvas();
   initScrollReveal();
+    initBiasEngine();
   eraIdx = parseInt(localStorage.getItem(ERA_KEY) || '0');
   applyEra();
   const playerCollapsed = localStorage.getItem('playerCollapsed') === 'true';
@@ -479,8 +484,14 @@ function setupClickEffect() {
     if (e.target.closest('a') || e.target.closest('button') || e.target.closest('iframe')) return;
     const spark = document.createElement('div');
     spark.className = 'sparkle-effect';
-    spark.style.left = e.clientX + 'px';
-    spark.style.top = e.clientY + 'px';
+    spark.textContent = typeof biasEmoji !== 'undefined' ? biasEmoji : '✨';
+    spark.style.left = (e.clientX - 10) + 'px';
+    spark.style.top = (e.clientY - 10) + 'px';
+    spark.style.fontSize = '20px';
+    spark.style.position = 'fixed';
+    spark.style.pointerEvents = 'none';
+    spark.style.zIndex = '99999';
+    spark.style.animation = 'floatUp 0.6s ease-out forwards';
     document.body.appendChild(spark);
     setTimeout(function () { if (spark.parentNode) spark.remove(); }, 600);
   });
@@ -1777,3 +1788,172 @@ window.downloadCard = function () {
     if (typeof showToast === 'function') showToast('Download not available, try copying instead! 💗');
   }
 };
+
+
+// =============================================
+// BIAS PERSONALIZATION ENGINE
+// =============================================
+let currentBias = localStorage.getItem('blink_bias');
+let biasEmoji = '✨';
+
+const biasProfiles = {
+  'OT4': { color: '#FF7698', emoji: '✨', trackIdx: 0 },
+  'JISOO': { color: '#ff2a2a', emoji: '🐰', trackIdx: 14 }, // Flower
+  'JENNIE': { color: '#4a90e2', emoji: '🐻', trackIdx: 11 }, // SOLO
+  'ROSE': { color: '#ffb6c1', emoji: '🌹', trackIdx: 12 }, // On The Ground
+  'LISA': { color: '#f1c40f', emoji: '🐥', trackIdx: 13 } // Lalisa
+};
+
+function initBiasEngine() {
+  currentBias = localStorage.getItem('blink_bias');
+  if (!currentBias) {
+    showBiasModal();
+  } else {
+    applyBias(currentBias);
+  }
+}
+
+function showBiasModal() {
+  if (document.getElementById('bias-modal')) return;
+  const modalHTML = `
+    <div id="bias-modal" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); backdrop-filter:blur(10px); z-index:10000; display:flex; justify-content:center; align-items:center; opacity:0; transition:opacity 0.5s;">
+      <div style="background:var(--glass-bg); padding:3rem; border-radius:20px; border:1px solid var(--glass-border); text-align:center; max-width:500px; width:90%; box-shadow:0 0 40px rgba(255,118,152,0.3); transform:scale(0.8); transition:transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);" id="bias-modal-content">
+        <h2 style="font-size:2rem; margin-bottom:1rem; text-shadow:0 0 10px var(--bp-pink);">Who is your Bias?</h2>
+        <p style="margin-bottom:2rem; opacity:0.8;">Personalize your BLINK experience!</p>
+        <div style="display:flex; flex-wrap:wrap; gap:1rem; justify-content:center;">
+          <button class="btn btn-glow" onclick="selectBias('JISOO')" style="background:rgba(255,42,42,0.2); border-color:#ff2a2a;">🐰 JISOO</button>
+          <button class="btn btn-glow" onclick="selectBias('JENNIE')" style="background:rgba(74,144,226,0.2); border-color:#4a90e2;">🐻 JENNIE</button>
+          <button class="btn btn-glow" onclick="selectBias('ROSE')" style="background:rgba(255,182,193,0.2); border-color:#ffb6c1;">🌹 ROSÉ</button>
+          <button class="btn btn-glow" onclick="selectBias('LISA')" style="background:rgba(241,196,15,0.2); border-color:#f1c40f;">🐥 LISA</button>
+          <button class="btn btn-glow" onclick="selectBias('OT4')" style="background:rgba(255,118,152,0.2); border-color:#FF7698; width:100%;">✨ OT4 (All of them!)</button>
+        </div>
+      </div>
+    </div>
+  `;
+  document.body.insertAdjacentHTML('beforeend', modalHTML);
+  setTimeout(() => {
+    document.getElementById('bias-modal').style.opacity = '1';
+    document.getElementById('bias-modal-content').style.transform = 'scale(1)';
+  }, 100);
+}
+
+window.selectBias = function(bias) {
+  localStorage.setItem('blink_bias', bias);
+  currentBias = bias;
+  applyBias(bias);
+  const modal = document.getElementById('bias-modal');
+  if (modal) {
+    modal.style.opacity = '0';
+    document.getElementById('bias-modal-content').style.transform = 'scale(0.8)';
+    setTimeout(() => modal.remove(), 500);
+  }
+  showToast(`Bias set to ${bias}! 🖤💗`);
+  
+  // Jump to bias track
+  if (ytPlayerReady && biasProfiles[bias].trackIdx !== 0) {
+    ytLoadTrack(biasProfiles[bias].trackIdx);
+  }
+};
+
+function applyBias(bias) {
+  const profile = biasProfiles[bias] || biasProfiles['OT4'];
+  biasEmoji = profile.emoji;
+  document.documentElement.style.setProperty('--bp-pink', profile.color);
+  
+  let rgb = hexToRgb(profile.color);
+  if (rgb) {
+    document.documentElement.style.setProperty('--bp-pink-glow', `rgba(${rgb.r},${rgb.g},${rgb.b},0.6)`);
+    document.documentElement.style.setProperty('--glass-border', `rgba(${rgb.r},${rgb.g},${rgb.b},0.3)`);
+  }
+}
+
+function hexToRgb(hex) {
+  var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return result ? { r: parseInt(result[1], 16), g: parseInt(result[2], 16), b: parseInt(result[3], 16) } : null;
+}
+
+
+// =============================================
+// HAMMER BONG MODE
+// =============================================
+function initLightstickMode() {
+  if (document.getElementById('hammer-bong-btn')) return;
+  
+  // Inject Toggle Button
+  const btn = document.createElement('button');
+  btn.id = 'hammer-bong-btn';
+  btn.className = 'hammer-bong-btn';
+  btn.innerHTML = '🔨';
+  btn.title = 'Concert Mode';
+  btn.onclick = toggleLightstickMode;
+  document.body.appendChild(btn);
+
+  // Inject Overlay
+  const overlay = document.createElement('div');
+  overlay.id = 'lightstick-overlay';
+  overlay.className = 'lightstick-overlay';
+  overlay.innerHTML = `
+    <div class="virtual-lightstick" id="virtual-lightstick">🔨</div>
+    <p style="color:rgba(255,255,255,0.5); margin-top:2rem;">Tap or Wave (Mobile) to sync with music!</p>
+    <button class="btn btn-glow" style="margin-top:2rem;" onclick="toggleLightstickMode()">Exit Concert Mode</button>
+  `;
+  document.body.appendChild(overlay);
+
+  // Handle Mobile Device Orientation (Waving)
+  if (window.DeviceMotionEvent) {
+    window.addEventListener('devicemotion', (e) => {
+      if (document.getElementById('lightstick-overlay').classList.contains('active')) {
+        const acc = e.accelerationIncludingGravity;
+        if (acc && (Math.abs(acc.x) > 15 || Math.abs(acc.y) > 15)) {
+          triggerLightstickPulse();
+        }
+      }
+    });
+  }
+}
+
+function toggleLightstickMode() {
+  const overlay = document.getElementById('lightstick-overlay');
+  overlay.classList.toggle('active');
+  if (overlay.classList.contains('active')) {
+    if (!ytIsPlaying) ytPlayPause(); // Auto play music
+  }
+}
+
+function triggerLightstickPulse() {
+  const ls = document.getElementById('virtual-lightstick');
+  if (ls) {
+    ls.style.transform = 'scale(1.2) rotate(15deg)';
+    ls.style.filter = 'drop-shadow(0 0 80px var(--bp-pink)) brightness(2)';
+    setTimeout(() => {
+      ls.style.transform = '';
+      ls.style.filter = '';
+    }, 100);
+  }
+}
+
+// =============================================
+// DAILY LOGIN STREAK
+// =============================================
+function initDailyStreak() {
+  const today = new Date().toDateString();
+  let lastLogin = localStorage.getItem('last_login_date');
+  let streak = parseInt(localStorage.getItem('blink_streak') || '0');
+
+  if (lastLogin !== today) {
+    if (lastLogin === new Date(Date.now() - 86400000).toDateString()) {
+      streak++; // Logged in yesterday
+    } else if (lastLogin !== null) {
+      streak = 1; // Missed a day
+    } else {
+      streak = 1; // First ever login
+    }
+    localStorage.setItem('last_login_date', today);
+    localStorage.setItem('blink_streak', streak);
+    
+    // Show toast for streak
+    setTimeout(() => {
+      showToast(`🔥 ${streak} Day BLINK Streak! ${streak >= 3 ? 'Vault unlocked!' : ''}`);
+    }, 2000);
+  }
+}
