@@ -1907,19 +1907,27 @@ function initLightstickMode() {
   if (document.getElementById('hammer-bong-btn')) return;
   
   const bpBongSVG = `
-  <svg viewBox="0 0 100 100" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-    <!-- Handle -->
-    <rect x="44" y="30" width="12" height="60" rx="4" fill="#222"/>
-    <rect x="42" y="80" width="16" height="15" rx="3" fill="#ff2a85"/>
-    <rect x="42" y="40" width="16" height="5" fill="#444"/>
-    <!-- Left Pink Mallet -->
-    <path d="M 44,32 L 20,18 C 5,10 5,50 20,42 L 44,28 Z" fill="var(--bp-pink)"/>
-    <!-- Right Pink Mallet -->
-    <path d="M 56,32 L 80,18 C 95,10 95,50 80,42 L 56,28 Z" fill="var(--bp-pink)"/>
-    <!-- Center Star/Logo -->
-    <circle cx="50" cy="30" r="10" fill="#111"/>
-    <path d="M 50,24 L 52,28 L 56,28 L 53,31 L 54,36 L 50,33 L 46,36 L 47,31 L 44,28 L 48,28 Z" fill="#ff2a85"/>
-  </svg>`;
+<svg viewBox="0 0 200 200" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="handleGrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#111" /><stop offset="50%" stop-color="#333" /><stop offset="100%" stop-color="#0a0a0a" /></linearGradient>
+    <radialGradient id="pinkGrad" cx="30%" cy="30%" r="70%"><stop offset="0%" stop-color="#ff85c0" /><stop offset="40%" stop-color="#ff2a85" /><stop offset="100%" stop-color="#a8005c" /></radialGradient>
+    <radialGradient id="buttonGrad" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#ff2a85" /><stop offset="100%" stop-color="#7a0035" /></radialGradient>
+    <linearGradient id="baseGrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#ff2a85" /><stop offset="50%" stop-color="#ff85c0" /><stop offset="100%" stop-color="#a8005c" /></linearGradient>
+    <filter id="glow"><feGaussianBlur stdDeviation="3" result="coloredBlur"/><feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <rect x="88" y="160" width="24" height="25" rx="4" fill="url(#baseGrad)"/>
+  <rect x="90" y="60" width="20" height="110" rx="6" fill="url(#handleGrad)"/>
+  <line x1="90" y1="80" x2="110" y2="80" stroke="#111" stroke-width="2"/>
+  <line x1="90" y1="100" x2="110" y2="100" stroke="#111" stroke-width="2"/>
+  <line x1="90" y1="120" x2="110" y2="120" stroke="#111" stroke-width="2"/>
+  <line x1="90" y1="140" x2="110" y2="140" stroke="#111" stroke-width="2"/>
+  <rect x="86" y="55" width="28" height="12" rx="4" fill="#111"/>
+  <path d="M 88,60 C 88,40 20,20 20,60 C 20,100 88,80 88,60 Z" fill="url(#pinkGrad)"/>
+  <path d="M 112,60 C 112,40 180,20 180,60 C 180,100 112,80 112,60 Z" fill="url(#pinkGrad)"/>
+  <circle cx="100" cy="60" r="14" fill="#000"/>
+  <circle cx="100" cy="60" r="10" fill="url(#buttonGrad)" filter="url(#glow)"/>
+  <line x1="100" y1="53" x2="100" y2="60" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
+</svg>`;
 
   // Inject Toggle Button
   const btn = document.createElement('button');
@@ -1973,7 +1981,24 @@ function initLightstickMode() {
   }
 }
 
+function injectLightstickStyles() {
+  if (document.getElementById('ls-sync-styles')) return;
+  const style = document.createElement('style');
+  style.id = 'ls-sync-styles';
+  style.innerHTML = `
+    @keyframes bpmSyncPulse {
+      0%, 100% { transform: scale(1) rotate(0deg); filter: drop-shadow(0 0 10px var(--bp-pink)) brightness(1); }
+      20% { transform: scale(1.15) rotate(5deg); filter: drop-shadow(0 0 50px var(--bp-pink)) brightness(1.8); }
+      50% { transform: scale(1) rotate(-5deg); filter: drop-shadow(0 0 20px var(--bp-pink)) brightness(1.2); }
+    }
+    .ls-sync-active { animation: bpmSyncPulse var(--bpm-duration, 0.5s) ease-in-out infinite; }
+    .ls-sync-manual { transform: scale(1.3) rotate(20deg) !important; filter: drop-shadow(0 0 80px var(--bp-pink)) brightness(2.5) !important; transition: all 0.1s ease-out !important; }
+  `;
+  document.head.appendChild(style);
+}
+
 function updateSyncInterval() {
+  injectLightstickStyles();
   if (currentBpmInterval) clearInterval(currentBpmInterval);
   
   let currentTitle = "Playing With Fire"; // Fallback
@@ -1984,15 +2009,27 @@ function updateSyncInterval() {
   }
   
   const bpm = songBpmDict[currentTitle] || 120; // Default to 120 BPM
-  const msPerBeat = 60000 / bpm;
+  const beatDuration = 60 / bpm;
+  
+  const ls = document.getElementById('virtual-lightstick');
+  if (ls) {
+    ls.style.setProperty('--bpm-duration', `${beatDuration}s`);
+    if (typeof window.ytPlayer !== 'undefined' && window.ytIsPlaying) {
+      ls.classList.add('ls-sync-active');
+    } else {
+      ls.classList.remove('ls-sync-active');
+    }
+  }
   
   currentBpmInterval = setInterval(() => {
-    if (document.getElementById('lightstick-overlay') && document.getElementById('lightstick-overlay').classList.contains('active')) {
-      if (typeof window.ytPlayer !== 'undefined' && window.ytIsPlaying) {
-        triggerLightstickPulse();
+    if (ls && document.getElementById('lightstick-overlay').classList.contains('active')) {
+      if (window.ytIsPlaying) {
+        if (!ls.classList.contains('ls-sync-active')) ls.classList.add('ls-sync-active');
+      } else {
+        ls.classList.remove('ls-sync-active');
       }
     }
-  }, msPerBeat);
+  }, 500);
 }
 
 function toggleLightstickMode() {
@@ -2005,22 +2042,22 @@ function toggleLightstickMode() {
     }
   } else {
     if (currentBpmInterval) clearInterval(currentBpmInterval);
+    const ls = document.getElementById('virtual-lightstick');
+    if (ls) ls.classList.remove('ls-sync-active');
   }
 }
 
 function triggerLightstickPulse(isManual = false) {
   const ls = document.getElementById('virtual-lightstick');
   if (ls) {
-    const scale = isManual ? 1.4 : 1.15;
-    const rot = isManual ? (Math.random() > 0.5 ? 25 : -25) : (Math.random() > 0.5 ? 8 : -8);
-    
-    ls.style.transform = `scale(${scale}) rotate(${rot}deg)`;
-    ls.style.filter = `drop-shadow(0 0 ${isManual ? 100 : 50}px var(--bp-pink)) brightness(${isManual ? 2.5 : 1.5})`;
-    
+    ls.classList.remove('ls-sync-active');
+    ls.classList.add('ls-sync-manual');
     setTimeout(() => {
-      ls.style.transform = 'scale(1) rotate(0deg)';
-      ls.style.filter = 'drop-shadow(0 0 10px var(--bp-pink)) brightness(1)';
-    }, isManual ? 200 : 150);
+      ls.classList.remove('ls-sync-manual');
+      if (typeof window.ytIsPlaying !== 'undefined' && window.ytIsPlaying) {
+        ls.classList.add('ls-sync-active');
+      }
+    }, 150);
   }
 }
 
