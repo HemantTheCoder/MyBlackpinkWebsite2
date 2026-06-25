@@ -1890,7 +1890,7 @@ body.era-deadline {
 
 .virtual-lightstick {
   font-size: 10rem;
-  animation: lightstickPulse 0.5s infinite alternate;
+  
   filter: drop-shadow(0 0 40px var(--bp-pink));
   cursor: pointer;
   user-select: none;
@@ -1900,7 +1900,6 @@ body.era-deadline {
   transform: scale(0.9) rotate(-10deg);
 }
 
-@keyframes lightstickPulse {
-  0% { filter: drop-shadow(0 0 20px var(--bp-pink)) brightness(1); transform: scale(1); }
+
   100% { filter: drop-shadow(0 0 60px var(--bp-pink)) brightness(1.5); transform: scale(1.05); }
 }

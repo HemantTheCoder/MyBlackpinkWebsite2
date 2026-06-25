@@ -1883,7 +1883,7 @@ function initLightstickMode() {
   const btn = document.createElement('button');
   btn.id = 'hammer-bong-btn';
   btn.className = 'hammer-bong-btn';
-  btn.innerHTML = '🔨';
+  btn.innerHTML = '<svg viewBox="0 0 100 100" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">  <!-- Handle -->  <rect x="44" y="30" width="12" height="60" rx="4" fill="#222"/>  <rect x="42" y="80" width="16" height="15" rx="3" fill="#ff2a85"/>  <rect x="42" y="40" width="16" height="5" fill="#444"/>  <!-- Left Pink Mallet -->  <path d="M 44,32 L 20,18 C 5,10 5,50 20,42 L 44,28 Z" fill="var(--bp-pink)"/>  <!-- Right Pink Mallet -->  <path d="M 56,32 L 80,18 C 95,10 95,50 80,42 L 56,28 Z" fill="var(--bp-pink)"/>  <!-- Center Star/Logo -->  <circle cx="50" cy="30" r="10" fill="#111"/>  <path d="M 50,24 L 52,28 L 56,28 L 53,31 L 54,36 L 50,33 L 46,36 L 47,31 L 44,28 L 48,28 Z" fill="#ff2a85"/></svg>';
   btn.title = 'Concert Mode';
   btn.onclick = toggleLightstickMode;
   document.body.appendChild(btn);
@@ -1893,11 +1893,23 @@ function initLightstickMode() {
   overlay.id = 'lightstick-overlay';
   overlay.className = 'lightstick-overlay';
   overlay.innerHTML = `
-    <div class="virtual-lightstick" id="virtual-lightstick">🔨</div>
-    <p style="color:rgba(255,255,255,0.5); margin-top:2rem;">Tap or Wave (Mobile) to sync with music!</p>
+    <div class="virtual-lightstick" id="virtual-lightstick" style="width: 250px; height: 250px; display:flex; justify-content:center; align-items:center; filter: drop-shadow(0 0 10px var(--bp-pink)); transition: transform 0.15s, filter 0.15s;">
+      <svg viewBox="0 0 100 100" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">  <!-- Handle -->  <rect x="44" y="30" width="12" height="60" rx="4" fill="#222"/>  <rect x="42" y="80" width="16" height="15" rx="3" fill="#ff2a85"/>  <rect x="42" y="40" width="16" height="5" fill="#444"/>  <!-- Left Pink Mallet -->  <path d="M 44,32 L 20,18 C 5,10 5,50 20,42 L 44,28 Z" fill="var(--bp-pink)"/>  <!-- Right Pink Mallet -->  <path d="M 56,32 L 80,18 C 95,10 95,50 80,42 L 56,28 Z" fill="var(--bp-pink)"/>  <!-- Center Star/Logo -->  <circle cx="50" cy="30" r="10" fill="#111"/>  <path d="M 50,24 L 52,28 L 56,28 L 53,31 L 54,36 L 50,33 L 46,36 L 47,31 L 44,28 L 48,28 Z" fill="#ff2a85"/></svg>
+    </div>
+    <p style="color:rgba(255,255,255,0.5); margin-top:2rem;">Music Sync Active! Wave phone to interact.</p>
     <button class="btn btn-glow" style="margin-top:2rem;" onclick="toggleLightstickMode()">Exit Concert Mode</button>
   `;
   document.body.appendChild(overlay);
+
+  // Simulated Music Sync
+  setInterval(() => {
+    if (document.getElementById('lightstick-overlay').classList.contains('active')) {
+      if (typeof window.ytPlayer !== 'undefined' && window.ytIsPlaying) {
+        // Create a fake beat sync
+        triggerLightstickPulse();
+      }
+    }
+  }, 480); // ~125 BPM average for pop songs
 
   // Handle Mobile Device Orientation (Waving)
   if (window.DeviceMotionEvent) {
@@ -1905,7 +1917,7 @@ function initLightstickMode() {
       if (document.getElementById('lightstick-overlay').classList.contains('active')) {
         const acc = e.accelerationIncludingGravity;
         if (acc && (Math.abs(acc.x) > 15 || Math.abs(acc.y) > 15)) {
-          triggerLightstickPulse();
+          triggerLightstickPulse(true);
         }
       }
     });
@@ -1916,19 +1928,25 @@ function toggleLightstickMode() {
   const overlay = document.getElementById('lightstick-overlay');
   overlay.classList.toggle('active');
   if (overlay.classList.contains('active')) {
-    if (!ytIsPlaying) ytPlayPause(); // Auto play music
+    if (typeof window.ytPlayer !== 'undefined' && typeof ytIsPlaying !== 'undefined' && !ytIsPlaying) {
+      if (typeof ytPlayPause === 'function') ytPlayPause(); // Auto play music
+    }
   }
 }
 
-function triggerLightstickPulse() {
+function triggerLightstickPulse(isManual = false) {
   const ls = document.getElementById('virtual-lightstick');
   if (ls) {
-    ls.style.transform = 'scale(1.2) rotate(15deg)';
-    ls.style.filter = 'drop-shadow(0 0 80px var(--bp-pink)) brightness(2)';
+    const scale = isManual ? 1.3 : 1.1;
+    const rot = isManual ? (Math.random() > 0.5 ? 20 : -20) : (Math.random() > 0.5 ? 5 : -5);
+    
+    ls.style.transform = `scale(${scale}) rotate(${rot}deg)`;
+    ls.style.filter = `drop-shadow(0 0 ${isManual ? 80 : 40}px var(--bp-pink)) brightness(${isManual ? 2 : 1.5})`;
+    
     setTimeout(() => {
-      ls.style.transform = '';
-      ls.style.filter = '';
-    }, 100);
+      ls.style.transform = 'scale(1) rotate(0deg)';
+      ls.style.filter = 'drop-shadow(0 0 10px var(--bp-pink)) brightness(1)';
+    }, isManual ? 200 : 150);
   }
 }
 
