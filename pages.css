@@ -1780,3 +1780,75 @@
       .countdown-num { font-size: 1.8rem; }
     }
   
+
+
+/* --- QUOTE GENERATOR UI POLISH --- */
+.member-grid {
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)) !important;
+  gap: 1.5rem !important;
+}
+
+.member-btn {
+  border-radius: 20px !important;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+.member-btn img {
+  border-radius: 18px 18px 0 0 !important;
+  transition: transform 0.4s ease;
+}
+
+.member-btn:hover img {
+  transform: scale(1.05);
+}
+
+.member-btn-name {
+  font-size: 1rem !important;
+  padding: 0.8rem 0 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.lyric-select {
+  font-size: 1.1rem !important;
+  padding: 1rem 2.5rem 1rem 1rem !important;
+  border-radius: 16px !important;
+}
+
+.action-row {
+  gap: 1rem !important;
+}
+
+.action-btn {
+  padding: 1rem !important;
+  font-size: 1rem !important;
+  border-radius: 16px !important;
+}
+
+#quote-card {
+  max-width: 500px !important;
+  padding: 3rem !important;
+}
+
+.member-photo-ring {
+  width: 90px !important;
+  height: 90px !important;
+  border-width: 3px !important;
+  box-shadow: 0 0 20px var(--bp-pink-glow) !important;
+  margin-bottom: 1rem !important;
+}
+
+.card-member-name {
+  font-size: 1.3rem !important;
+}
+
+.card-lyric {
+  font-size: 1.8rem !important;
+  line-height: 1.4 !important;
+  margin-top: 1rem !important;
+}
+
+.card-song {
+  font-size: 1rem !important;
+  margin-top: 1.5rem !important;
+}
