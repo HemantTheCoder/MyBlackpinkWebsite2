@@ -2693,17 +2693,18 @@ window.initProfile = async function() {
   const pcContainer = document.getElementById('profile-photocards');
   if (pcContainer) {
     pcContainer.innerHTML = '';
-    const cards = currentUser.photocards || [];
+    const rawCards = currentUser.photocards || [];
+    const cards = rawCards.filter(c => c && c.url);
     if (cards.length === 0) {
       pcContainer.innerHTML = '<p style="color:#aaa; grid-column: 1 / -1; text-align: center;">You haven\'t pulled any cards yet.</p>';
     } else {
       const previewCards = cards.slice(0, 4);
       previewCards.forEach(card => {
         const div = document.createElement('div');
-        div.className = `gacha-card ${card.rarity.toLowerCase()}`;
+        div.className = `gacha-card ${card.rarity ? card.rarity.toLowerCase() : 'common'}`;
         div.innerHTML = `
           <img src="${card.url}" alt="Photocard">
-          <div class="rarity-label">${card.rarity}</div>
+          <div class="rarity-label">${card.rarity || 'Common'}</div>
         `;
         pcContainer.appendChild(div);
       });
@@ -2733,7 +2734,9 @@ window.showFullCollection = function() {
   const grid = document.getElementById('full-collection-grid');
   if (!modal || !grid) return;
   
-  const cards = (currentUser && currentUser.photocards) ? currentUser.photocards : [];
+  const rawCards = (currentUser && currentUser.photocards) ? currentUser.photocards : [];
+  const cards = rawCards.filter(c => c && c.url); // filter out nulls/invalid
+  
   grid.innerHTML = '';
   
   if (cards.length === 0) {
