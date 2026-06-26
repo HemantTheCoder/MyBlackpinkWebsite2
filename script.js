@@ -2689,15 +2689,16 @@ window.initProfile = async function() {
 
   renderPlaylistUI();
 
-  // Render Photocards
+  // Render Photocards (Preview)
   const pcContainer = document.getElementById('profile-photocards');
   if (pcContainer) {
     pcContainer.innerHTML = '';
     const cards = currentUser.photocards || [];
     if (cards.length === 0) {
-      pcContainer.innerHTML = '<p style="color:#aaa;">You haven\'t pulled any cards yet.</p>';
+      pcContainer.innerHTML = '<p style="color:#aaa; grid-column: 1 / -1; text-align: center;">You haven\'t pulled any cards yet.</p>';
     } else {
-      cards.forEach(card => {
+      const previewCards = cards.slice(0, 4);
+      previewCards.forEach(card => {
         const div = document.createElement('div');
         div.className = `gacha-card ${card.rarity.toLowerCase()}`;
         div.innerHTML = `
@@ -2706,8 +2707,57 @@ window.initProfile = async function() {
         `;
         pcContainer.appendChild(div);
       });
+      
+      // If they have more than 4, hint it
+      if (cards.length > 4) {
+        const moreDiv = document.createElement('div');
+        moreDiv.style.display = 'flex';
+        moreDiv.style.alignItems = 'center';
+        moreDiv.style.justifyContent = 'center';
+        moreDiv.style.background = 'rgba(255,255,255,0.05)';
+        moreDiv.style.borderRadius = '12px';
+        moreDiv.style.cursor = 'pointer';
+        moreDiv.style.border = '2px dashed var(--bp-pink)';
+        moreDiv.innerHTML = `<span style="color:var(--bp-pink); font-weight:bold;">+${cards.length - 4} More</span>`;
+        moreDiv.onclick = showFullCollection;
+        pcContainer.appendChild(moreDiv);
+      }
     }
   }
+};
+
+window.showFullCollection = function() {
+  const modal = document.getElementById('collection-modal');
+  const grid = document.getElementById('full-collection-grid');
+  if (!modal || !grid) return;
+  
+  const cards = (currentUser && currentUser.photocards) ? currentUser.photocards : [];
+  grid.innerHTML = '';
+  
+  if (cards.length === 0) {
+    grid.innerHTML = '<p style="color:#aaa; grid-column: 1 / -1; text-align: center;">No cards found.</p>';
+  } else {
+    // Sort cards by rarity before displaying in full collection (Legendary first)
+    const rarityOrder = { 'Legendary': 4, 'Epic': 3, 'Rare': 2, 'Common': 1 };
+    const sortedCards = [...cards].sort((a, b) => rarityOrder[b.rarity] - rarityOrder[a.rarity]);
+    
+    sortedCards.forEach(card => {
+      const div = document.createElement('div');
+      div.className = `gacha-card ${card.rarity.toLowerCase()}`;
+      div.innerHTML = `
+        <img src="${card.url}" alt="Photocard">
+        <div class="rarity-label">${card.rarity}</div>
+      `;
+      grid.appendChild(div);
+    });
+  }
+  
+  modal.style.display = 'block';
+};
+
+window.closeCollectionModal = function() {
+  const modal = document.getElementById('collection-modal');
+  if (modal) modal.style.display = 'none';
 };
 
 function getRarityColor(r) {
