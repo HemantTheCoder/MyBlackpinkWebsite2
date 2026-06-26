@@ -181,7 +181,7 @@
     async function fetchGlobalLeaderboard() {
       const glDiv = document.getElementById('global-leaderboard');
       try {
-        const res = await fetch('http://localhost:3000/api/leaderboard');
+        const res = await fetch('https://myblackpinkwebsite2.onrender.com/api/leaderboard');
         const scores = await res.json();
         
         if (scores.length === 0) {

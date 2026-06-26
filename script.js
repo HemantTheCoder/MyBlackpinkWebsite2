@@ -648,7 +648,7 @@ function saveHighScore(gameKey, currentScore) {
   // GLOBAL LEADERBOARD INTEGRATION (Trivia Only for now)
   if (gameKey === 'triviaHighScore') {
     const username = localStorage.getItem('blink_id') || 'Anonymous Blink';
-    fetch('http://localhost:3000/api/leaderboard', {
+    fetch('https://myblackpinkwebsite2.onrender.com/api/leaderboard', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, score: currentScore })
