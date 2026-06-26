@@ -88,18 +88,25 @@
   </style>
 </head>
 <body>
-  <header>
-    <div class="logo">
-      <a href="index.html">BLACKPINK</a>
+  <!-- Loading Screen -->
+  <div id="loading-screen">
+    <div class="loading-logo">BLACKPINK</div>
+    <div class="loading-bar"><div class="loading-fill"></div></div>
+  </div>
+
+  <!-- Page Transition Overlay -->
+  <div id="page-transition"></div>
+
+  <!-- Lightstick Canvas Background -->
+  <canvas id="lightstick-canvas"></canvas>
+
+  <!-- Era Toggle Button -->
+  <button id="era-toggle-btn" onclick="cycleEra()">&#x1F5A4; Original</button>
+
+  <header class="hero" style="height: 30vh; background: radial-gradient(circle at center, var(--glass-border), transparent);">
+    <div class="hero-content">
+      <h1 style="font-size: 3.5rem;">Blink Wall</h1>
     </div>
-    <nav>
-      <ul>
-        <li><a href="index.html">Home</a></li>
-        <li><a href="games.html">Games</a></li>
-        <li><a href="leaderboard.html">Leaderboard</a></li>
-        <li><a href="blink-wall.html">Blink Wall</a></li>
-      </ul>
-    </nav>
   </header>
 
   <main class="wall-container">
