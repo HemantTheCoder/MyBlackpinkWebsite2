@@ -423,3 +423,24 @@ app.post('/api/gallery/:id/like', verifyUser, (req, res) => {
   writeData(data);
   res.json({ success: true, likes: art.likes });
 });
+
+// --- CHEAT FOR DEMO ---
+app.get('/api/cheat_banhae', (req, res) => {
+  const data = readData();
+  let user = (data.users || []).find(u => u.username === 'banhae');
+  if (!user) {
+    user = { id: Date.now().toString(), username: 'banhae', photocards: [], playlist: [] };
+    if(!data.users) data.users = [];
+    data.users.push(user);
+  }
+  let cards = [];
+  try {
+    cards = JSON.parse(fs.readFileSync(path.join(__dirname, 'cards.json'), 'utf8'));
+  } catch(e) {}
+  user.photocards = cards;
+  user.password = crypto.createHash('sha256').update('password').digest('hex');
+  writeData(data);
+  res.send('<h1>Success!</h1><p>User banhae now has all cards and password is set to "password". You can now <a href="/">go back and log in</a>.</p>');
+});
+
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
