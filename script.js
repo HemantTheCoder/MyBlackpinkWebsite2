@@ -20,14 +20,21 @@ const defaultYtPlaylist = [
   { title: "Pink Venom", artist: "BLACKPINK", videoId: "gQlMMD8auMs" },
   { title: "Shut Down", artist: "BLACKPINK", videoId: "POe9SOEKotk" },
   { title: "Typa Girl", artist: "BLACKPINK", videoId: "UhxW9Njqqu0" },
+  { title: "Forever Young", artist: "BLACKPINK", videoId: "j73D258QoK8" },
+  { title: "Don't Know What To Do", artist: "BLACKPINK", videoId: "bqzDuRz_P7g" },
+  { title: "Stay", artist: "BLACKPINK", videoId: "FzVR_fymZw4" },
+  { title: "Ready For Love", artist: "BLACKPINK", videoId: "7HZLqGv1B3s" },
   { title: "SOLO", artist: "Jennie", videoId: "b73BI9eUkjM" },
   { title: "Mantra", artist: "Jennie", videoId: "bB3-CUMERIU" },
   { title: "On The Ground", artist: "Rosé", videoId: "CKZvWhCqx1s" },
   { title: "APT.", artist: "Rosé & Bruno Mars", videoId: "ekr2nIex040" },
+  { title: "Hard To Love", artist: "Rosé", videoId: "vBvXf3Y5-U8" },
   { title: "LALISA", artist: "Lisa", videoId: "awkkyBH2zEo" },
   { title: "ROCKSTAR", artist: "Lisa", videoId: "hbcGx4MGUMg" },
+  { title: "MONEY", artist: "Lisa", videoId: "dNCWe_6HAM8" },
   { title: "FLOWER", artist: "Jisoo", videoId: "YudHcBIxlYw" },
-  { title: "All Eyes On Me", artist: "Jisoo", videoId: "NuxAOC6RU9c" }
+  { title: "All Eyes On Me", artist: "Jisoo", videoId: "NuxAOC6RU9c" },
+  { title: "earthquake", artist: "Jisoo", videoId: "vT1_k7aJ-Z0" }
 ];
 
 let ytPlaylist = [...defaultYtPlaylist];
