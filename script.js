@@ -22,15 +22,12 @@ const ytPlaylist = [
   { title: "Typa Girl", artist: "BLACKPINK", videoId: "UhxW9Njqqu0" },
   { title: "SOLO", artist: "Jennie", videoId: "b73BI9eUkjM" },
   { title: "Mantra", artist: "Jennie", videoId: "bB3-CUMERIU" },
-  { title: "Dracula", artist: "Jennie", videoId: "0UPDBODtxzw" },
-  { title: "On The Ground", artist: "Rosé", videoId: "VdOioq-I-Xw" },
-  { title: "APT.", artist: "Rosé & Bruno Mars", videoId: "ekr0tIQA03c" },
+  { title: "On The Ground", artist: "Rosé", videoId: "CKZvWhCqx1s" },
+  { title: "APT.", artist: "Rosé & Bruno Mars", videoId: "ekr2nIex040" },
   { title: "LALISA", artist: "Lisa", videoId: "awkkyBH2zEo" },
   { title: "ROCKSTAR", artist: "Lisa", videoId: "hbcGx4MGUMg" },
   { title: "FLOWER", artist: "Jisoo", videoId: "YudHcBIxlYw" },
-  { title: "All Eyes On Me", artist: "Jisoo", videoId: "NuxAOC6RU9c" },
-  { title: "GO (ft. Chris Martin)", artist: "BLACKPINK", videoId: "2GJfWMYCWY0" },
-  { title: "JUMP", artist: "BLACKPINK", videoId: "CgCVZdcKcqY" }
+  { title: "All Eyes On Me", artist: "Jisoo", videoId: "NuxAOC6RU9c" }
 ];
 
 let ytPlayer = null;
