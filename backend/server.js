@@ -254,7 +254,8 @@ app.get('/api/me', verifyUser, (req, res) => {
     playCount: req.user.playCount || 0,
     commentsCount: req.user.commentsCount || 0,
     joined: req.user.joined,
-    photocards: validCards
+    photocards: validCards,
+    lastPullDate: req.user.lastPullDate
   });
 });
 

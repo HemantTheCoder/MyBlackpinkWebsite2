@@ -2991,6 +2991,40 @@ window.toggleLike = async function(id) {
 window.initPhotocards = function() {
   const btn = document.getElementById('pull-card-btn');
   if(!btn) return;
+  
+  window.updatePhotocardUI = function() {
+    if (!currentUser || !document.getElementById('pull-card-btn')) return;
+    if (currentUser.lastPullDate === new Date().toDateString()) {
+      const b = document.getElementById('pull-card-btn');
+      const cd = document.getElementById('pull-countdown');
+      if (b) b.style.display = 'none';
+      if (cd) {
+        cd.style.display = 'block';
+        if (window.pullInterval) clearInterval(window.pullInterval);
+        window.pullInterval = setInterval(() => {
+          const now = new Date();
+          const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+          const diff = tomorrow - now;
+          if (diff <= 0) {
+            clearInterval(window.pullInterval);
+            b.style.display = 'inline-block';
+            cd.style.display = 'none';
+          } else {
+            const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
+            const m = Math.floor((diff / 1000 / 60) % 60);
+            const s = Math.floor((diff / 1000) % 60);
+            cd.innerHTML = `Next pull available in: <span style="color:var(--bp-pink);">${h}h ${m}m ${s}s</span>`;
+          }
+        }, 1000);
+      }
+    }
+  };
+  
+  // Call immediately in case currentUser is already loaded
+  if (typeof currentUser !== 'undefined' && currentUser) {
+    window.updatePhotocardUI();
+  }
+
   btn.addEventListener('click', async () => {
     if(!currentUser) return alert('Please login first!');
     try {
@@ -3012,8 +3046,16 @@ window.initPhotocards = function() {
         localStorage.setItem('bp_user', JSON.stringify(currentUser));
         
         if(window.triggerConfetti) window.triggerConfetti();
+        window.updatePhotocardUI();
       } else {
-        alert(data.error || 'Failed to pull card');
+        const cd = document.getElementById('pull-countdown');
+        if (cd) {
+           cd.style.display = 'block';
+           cd.style.color = '#ff6666';
+           cd.innerHTML = data.error || 'Failed to pull card';
+        } else {
+           alert(data.error || 'Failed to pull card');
+        }
       }
     } catch(e) {
       alert('Error pulling card');
