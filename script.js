@@ -2883,7 +2883,31 @@ window.initProfile = async function() {
   });
 
   renderPlaylistUI();
+
+  // Render Photocards
+  const pcContainer = document.getElementById('profile-photocards');
+  if (pcContainer) {
+    pcContainer.innerHTML = '';
+    const cards = currentUser.photocards || [];
+    if (cards.length === 0) {
+      pcContainer.innerHTML = '<p style="color:#aaa;">You haven\'t pulled any cards yet.</p>';
+    } else {
+      cards.forEach(card => {
+        const div = document.createElement('div');
+        div.style.textAlign = 'center';
+        div.innerHTML = `<img src="${card.url}" style="width:100%; border-radius:8px; border:2px solid ${getRarityColor(card.rarity)};"><div style="font-size:0.8rem; margin-top:0.3rem;">${card.rarity}</div>`;
+        pcContainer.appendChild(div);
+      });
+    }
+  }
 };
+
+function getRarityColor(r) {
+  if(r==='Legendary') return '#f5b942';
+  if(r==='Epic') return '#b742f5';
+  if(r==='Rare') return '#4287f5';
+  return '#a0a0a0';
+}
 
 window.logoutUser = function() {
   localStorage.removeItem('user_token');
@@ -3052,7 +3076,9 @@ window.initFanArt = function() {
       art.forEach(a => {
         const item = document.createElement('div');
         item.className = 'masonry-item';
-        item.innerHTML = `<img src="${a.url}" alt="${a.caption}" onerror="this.src='assets/blackpinkgroup.webp'"><div class="masonry-caption">${a.caption}</div><div class="masonry-author">By ${a.author}</div>`;
+        const likeCount = a.likes ? a.likes.length : 0;
+        const isLiked = currentUser && a.likes && a.likes.includes(currentUser.id);
+        item.innerHTML = `<img src="${a.url}" alt="${a.caption}" onerror="this.src='assets/blackpinkgroup.webp'"><div class="masonry-caption">${a.caption}</div><div class="masonry-author" style="display:flex; justify-content:space-between; align-items:center;"><span>By ${a.author}</span><span onclick="toggleLike('${a.id}')" style="cursor:pointer;">${isLiked ? '❤️' : '🤍'} ${likeCount}</span></div>`;
         grid.appendChild(item);
       });
     } catch (e) {
@@ -3087,7 +3113,52 @@ window.initFanArt = function() {
   fetchArt();
 };
 
+window.toggleLike = async function(id) {
+  if (!currentUser) return alert('Please login to like fan art!');
+  try {
+    const res = await fetch(`${API_URL}/gallery/${id}/like`, {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${currentUser.token}` }
+    });
+    if (res.ok) window.initFanArt();
+  } catch(e) {}
+};
+
+window.initPhotocards = function() {
+  const btn = document.getElementById('pull-card-btn');
+  if(!btn) return;
+  btn.addEventListener('click', async () => {
+    if(!currentUser) return alert('Please login first!');
+    try {
+      const res = await fetch(`${API_URL}/me/pull`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${currentUser.token}` }
+      });
+      const data = await res.json();
+      if(res.ok) {
+        document.getElementById('card-reveal').style.display = 'block';
+        document.getElementById('pulled-card-img').src = data.card.url;
+        document.getElementById('pulled-card-rarity').textContent = data.card.rarity;
+        document.getElementById('pulled-card-rarity').className = 'card-rarity ' + data.card.rarity.toLowerCase();
+        
+        // Save to currentUser memory
+        if(!currentUser.photocards) currentUser.photocards = [];
+        currentUser.photocards.push(data.card);
+        currentUser.lastPullDate = new Date().toDateString();
+        localStorage.setItem('bp_user', JSON.stringify(currentUser));
+        
+        if(window.triggerConfetti) window.triggerConfetti();
+      } else {
+        alert(data.error || 'Failed to pull card');
+      }
+    } catch(e) {
+      alert('Error pulling card');
+    }
+  });
+};
+
 document.addEventListener('DOMContentLoaded', () => {
   if (document.getElementById('birthday-timer')) initBirthdayCountdown();
   if (document.getElementById('fanart-grid')) initFanArt();
+  if (document.getElementById('pull-card-btn')) initPhotocards();
 });

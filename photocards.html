@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Photocard Gacha | Blackpink</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <style>
+    .gacha-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 50vh;
+      margin-top: 2rem;
+    }
+    .pack-img {
+      width: 250px;
+      cursor: pointer;
+      transition: all 0.3s;
+      filter: drop-shadow(0 0 15px var(--bp-pink));
+      animation: floatUp 3s infinite ease-in-out alternate;
+    }
+    .pack-img:hover {
+      transform: scale(1.05);
+      filter: drop-shadow(0 0 25px var(--bp-pink));
+    }
+    #card-reveal {
+      display: none;
+      margin-top: 2rem;
+      text-align: center;
+    }
+    #card-reveal img {
+      max-width: 300px;
+      border-radius: 15px;
+      box-shadow: 0 0 30px rgba(0,0,0,0.8);
+      border: 2px solid #fff;
+    }
+    .card-rarity {
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin-top: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+    .card-rarity.common { color: #a0a0a0; }
+    .card-rarity.rare { color: #4287f5; text-shadow: 0 0 10px #4287f5; }
+    .card-rarity.epic { color: #b742f5; text-shadow: 0 0 15px #b742f5; }
+    .card-rarity.legendary { color: #f5b942; text-shadow: 0 0 20px #f5b942; }
+
+    .reveal-anim.legendary img {
+      animation: legendaryGlow 2s infinite alternate;
+    }
+    @keyframes legendaryGlow {
+      from { box-shadow: 0 0 20px #f5b942, inset 0 0 20px #f5b942; border-color: #f5b942; }
+      to { box-shadow: 0 0 50px #f5b942, inset 0 0 50px #f5b942; border-color: #fff; }
+    }
+  </style>
+</head>
+<body>
+  
+  <header class="hero">
+    <div class="hero-content">
+      <h1>🎴 Photocard Pull</h1>
+      <p style="font-size: 1.2rem; font-weight: 300; margin-top: 0.5rem; position:relative; z-index:1;">Pull your daily random Blackpink photocard!</p>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="text-center" style="margin-bottom: 2rem;">
+      <a href="index.html" class="btn">&larr; Back to Home</a>
+      <a href="profile.html" class="btn">View My Collection &rarr;</a>
+    </div>
+
+    <div class="glass-card gacha-container">
+      <h2>Your Daily Pull</h2>
+      <p style="color: #ccc; margin-bottom: 2rem;">You can pull one random photocard every day. Rarities range from Common to Legendary!</p>
+      
+      <button id="pull-card-btn" class="btn btn-glow" style="font-size: 1.5rem; padding: 1rem 3rem;">PULL CARD 🎁</button>
+
+      <div id="card-reveal">
+        <h3 style="margin-bottom: 1rem; color: var(--bp-pink);">You Pulled:</h3>
+        <img id="pulled-card-img" src="" alt="Pulled Photocard">
+        <div id="pulled-card-rarity" class="card-rarity"></div>
+      </div>
+    </div>
+  </main>
+
+  <script src="script.js" defer></script>
+</body>
+</html>

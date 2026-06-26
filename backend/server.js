@@ -175,6 +175,8 @@ app.post('/api/register', (req, res) => {
     playlist: [],
     playCount: 0,
     commentsCount: 0,
+    photocards: [],
+    lastPullDate: null,
     token: token,
     joined: new Date().toISOString()
   };
@@ -361,3 +363,63 @@ app.post('/api/gallery', (req, res) => {
   res.status(201).json(newArt);
 });
 
+
+// --- Photocard Endpoints ---
+app.get('/api/cards', (req, res) => {
+  try {
+    const cards = JSON.parse(fs.readFileSync(path.join(__dirname, 'cards.json'), 'utf8'));
+    res.json(cards);
+  } catch(e) {
+    res.json([]);
+  }
+});
+
+app.post('/api/me/pull', verifyUser, (req, res) => {
+  const data = readData();
+  const user = data.users.find(u => u.id === req.user.id);
+  const today = new Date().toDateString();
+  if (user.lastPullDate === today) {
+    return res.status(400).json({ error: 'You already pulled a card today!' });
+  }
+  
+  let cards = [];
+  try {
+    cards = JSON.parse(fs.readFileSync(path.join(__dirname, 'cards.json'), 'utf8'));
+  } catch(e) {}
+  
+  if (cards.length === 0) return res.status(500).json({ error: 'No cards available' });
+  
+  const roll = Math.random() * 100;
+  let rarity = 'Common';
+  if (roll > 95) rarity = 'Legendary';
+  else if (roll > 80) rarity = 'Epic';
+  else if (roll > 55) rarity = 'Rare';
+  
+  const pool = cards.filter(c => c.rarity === rarity);
+  const finalPool = pool.length > 0 ? pool : cards;
+  const pulledCard = finalPool[Math.floor(Math.random() * finalPool.length)];
+  
+  if (!user.photocards) user.photocards = [];
+  user.photocards.push(pulledCard);
+  user.lastPullDate = today;
+  writeData(data);
+  res.json({ success: true, card: pulledCard });
+});
+
+// --- Gallery Likes ---
+app.post('/api/gallery/:id/like', verifyUser, (req, res) => {
+  const data = readData();
+  if (!data.gallery) data.gallery = [];
+  const art = data.gallery.find(a => a.id === req.params.id);
+  if (!art) return res.status(404).json({ error: 'Art not found' });
+  
+  if (!art.likes) art.likes = [];
+  const userIndex = art.likes.indexOf(req.user.id);
+  if (userIndex > -1) {
+    art.likes.splice(userIndex, 1);
+  } else {
+    art.likes.push(req.user.id);
+  }
+  writeData(data);
+  res.json({ success: true, likes: art.likes });
+});
