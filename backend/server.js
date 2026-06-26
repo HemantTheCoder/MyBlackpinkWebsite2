@@ -226,6 +226,26 @@ function verifyUser(req, res, next) {
 }
 
 app.get('/api/me', verifyUser, (req, res) => {
+  let validCards = [];
+  try {
+    const allCards = JSON.parse(fs.readFileSync(path.join(__dirname, 'cards.json'), 'utf8'));
+    const validUrls = new Set(allCards.map(c => c.url));
+    if (req.user.photocards) {
+      validCards = req.user.photocards.filter(c => validUrls.has(c.url));
+      // Self-heal the database if invalid cards were found
+      if (validCards.length !== req.user.photocards.length) {
+        const data = readData();
+        const u = data.users.find(x => x.id === req.user.id);
+        if (u) {
+          u.photocards = validCards;
+          writeData(data);
+        }
+      }
+    }
+  } catch(e) {
+    validCards = req.user.photocards || [];
+  }
+
   res.json({
     username: req.user.username,
     bias: req.user.bias,
@@ -234,7 +254,7 @@ app.get('/api/me', verifyUser, (req, res) => {
     playCount: req.user.playCount || 0,
     commentsCount: req.user.commentsCount || 0,
     joined: req.user.joined,
-    photocards: req.user.photocards || []
+    photocards: validCards
   });
 });
 

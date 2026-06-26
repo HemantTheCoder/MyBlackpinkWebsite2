@@ -714,12 +714,6 @@
     "name": "Photocard #119"
   },
   {
-    "id": "CARD_120",
-    "url": "https://upload.wikimedia.org/wikipedia/commons/7/72/Dancing_Girls_Bath_%28Hampi_water_tank%29%2C_Hampi%2C_Vijayanagara%2C_Karnataka%2C_India_%282012%29.jpg",
-    "rarity": "Common",
-    "name": "Photocard #120"
-  },
-  {
     "id": "CARD_121",
     "url": "https://upload.wikimedia.org/wikipedia/commons/c/c1/BLACKPINK_%28%EB%B8%94%EB%9E%99%ED%95%91%ED%81%AC%29_Airport_Departure_Aug_25%2C_2022_%282%29.jpg",
     "rarity": "Legendary",
@@ -792,12 +786,6 @@
     "name": "Photocard #132"
   },
   {
-    "id": "CARD_133",
-    "url": "https://upload.wikimedia.org/wikipedia/commons/5/5b/Ros%C3%A9-On_the_Ground-logo.png",
-    "rarity": "Rare",
-    "name": "Photocard #133"
-  },
-  {
     "id": "CARD_134",
     "url": "https://upload.wikimedia.org/wikipedia/commons/b/b7/Kim_Ji-Soo_in_2020_Dior_%2812%29.png",
     "rarity": "Common",
@@ -844,12 +832,6 @@
     "url": "https://upload.wikimedia.org/wikipedia/commons/b/bf/Blackpink_Born_Pink_Tour_Hanoi_03.jpg",
     "rarity": "Legendary",
     "name": "Photocard #141"
-  },
-  {
-    "id": "CARD_142",
-    "url": "https://upload.wikimedia.org/wikipedia/commons/e/ec/Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg",
-    "rarity": "Common",
-    "name": "Photocard #142"
   },
   {
     "id": "CARD_143",
@@ -900,12 +882,6 @@
     "name": "Photocard #150"
   },
   {
-    "id": "CARD_151",
-    "url": "https://upload.wikimedia.org/wikipedia/commons/3/3b/Kim_Ji-soo_%28born_Yang_Sung-yoon_on_October_24%2C_1972%29_from_acrofan.jpg",
-    "rarity": "Epic",
-    "name": "Photocard #151"
-  },
-  {
     "id": "CARD_152",
     "url": "https://upload.wikimedia.org/wikipedia/commons/2/2e/BLACKPINK_Pink_Venom_Tour_2022_%2852543715232%29.jpg",
     "rarity": "Common",
@@ -936,12 +912,6 @@
     "name": "Photocard #156"
   },
   {
-    "id": "CARD_157",
-    "url": "https://upload.wikimedia.org/wikipedia/commons/f/f1/Apt._%28Ros%C3%A9_and_Bruno_Mars_logo%29.png",
-    "rarity": "Rare",
-    "name": "Photocard #157"
-  },
-  {
     "id": "CARD_158",
     "url": "https://upload.wikimedia.org/wikipedia/commons/5/54/Blackpink%27s_Lisa_Manoban_02.png",
     "rarity": "Common",
@@ -966,12 +936,6 @@
     "name": "Photocard #161"
   },
   {
-    "id": "CARD_162",
-    "url": "https://upload.wikimedia.org/wikipedia/commons/a/a0/Mia_Rose_%28Singer%29.jpg",
-    "rarity": "Common",
-    "name": "Photocard #162"
-  },
-  {
     "id": "CARD_163",
     "url": "https://upload.wikimedia.org/wikipedia/commons/4/4f/Lalisa_Manobal_at_the_Busan_International_Film_Festival_2025_04.jpg",
     "rarity": "Common",
@@ -984,22 +948,10 @@
     "name": "Photocard #164"
   },
   {
-    "id": "CARD_165",
-    "url": "https://upload.wikimedia.org/wikipedia/commons/1/1b/WInd_Rose_Aguiar.png",
-    "rarity": "Rare",
-    "name": "Photocard #165"
-  },
-  {
     "id": "CARD_166",
     "url": "https://upload.wikimedia.org/wikipedia/commons/8/88/171001_%EC%BD%94%EB%A6%AC%EC%95%84_%EB%AE%A4%EC%A7%81_%ED%8E%98%EC%8A%A4%ED%8B%B0%EB%B2%8C_%EB%B8%94%EB%9E%99%ED%95%91%ED%81%AC_%281%29.jpg",
     "rarity": "Common",
     "name": "Photocard #166"
-  },
-  {
-    "id": "CARD_167",
-    "url": "https://upload.wikimedia.org/wikipedia/commons/e/ef/Rose_R_album_-_logo.png",
-    "rarity": "Common",
-    "name": "Photocard #167"
   },
   {
     "id": "CARD_168",
