@@ -152,71 +152,7 @@
     <p>Created with 💗 by <a href="https://github.com/HemantTheCoder" target="_blank">Hemant</a></p>
   </footer>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      // Local Records
-      const trivia = localStorage.getItem('triviaHighScore') || 0;
-      const emoji = localStorage.getItem('emojiBestStreak') || 0;
-      const puzzle = localStorage.getItem('puzzleBestMoves');
-      const lyrics = localStorage.getItem('lyricsHighScore') || 0;
-      const silhouette = localStorage.getItem('silhouetteHighScore') || 0;
-      const daily = localStorage.getItem('dailyBestStreak') || 0;
-
-      document.getElementById('score-trivia').innerHTML = `${trivia} <span style="font-size: 1rem; color: #fff;">/ 10</span>`;
-      document.getElementById('score-emoji').innerHTML = `${emoji} <span style="font-size: 1rem; color: #fff;">streak</span>`;
-      document.getElementById('score-lyrics').innerHTML = `${lyrics} <span style="font-size: 1rem; color: #fff;">/ 10</span>`;
-      document.getElementById('score-silhouette').innerHTML = `${silhouette} <span style="font-size: 1rem; color: #fff;">pts</span>`;
-      document.getElementById('score-daily').innerHTML = `${daily} <span style="font-size: 1rem; color: #fff;">streak</span>`;
-      
-      if(puzzle) {
-        document.getElementById('score-puzzle').innerHTML = `${puzzle} <span style="font-size: 1rem; color: #fff;">moves</span>`;
-      } else {
-        document.getElementById('score-puzzle').innerHTML = `-- <span style="font-size: 1rem; color: #fff;">moves</span>`;
-      }
-
-      // Global Records Fetch
-      fetchGlobalLeaderboard();
-    });
-
-    async function fetchGlobalLeaderboard() {
-      const glDiv = document.getElementById('global-leaderboard');
-      try {
-        const res = await fetch('https://myblackpinkwebsite2.onrender.com/api/leaderboard');
-        const scores = await res.json();
-        
-        if (scores.length === 0) {
-          glDiv.innerHTML = '<p>No scores yet! Play trivia to be the first!</p>';
-          return;
-        }
-
-        glDiv.innerHTML = '';
-        scores.forEach((entry, index) => {
-          const rank = index + 1;
-          const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : `#${rank}`;
-          glDiv.innerHTML += `
-            <div class="lb-card" style="padding: 1rem; margin-bottom: 0;">
-              <div class="lb-title" style="font-size: 1.2rem;">${medal} ${entry.username}</div>
-              <div class="lb-score" style="font-size: 1.5rem;">${entry.score}</div>
-            </div>
-          `;
-        });
-      } catch (e) {
-        glDiv.innerHTML = '<p style="color: red;">Failed to load global leaderboard.</p>';
-      }
-    }
-
-    function resetLeaderboards() {
-      if(confirm("Are you sure you want to erase all your high scores?")) {
-        localStorage.removeItem('triviaHighScore');
-        localStorage.removeItem('emojiBestStreak');
-        localStorage.removeItem('puzzleBestMoves');
-        localStorage.removeItem('lyricsHighScore');
-        localStorage.removeItem('silhouetteHighScore');
-        localStorage.removeItem('dailyBestStreak');
-        location.reload();
-      }
-    }
-  </script>
+  <script src="script.js?v=1782403755244" defer></script>
 
   <!-- Back to Top -->
   <button id="back-to-top" aria-label="Back to top">&#8593;</button>

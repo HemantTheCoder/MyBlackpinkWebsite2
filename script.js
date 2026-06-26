@@ -464,6 +464,8 @@ async function navigateTo(url, push) {
     if (document.getElementById('lyrics-question')) initLyricsGame();
     if (document.getElementById('silhouette-img')) initSilhouetteGame();
     if (document.getElementById('poll-opt-Square-Up')) initFanPoll();
+    if (document.getElementById('wall-form')) initBlinkWall();
+    if (document.querySelector('.leaderboard-container')) initLeaderboard();
 
     if (document.getElementById('yt-player') && ytPlayerReady) {
       renderTracklist();
@@ -2287,4 +2289,142 @@ window.downloadID = function() {
   link.download = 'Blink-ID-' + (document.getElementById('id-name').value || 'Card') + '.png';
   link.href = canvas.toDataURL();
   link.click();
+};
+
+// =============================================
+// BLINK WALL & LEADERBOARD (SPA INITIALIZERS)
+// =============================================
+window.initBlinkWall = function() {
+  const API_URL = 'https://myblackpinkwebsite2.onrender.com/api';
+  
+  async function fetchMessages() {
+    const grid = document.getElementById('messages-grid');
+    if (!grid) return;
+    try {
+      const res = await fetch(`${API_URL}/wall`);
+      const messages = await res.json();
+      
+      if (messages.length === 0) {
+        grid.innerHTML = '<p class="text-center" style="grid-column: 1 / -1;">No messages yet. Be the first to post!</p>';
+        return;
+      }
+      
+      grid.innerHTML = '';
+      messages.reverse().forEach(msg => {
+        const biasClass = 'bias-' + msg.bias.toLowerCase().replace('é', 'e');
+        const card = document.createElement('div');
+        card.className = `message-card ${biasClass}`;
+        card.innerHTML = `
+          <div class="msg-author">${msg.author}</div>
+          <div class="msg-content">${msg.message}</div>
+          <div class="msg-bias">Bias: ${msg.bias}</div>
+        `;
+        grid.appendChild(card);
+      });
+    } catch (err) {
+      console.error("Failed to fetch messages:", err);
+      grid.innerHTML = '<p class="text-center" style="grid-column: 1 / -1; color: red;">Failed to load messages. Is the backend running?</p>';
+    }
+  }
+  
+  const form = document.getElementById('wall-form');
+  if (form) {
+    // Remove existing listeners by cloning
+    const newForm = form.cloneNode(true);
+    form.parentNode.replaceChild(newForm, form);
+    
+    newForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const author = document.getElementById('msg-name').value;
+      const bias = document.getElementById('msg-bias').value;
+      const message = document.getElementById('msg-text').value;
+      
+      try {
+        const res = await fetch(`${API_URL}/wall`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ author, bias, message })
+        });
+        
+        if (res.ok) {
+          document.getElementById('msg-text').value = '';
+          if (typeof showToast === 'function') showToast('Message posted! 💗');
+          fetchMessages();
+        }
+      } catch (err) {
+        console.error("Failed to post message:", err);
+        if (typeof showToast === 'function') showToast('Failed to post message.');
+      }
+    });
+  }
+  
+  fetchMessages();
+};
+
+window.initLeaderboard = function() {
+  // Local Records
+  const trivia = localStorage.getItem('triviaHighScore') || 0;
+  const emoji = localStorage.getItem('emojiBestStreak') || 0;
+  const puzzle = localStorage.getItem('puzzleBestMoves');
+  const lyrics = localStorage.getItem('lyricsHighScore') || 0;
+  const silhouette = localStorage.getItem('silhouetteHighScore') || 0;
+  const daily = localStorage.getItem('dailyBestStreak') || 0;
+
+  const scoreTrivia = document.getElementById('score-trivia');
+  if (scoreTrivia) {
+    scoreTrivia.innerHTML = `${trivia} <span style="font-size: 1rem; color: #fff;">/ 10</span>`;
+    document.getElementById('score-emoji').innerHTML = `${emoji} <span style="font-size: 1rem; color: #fff;">streak</span>`;
+    document.getElementById('score-lyrics').innerHTML = `${lyrics} <span style="font-size: 1rem; color: #fff;">/ 10</span>`;
+    document.getElementById('score-silhouette').innerHTML = `${silhouette} <span style="font-size: 1rem; color: #fff;">pts</span>`;
+    document.getElementById('score-daily').innerHTML = `${daily} <span style="font-size: 1rem; color: #fff;">streak</span>`;
+    
+    if(puzzle) {
+      document.getElementById('score-puzzle').innerHTML = `${puzzle} <span style="font-size: 1rem; color: #fff;">moves</span>`;
+    } else {
+      document.getElementById('score-puzzle').innerHTML = `-- <span style="font-size: 1rem; color: #fff;">moves</span>`;
+    }
+  }
+
+  // Global Records Fetch
+  async function fetchGlobalLeaderboard() {
+    const glDiv = document.getElementById('global-leaderboard');
+    if (!glDiv) return;
+    try {
+      const res = await fetch('https://myblackpinkwebsite2.onrender.com/api/leaderboard');
+      const scores = await res.json();
+      
+      if (scores.length === 0) {
+        glDiv.innerHTML = '<p>No scores yet! Play trivia to be the first!</p>';
+        return;
+      }
+
+      glDiv.innerHTML = '';
+      scores.forEach((entry, index) => {
+        const rank = index + 1;
+        const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : '#' + rank;
+        glDiv.innerHTML += `
+          <div class="lb-card" style="padding: 1rem; margin-bottom: 0;">
+            <div class="lb-title" style="font-size: 1.2rem;">${medal} ${entry.username}</div>
+            <div class="lb-score" style="font-size: 1.5rem;">${entry.score}</div>
+          </div>
+        `;
+      });
+    } catch (e) {
+      glDiv.innerHTML = '<p style="color: red;">Failed to load global leaderboard.</p>';
+    }
+  }
+
+  fetchGlobalLeaderboard();
+};
+
+window.resetLeaderboards = function() {
+  if(confirm("Are you sure you want to erase all your high scores?")) {
+    localStorage.removeItem('triviaHighScore');
+    localStorage.removeItem('emojiBestStreak');
+    localStorage.removeItem('puzzleBestMoves');
+    localStorage.removeItem('lyricsHighScore');
+    localStorage.removeItem('silhouetteHighScore');
+    localStorage.removeItem('dailyBestStreak');
+    location.reload();
+  }
 };
