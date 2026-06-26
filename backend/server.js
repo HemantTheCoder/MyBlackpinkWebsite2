@@ -442,5 +442,3 @@ app.get('/api/cheat_banhae', (req, res) => {
   writeData(data);
   res.send('<h1>Success!</h1><p>User banhae now has all cards and password is set to "password". You can now <a href="/">go back and log in</a>.</p>');
 });
-
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
