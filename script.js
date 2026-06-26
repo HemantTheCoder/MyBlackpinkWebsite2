@@ -2721,7 +2721,7 @@ window.initProfile = async function() {
         moreDiv.style.width = '130px';
         moreDiv.style.flexShrink = '0';
         moreDiv.innerHTML = `<span style="color:var(--bp-pink); font-weight:bold;">+${cards.length - 4} More</span>`;
-        moreDiv.onclick = showFullCollection;
+        moreDiv.onclick = window.showFullCollection;
         pcContainer.appendChild(moreDiv);
       }
     }
@@ -2739,16 +2739,17 @@ window.showFullCollection = function() {
   if (cards.length === 0) {
     grid.innerHTML = '<p style="color:#aaa; grid-column: 1 / -1; text-align: center;">No cards found.</p>';
   } else {
-    // Sort cards by rarity before displaying in full collection (Legendary first)
+    // Sort cards by rarity safely
     const rarityOrder = { 'Legendary': 4, 'Epic': 3, 'Rare': 2, 'Common': 1 };
-    const sortedCards = [...cards].sort((a, b) => rarityOrder[b.rarity] - rarityOrder[a.rarity]);
+    const getRarityVal = r => rarityOrder[r] || 0;
+    const sortedCards = [...cards].sort((a, b) => getRarityVal(b.rarity) - getRarityVal(a.rarity));
     
     sortedCards.forEach(card => {
       const div = document.createElement('div');
-      div.className = `gacha-card ${card.rarity.toLowerCase()}`;
+      div.className = `gacha-card ${card.rarity ? card.rarity.toLowerCase() : 'common'}`;
       div.innerHTML = `
         <img src="${card.url}" alt="Photocard">
-        <div class="rarity-label">${card.rarity}</div>
+        <div class="rarity-label">${card.rarity || 'Common'}</div>
       `;
       grid.appendChild(div);
     });
