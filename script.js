@@ -2609,13 +2609,13 @@ window.initProfile = async function() {
   await fetchCurrentUser();
   const token = localStorage.getItem('user_token');
   if (!token || !currentUser) {
-    document.getElementById('profile-dashboard').style.display = 'none';
-    document.getElementById('profile-unauth').style.display = 'block';
+    navigateTo('login.html');
     return;
   }
   
   document.getElementById('profile-dashboard').style.display = 'block';
-  document.getElementById('profile-unauth').style.display = 'none';
+  const unauthDiv = document.getElementById('profile-unauth');
+  if (unauthDiv) unauthDiv.style.display = 'none';
   document.getElementById('profile-greeting').textContent = `Welcome, ${currentUser.username}!`;
   
   document.getElementById('update-bias').value = currentUser.bias || 'OT4';
