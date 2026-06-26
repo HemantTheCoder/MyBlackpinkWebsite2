@@ -503,6 +503,10 @@ async function navigateTo(url, push) {
     if (document.getElementById('feedback-form')) initFeedback();
     if (document.getElementById('user-login-form')) initLogin();
     if (document.getElementById('profile-dashboard')) initProfile();
+    
+    if (document.getElementById('pull-card-btn')) initPhotocards();
+    if (document.getElementById('fanart-grid')) initFanArt();
+    if (document.getElementById('birthday-timer')) initBirthdayCountdown();
 
     if (document.getElementById('yt-player') && ytPlayerReady) {
       renderTracklist();
