@@ -399,10 +399,9 @@ app.post('/api/me/pull', verifyUser, (req, res) => {
   const data = readData();
   const user = data.users.find(u => u.id === req.user.id);
   const today = new Date().toDateString();
-  // Allow unlimited pulls for testing/fun
-  // if (user.lastPullDate === today) {
-  //   return res.status(400).json({ error: 'You already pulled a card today!' });
-  // }
+  if (user.lastPullDate === today) {
+    return res.status(400).json({ error: 'You have already pulled your daily card today! Come back tomorrow.' });
+  }
   
   let cards = [];
   try {
