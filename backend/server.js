@@ -9,6 +9,7 @@ const DATA_FILE = path.join(__dirname, 'data.json');
 
 app.use(cors());
 app.use(express.json());
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Utility to read data
 function readData() {
@@ -100,6 +101,49 @@ app.post('/api/leaderboard', (req, res) => {
   writeData(data);
   res.status(201).json({ success: true });
 });
+
+// --- Root / Welcome Route ---
+app.get('/', (req, res) => {
+  res.send('<h1>🖤💖 Blackpink API is running!</h1><p>Visit the <a href="/admin.html">Admin Dashboard</a></p>');
+});
+
+// --- Admin APIs ---
+const ADMIN_PASS = 'admin123';
+const ADMIN_TOKEN = 'secret-admin-token-99';
+
+app.post('/api/admin/login', (req, res) => {
+  const { password } = req.body;
+  if (password === ADMIN_PASS) {
+    res.json({ token: ADMIN_TOKEN });
+  } else {
+    res.status(401).json({ error: 'Unauthorized' });
+  }
+});
+
+// Middleware to check token
+function verifyAdmin(req, res, next) {
+  const token = req.headers['authorization'];
+  if (token === `Bearer ${ADMIN_TOKEN}`) {
+    next();
+  } else {
+    res.status(403).json({ error: 'Forbidden' });
+  }
+}
+
+app.delete('/api/wall/:id', verifyAdmin, (req, res) => {
+  const data = readData();
+  data.wallMessages = data.wallMessages.filter(m => m.id !== req.params.id);
+  writeData(data);
+  res.json({ success: true });
+});
+
+app.delete('/api/leaderboard/:id', verifyAdmin, (req, res) => {
+  const data = readData();
+  data.leaderboard = data.leaderboard.filter(l => l.id !== req.params.id);
+  writeData(data);
+  res.json({ success: true });
+});
+
 
 app.listen(PORT, () => {
   console.log(`Backend server running on http://localhost:${PORT}`);
