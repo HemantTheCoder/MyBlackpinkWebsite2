@@ -2699,8 +2699,11 @@ window.initProfile = async function() {
     } else {
       cards.forEach(card => {
         const div = document.createElement('div');
-        div.style.textAlign = 'center';
-        div.innerHTML = `<img src="${card.url}" style="width:100%; border-radius:8px; border:2px solid ${getRarityColor(card.rarity)};"><div style="font-size:0.8rem; margin-top:0.3rem;">${card.rarity}</div>`;
+        div.className = `gacha-card ${card.rarity.toLowerCase()}`;
+        div.innerHTML = `
+          <img src="${card.url}" alt="Photocard">
+          <div class="rarity-label">${card.rarity}</div>
+        `;
         pcContainer.appendChild(div);
       });
     }
