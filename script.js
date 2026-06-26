@@ -2152,3 +2152,111 @@ function initDailyStreak() {
     }, 2000);
   }
 }
+
+// =============================================
+// BLINK ID GENERATOR
+// =============================================
+window.generateID = function() {
+  const canvas = document.getElementById('id-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const name = document.getElementById('id-name').value || 'BLINK';
+  const year = document.getElementById('id-year').value;
+  const bias = localStorage.getItem('blink_bias') || 'OT4';
+
+  canvas.style.display = 'block';
+  document.getElementById('download-btn').style.display = 'inline-block';
+
+  // Background Gradient
+  const grad = ctx.createLinearGradient(0, 0, 600, 350);
+  grad.addColorStop(0, '#111');
+  grad.addColorStop(1, '#222');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, 600, 350);
+
+  // Accent Overlay (Based on Bias)
+  const accent = ctx.createLinearGradient(0, 0, 600, 350);
+  accent.addColorStop(0, 'transparent');
+  let accentColor = '#FF7698';
+  if(bias === 'JISOO') accentColor = '#ff2a2a';
+  if(bias === 'JENNIE') accentColor = '#4a90e2';
+  if(bias === 'ROSE') accentColor = '#ffb6c1';
+  if(bias === 'LISA') accentColor = '#f1c40f';
+  
+  accent.addColorStop(1, accentColor);
+  ctx.fillStyle = accent;
+  ctx.globalAlpha = 0.3;
+  ctx.fillRect(0, 0, 600, 350);
+  ctx.globalAlpha = 1;
+
+  // Draw Grid / Tech lines
+  ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+  ctx.lineWidth = 1;
+  for(let i=0; i<600; i+=20) { ctx.beginPath(); ctx.moveTo(i,0); ctx.lineTo(i,350); ctx.stroke(); }
+  for(let i=0; i<350; i+=20) { ctx.beginPath(); ctx.moveTo(0,i); ctx.lineTo(600,i); ctx.stroke(); }
+
+  // Text Elements
+  ctx.fillStyle = '#fff';
+  ctx.font = 'bold 30px Arial';
+  ctx.textAlign = 'left';
+  ctx.fillText('OFFICIAL BLINK ID', 40, 60);
+
+  ctx.fillStyle = accentColor;
+  ctx.font = 'bold 20px Arial';
+  ctx.fillText('GLOBAL MEMBERSHIP', 40, 90);
+
+  // Line separator
+  ctx.beginPath();
+  ctx.moveTo(40, 120);
+  ctx.lineTo(560, 120);
+  ctx.strokeStyle = accentColor;
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // Details
+  ctx.fillStyle = 'rgba(255,255,255,0.6)';
+  ctx.font = '16px Arial';
+  ctx.fillText('NAME', 40, 170);
+  ctx.fillStyle = '#fff';
+  ctx.font = 'bold 36px Arial';
+  ctx.fillText(name.toUpperCase(), 40, 210);
+
+  ctx.fillStyle = 'rgba(255,255,255,0.6)';
+  ctx.font = '16px Arial';
+  ctx.fillText('STATUS', 40, 260);
+  ctx.fillStyle = '#fff';
+  ctx.font = 'bold 24px Arial';
+  ctx.fillText('BLINK SINCE ' + year, 40, 290);
+
+  ctx.fillStyle = 'rgba(255,255,255,0.6)';
+  ctx.font = '16px Arial';
+  ctx.fillText('BIAS', 350, 260);
+  ctx.fillStyle = accentColor;
+  ctx.font = 'bold 24px Arial';
+  ctx.fillText(bias, 350, 290);
+
+  // Logo placeholder (geometric)
+  ctx.fillStyle = 'rgba(255,255,255,0.1)';
+  ctx.fillRect(430, 40, 130, 60);
+  ctx.fillStyle = '#fff';
+  ctx.font = 'bold 16px Arial';
+  ctx.textAlign = 'center';
+  ctx.fillText('BLACKPINK', 495, 75);
+
+  // Holographic corner stamp
+  ctx.beginPath();
+  ctx.arc(520, 270, 40, 0, 2 * Math.PI);
+  ctx.fillStyle = 'rgba(255, 118, 152, 0.2)';
+  ctx.fill();
+  ctx.strokeStyle = accentColor;
+  ctx.stroke();
+};
+
+window.downloadID = function() {
+  const canvas = document.getElementById('id-canvas');
+  if (!canvas) return;
+  const link = document.createElement('a');
+  link.download = 'Blink-ID-' + (document.getElementById('id-name').value || 'Card') + '.png';
+  link.href = canvas.toDataURL();
+  link.click();
+};
