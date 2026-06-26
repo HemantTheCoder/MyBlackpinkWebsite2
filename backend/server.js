@@ -233,7 +233,8 @@ app.get('/api/me', verifyUser, (req, res) => {
     playlist: req.user.playlist,
     playCount: req.user.playCount || 0,
     commentsCount: req.user.commentsCount || 0,
-    joined: req.user.joined
+    joined: req.user.joined,
+    photocards: req.user.photocards || []
   });
 });
 
