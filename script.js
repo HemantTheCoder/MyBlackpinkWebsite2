@@ -2718,6 +2718,8 @@ window.initProfile = async function() {
         moreDiv.style.borderRadius = '12px';
         moreDiv.style.cursor = 'pointer';
         moreDiv.style.border = '2px dashed var(--bp-pink)';
+        moreDiv.style.width = '130px';
+        moreDiv.style.flexShrink = '0';
         moreDiv.innerHTML = `<span style="color:var(--bp-pink); font-weight:bold;">+${cards.length - 4} More</span>`;
         moreDiv.onclick = showFullCollection;
         pcContainer.appendChild(moreDiv);
