@@ -2576,6 +2576,20 @@ function applyBiasTheme(bias) {
   if (bias === 'Lisa') document.body.classList.add('theme-lisa');
 }
 
+window.toggleAuthMode = function() {
+  const login = document.getElementById('login-section');
+  const reg = document.getElementById('register-section');
+  if (login && reg) {
+    if (login.style.display === 'none') {
+      login.style.display = 'block';
+      reg.style.display = 'none';
+    } else {
+      login.style.display = 'none';
+      reg.style.display = 'block';
+    }
+  }
+};
+
 window.initLogin = function() {
   if (localStorage.getItem('user_token')) {
     navigateTo('profile.html');
