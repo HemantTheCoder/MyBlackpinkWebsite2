@@ -1959,3 +1959,18 @@ body.era-deadline {
   background: var(--bp-pink);
   color: #fff;
 }
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  body { font-size: 14px; }
+  h1 { font-size: 2rem; }
+  .container { padding: 1rem; }
+  .glass-card { padding: 1.5rem; }
+  .blink-wall-grid, .era-grid { grid-template-columns: 1fr; }
+}
+
+@media (pointer: coarse) {
+  body { cursor: auto !important; }
+  * { cursor: auto !important; }
+  #custom-cursor { display: none !important; }
+}

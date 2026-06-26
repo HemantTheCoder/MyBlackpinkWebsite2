@@ -58,6 +58,17 @@ app.post('/api/wall', (req, res) => {
   };
   
   data.wallMessages.push(newMessage);
+
+  // If token is provided, increment user's comment count for Stan Level
+  const token = req.headers['authorization'];
+  if (token) {
+    const rawToken = token.replace('Bearer ', '');
+    const user = (data.users || []).find(u => u.token === rawToken);
+    if (user) {
+      user.commentsCount = (user.commentsCount || 0) + 1;
+    }
+  }
+
   writeData(data);
   
   res.status(201).json(newMessage);
@@ -162,6 +173,8 @@ app.post('/api/register', (req, res) => {
     bias: bias || 'OT4',
     dob: dob || '',
     playlist: [],
+    playCount: 0,
+    commentsCount: 0,
     token: token,
     joined: new Date().toISOString()
   };
@@ -216,8 +229,18 @@ app.get('/api/me', verifyUser, (req, res) => {
     bias: req.user.bias,
     dob: req.user.dob,
     playlist: req.user.playlist,
+    playCount: req.user.playCount || 0,
+    commentsCount: req.user.commentsCount || 0,
     joined: req.user.joined
   });
+});
+
+app.post('/api/me/play', verifyUser, (req, res) => {
+  const data = readData();
+  const user = data.users.find(u => u.id === req.user.id);
+  user.playCount = (user.playCount || 0) + 1;
+  writeData(data);
+  res.json({ success: true, playCount: user.playCount });
 });
 
 app.put('/api/me', verifyUser, (req, res) => {
@@ -320,3 +343,21 @@ app.delete('/api/feedback/:id', verifyAdmin, (req, res) => {
 app.listen(PORT, () => {
   console.log(`Backend server running on http://localhost:${PORT}`);
 });
+
+// --- Fan Art Gallery ---
+app.get('/api/gallery', (req, res) => {
+  const data = readData();
+  res.json(data.gallery || []);
+});
+
+app.post('/api/gallery', (req, res) => {
+  const { url, caption, author } = req.body;
+  if (!url || !caption) return res.status(400).json({ error: 'URL and caption required' });
+  const data = readData();
+  if (!data.gallery) data.gallery = [];
+  const newArt = { id: Date.now().toString(), url, caption, author: author || 'Anonymous', date: new Date().toISOString() };
+  data.gallery.unshift(newArt);
+  writeData(data);
+  res.status(201).json(newArt);
+});
+

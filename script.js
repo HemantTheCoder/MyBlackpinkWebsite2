@@ -4,6 +4,15 @@ if (loc.indexOf('http://') == 0 && !loc.includes('localhost') && !loc.includes('
   window.location.href = loc.replace('http://', 'https://');
 }
 
+// PWA Service Worker Registration
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(err => {
+      console.log('ServiceWorker registration failed: ', err);
+    });
+  });
+}
+
 // =============================================
 // YOUTUBE MUSIC PLAYER
 // =============================================
@@ -118,6 +127,15 @@ window.ytLoadTrack = function (idx) {
   if (ytPlayer && ytPlayerReady) {
     ytPlayer.loadVideoById(ytPlaylist[idx].videoId);
     ytIsPlaying = true;
+    
+    // Track play for Stan Level
+    const token = localStorage.getItem('user_token');
+    if (token) {
+      fetch(`${API_URL}/me/play`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` }
+      }).catch(err => console.log('Error tracking play:', err));
+    }
   }
   updateTrackInfo();
 };
@@ -2349,6 +2367,201 @@ window.initBlinkWall = function() {
   const form = document.getElementById('wall-form');
   if (form) {
     // Remove existing listeners by cloning
+  let streak = parseInt(localStorage.getItem('blink_streak') || '0');
+
+  if (lastLogin !== today) {
+    if (lastLogin === new Date(Date.now() - 86400000).toDateString()) {
+      streak++; // Logged in yesterday
+    } else if (lastLogin !== null) {
+      streak = 1; // Missed a day
+    } else {
+      streak = 1; // First ever login
+    }
+    localStorage.setItem('last_login_date', today);
+    localStorage.setItem('blink_streak', streak);
+    
+    // Show toast for streak
+    setTimeout(() => {
+      showToast(`🔥 ${streak} Day BLINK Streak! ${streak >= 3 ? 'Vault unlocked!' : ''}`);
+    }, 2000);
+  }
+}
+
+// =============================================
+// BLINK ID GENERATOR
+// =============================================
+window.generateID = function() {
+  const canvas = document.getElementById('id-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const name = document.getElementById('id-name').value || 'BLINK';
+  const year = document.getElementById('id-year').value;
+  const bias = localStorage.getItem('blink_bias') || 'OT4';
+
+  canvas.style.display = 'block';
+  document.getElementById('download-btn').style.display = 'inline-block';
+
+  // Background Gradient
+  const grad = ctx.createLinearGradient(0, 0, 600, 350);
+  grad.addColorStop(0, '#111');
+  grad.addColorStop(1, '#222');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, 600, 350);
+
+  // Accent Overlay (Based on Bias)
+  const accent = ctx.createLinearGradient(0, 0, 600, 350);
+  accent.addColorStop(0, 'transparent');
+  let accentColor = '#FF7698';
+  if(bias === 'JISOO') accentColor = '#ff2a2a';
+  if(bias === 'JENNIE') accentColor = '#4a90e2';
+  if(bias === 'ROSE') accentColor = '#ffb6c1';
+  if(bias === 'LISA') accentColor = '#f1c40f';
+  
+  accent.addColorStop(1, accentColor);
+  ctx.fillStyle = accent;
+  ctx.globalAlpha = 0.3;
+  ctx.fillRect(0, 0, 600, 350);
+  ctx.globalAlpha = 1;
+
+  // Draw Grid / Tech lines
+  ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+  ctx.lineWidth = 1;
+  for(let i=0; i<600; i+=20) { ctx.beginPath(); ctx.moveTo(i,0); ctx.lineTo(i,350); ctx.stroke(); }
+  for(let i=0; i<350; i+=20) { ctx.beginPath(); ctx.moveTo(0,i); ctx.lineTo(600,i); ctx.stroke(); }
+
+  // Text Elements
+  ctx.fillStyle = '#fff';
+  ctx.font = 'bold 30px Arial';
+  ctx.textAlign = 'left';
+  ctx.fillText('OFFICIAL BLINK ID', 40, 60);
+
+  ctx.fillStyle = accentColor;
+  ctx.font = 'bold 20px Arial';
+  ctx.fillText('GLOBAL MEMBERSHIP', 40, 90);
+
+  // Line separator
+  ctx.beginPath();
+  ctx.moveTo(40, 120);
+  ctx.lineTo(560, 120);
+  ctx.strokeStyle = accentColor;
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // Details
+  ctx.fillStyle = 'rgba(255,255,255,0.6)';
+  ctx.font = '16px Arial';
+  ctx.fillText('NAME', 40, 170);
+  ctx.fillStyle = '#fff';
+  ctx.font = 'bold 36px Arial';
+  ctx.fillText(name.toUpperCase(), 40, 210);
+
+  ctx.fillStyle = 'rgba(255,255,255,0.6)';
+  ctx.font = '16px Arial';
+  ctx.fillText('STATUS', 40, 260);
+  ctx.fillStyle = '#fff';
+  ctx.font = 'bold 24px Arial';
+  ctx.fillText('BLINK SINCE ' + year, 40, 290);
+
+  ctx.fillStyle = 'rgba(255,255,255,0.6)';
+  ctx.font = '16px Arial';
+  ctx.fillText('BIAS', 350, 260);
+  ctx.fillStyle = accentColor;
+  ctx.font = 'bold 24px Arial';
+  ctx.fillText(bias, 350, 290);
+
+  // Logo placeholder (geometric)
+  ctx.fillStyle = 'rgba(255,255,255,0.1)';
+  ctx.fillRect(430, 40, 130, 60);
+  ctx.fillStyle = '#fff';
+  ctx.font = 'bold 16px Arial';
+  ctx.textAlign = 'center';
+  ctx.fillText('BLACKPINK', 495, 75);
+
+  // Bias Image in Corner
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(520, 270, 40, 0, 2 * Math.PI);
+  ctx.clip();
+  
+  const img = new Image();
+  let imgPath = 'assets/blackpinkgroup.webp';
+  if (bias === 'JISOO') imgPath = 'assets/Jisoo.webp';
+  if (bias === 'JENNIE') imgPath = 'assets/Jennie.webp';
+  if (bias === 'ROSE') imgPath = 'assets/Rose.webp';
+  if (bias === 'LISA') imgPath = 'assets/Lisa.webp';
+  
+  img.onload = () => {
+    ctx.drawImage(img, 480, 230, 80, 80);
+    ctx.restore();
+    
+    // Draw ring border
+    ctx.beginPath();
+    ctx.arc(520, 270, 40, 0, 2 * Math.PI);
+    ctx.strokeStyle = accentColor;
+    ctx.lineWidth = 3;
+    ctx.stroke();
+  };
+  
+  // Fallback in case of error
+  img.onerror = () => {
+    ctx.fillStyle = 'rgba(255, 118, 152, 0.2)';
+    ctx.fill();
+    ctx.strokeStyle = accentColor;
+    ctx.stroke();
+    ctx.restore();
+  };
+  
+  img.src = imgPath;
+};
+
+window.downloadID = function() {
+  const canvas = document.getElementById('id-canvas');
+  if (!canvas) return;
+  const link = document.createElement('a');
+  link.download = 'Blink-ID-' + (document.getElementById('id-name').value || 'Card') + '.png';
+  link.href = canvas.toDataURL();
+  link.click();
+};
+
+// =============================================
+// BLINK WALL & LEADERBOARD (SPA INITIALIZERS)
+// =============================================
+window.initBlinkWall = function() {
+  const API_URL = 'https://myblackpinkwebsite2.onrender.com/api';
+  
+  async function fetchMessages() {
+    const grid = document.getElementById('messages-grid');
+    if (!grid) return;
+    try {
+      const res = await fetch(`${API_URL}/wall`);
+      const messages = await res.json();
+      
+      if (messages.length === 0) {
+        grid.innerHTML = '<p class="text-center" style="grid-column: 1 / -1;">No messages yet. Be the first to post!</p>';
+        return;
+      }
+      
+      grid.innerHTML = '';
+      messages.reverse().forEach(msg => {
+        const biasClass = 'bias-' + msg.bias.toLowerCase().replace('é', 'e');
+        const card = document.createElement('div');
+        card.className = `message-card ${biasClass}`;
+        card.innerHTML = `
+          <div class="msg-author">${msg.author}</div>
+          <div class="msg-content">${msg.message}</div>
+          <div class="msg-bias">Bias: ${msg.bias}</div>
+        `;
+        grid.appendChild(card);
+      });
+    } catch (err) {
+      console.error("Failed to fetch messages:", err);
+      grid.innerHTML = '<p class="text-center" style="grid-column: 1 / -1; color: red;">Failed to load messages. Is the backend running?</p>';
+    }
+  }
+  
+  const form = document.getElementById('wall-form');
+  if (form) {
+    // Remove existing listeners by cloning
     const newForm = form.cloneNode(true);
     form.parentNode.replaceChild(newForm, form);
     
@@ -2359,9 +2572,13 @@ window.initBlinkWall = function() {
       const message = document.getElementById('msg-text').value;
       
       try {
+        const headers = { 'Content-Type': 'application/json' };
+        const token = localStorage.getItem('user_token');
+        if (token) headers['Authorization'] = `Bearer ${token}`;
+
         const res = await fetch(`${API_URL}/wall`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers,
           body: JSON.stringify({ author, bias, message })
         });
         
@@ -2627,6 +2844,21 @@ window.initProfile = async function() {
   if (unauthDiv) unauthDiv.style.display = 'none';
   document.getElementById('profile-greeting').textContent = `Welcome, ${currentUser.username}!`;
   
+  // Stan Level Logic
+  const plays = currentUser.playCount || 0;
+  const comments = currentUser.commentsCount || 0;
+  let stanLevel = 'Trainee';
+  if (plays > 200 || comments > 50) stanLevel = 'Ultimate Blink 👑';
+  else if (plays > 50 || comments > 10) stanLevel = 'Blink 💖';
+  else if (plays > 10 || comments > 2) stanLevel = 'Rookie 🖤';
+
+  const badgeEl = document.getElementById('stan-level-badge');
+  if (badgeEl) badgeEl.textContent = stanLevel;
+  const playEl = document.getElementById('stat-plays');
+  if (playEl) playEl.textContent = plays;
+  const commEl = document.getElementById('stat-comments');
+  if (commEl) commEl.textContent = comments;
+
   document.getElementById('update-bias').value = currentUser.bias || 'OT4';
   if (currentUser.dob) document.getElementById('update-dob').value = currentUser.dob;
 
@@ -2739,3 +2971,123 @@ window.savePlaylist = async function() {
 if (localStorage.getItem('user_token')) {
   fetchCurrentUser();
 }
+
+// =============================================
+// =============================================
+// BIRTHDAY COUNTDOWN
+// =============================================
+window.triggerConfetti = function() {
+  if (typeof confetti === 'function') {
+    confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+  }
+};
+
+window.initBirthdayCountdown = function() {
+  const nameEl = document.getElementById('birthday-name');
+  const timerEl = document.getElementById('birthday-timer');
+  if (!nameEl || !timerEl) return;
+
+  const birthdays = [
+    { name: 'Jisoo', month: 0, date: 3 },
+    { name: 'Jennie', month: 0, date: 16 },
+    { name: 'Rosé', month: 1, date: 11 },
+    { name: 'Lisa', month: 2, date: 27 }
+  ];
+
+  function getNextBirthday() {
+    const now = new Date();
+    const year = now.getFullYear();
+    let next = null;
+    let minDiff = Infinity;
+
+    birthdays.forEach(b => {
+      let bDate = new Date(year, b.month, b.date);
+      if (bDate < now) {
+        bDate = new Date(year + 1, b.month, b.date);
+      }
+      const diff = bDate - now;
+      if (diff < minDiff) {
+        minDiff = diff;
+        next = { name: b.name, date: bDate };
+      }
+    });
+    return next;
+  }
+
+  const nextBday = getNextBirthday();
+  if (!nextBday) return;
+  nameEl.textContent = nextBday.name + "'s Birthday!";
+
+  setInterval(() => {
+    const now = new Date().getTime();
+    const distance = nextBday.date.getTime() - now;
+    if (distance < 0) {
+      timerEl.textContent = 'IT IS HER BIRTHDAY! 🎉';
+      return;
+    }
+    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+    timerEl.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+  }, 1000);
+};
+
+// =============================================
+// FAN ART GALLERY
+// =============================================
+window.initFanArt = function() {
+  const grid = document.getElementById('fanart-grid');
+  if (!grid) return;
+
+  async function fetchArt() {
+    try {
+      const res = await fetch(`${API_URL}/gallery`);
+      const art = await res.json();
+      grid.innerHTML = '';
+      if(art.length === 0) {
+        grid.innerHTML = '<p class="text-center" style="grid-column: 1 / -1;">No art submitted yet. Be the first!</p>';
+        return;
+      }
+      art.forEach(a => {
+        const item = document.createElement('div');
+        item.className = 'masonry-item';
+        item.innerHTML = `<img src="${a.url}" alt="${a.caption}" onerror="this.src='assets/blackpinkgroup.webp'"><div class="masonry-caption">${a.caption}</div><div class="masonry-author">By ${a.author}</div>`;
+        grid.appendChild(item);
+      });
+    } catch (e) {
+      grid.innerHTML = '<p class="text-center" style="grid-column: 1 / -1; color: red;">Failed to load art.</p>';
+    }
+  }
+
+  const form = document.getElementById('fanart-form');
+  if (form) {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const url = document.getElementById('art-url').value;
+      const caption = document.getElementById('art-caption').value;
+      const author = currentUser ? currentUser.username : 'Anonymous Blink';
+      try {
+        const res = await fetch(`${API_URL}/gallery`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url, caption, author })
+        });
+        if (res.ok) {
+          document.getElementById('art-url').value = '';
+          document.getElementById('art-caption').value = '';
+          if (typeof showToast === 'function') showToast('Fan Art Submitted! 🖤💖');
+          fetchArt();
+        }
+      } catch (err) {
+        alert('Failed to submit art');
+      }
+    });
+  }
+  fetchArt();
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+  if (document.getElementById('birthday-timer')) initBirthdayCountdown();
+  if (document.getElementById('fanart-grid')) initFanArt();
+});

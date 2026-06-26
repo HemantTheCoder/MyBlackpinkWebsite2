@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="Description" content="Blackpink Fan Art Gallery">
+  <title>Blink Fan Art Gallery</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="manifest" href="manifest.json">
+  <script src="script.js" defer></script>
+  <style>
+    .masonry-grid {
+      column-count: 3;
+      column-gap: 1rem;
+    }
+    .masonry-item {
+      display: inline-block;
+      width: 100%;
+      margin-bottom: 1rem;
+      border-radius: 10px;
+      overflow: hidden;
+      background: rgba(0,0,0,0.5);
+      border: 1px solid var(--bp-pink);
+      break-inside: avoid;
+    }
+    .masonry-item img {
+      width: 100%;
+      display: block;
+    }
+    .masonry-caption {
+      padding: 0.5rem;
+      font-size: 0.9rem;
+      color: #fff;
+    }
+    .masonry-author {
+      padding: 0 0.5rem 0.5rem 0.5rem;
+      font-size: 0.8rem;
+      color: var(--bp-pink);
+    }
+    @media (max-width: 768px) {
+      .masonry-grid { column-count: 2; }
+    }
+    @media (max-width: 480px) {
+      .masonry-grid { column-count: 1; }
+    }
+  </style>
+</head>
+<body class="theme-ot4">
+  <div id="custom-cursor"></div>
+
+  <header style="padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.5); border-bottom: 2px solid var(--bp-pink);">
+    <h1 style="margin: 0; font-size: 1.5rem; text-shadow: 0 0 10px var(--bp-pink);">🖤💖 BLINK ART</h1>
+    <nav style="display: flex; gap: 1rem;">
+      <a href="index.html" class="btn">Home</a>
+      <a href="profile.html" class="btn" id="nav-profile-btn">👤 Profile</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <div class="glass-card text-center" style="margin-bottom: 2rem;">
+      <h2 class="neon-text">Fan Art Gallery</h2>
+      <p>Submit your favorite fan art by pasting an image URL below!</p>
+      <form id="fanart-form" style="display: flex; flex-direction: column; gap: 1rem; max-width: 500px; margin: 1rem auto 0 auto; text-align: left;">
+        <input type="text" id="art-url" placeholder="Image URL (e.g. https://imgur.com/xyz.png)" required style="padding: 0.8rem; border-radius: 5px; border: 1px solid var(--bp-pink); background: rgba(0,0,0,0.8); color: white;">
+        <input type="text" id="art-caption" placeholder="Caption / Title" required style="padding: 0.8rem; border-radius: 5px; border: 1px solid var(--bp-pink); background: rgba(0,0,0,0.8); color: white;">
+        <button type="submit" class="btn btn-glow">Submit Art</button>
+      </form>
+    </div>
+
+    <div class="masonry-grid" id="fanart-grid">
+      <p class="text-center" style="grid-column: 1 / -1;">Loading art...</p>
+    </div>
+  </main>
+</body>
+</html>

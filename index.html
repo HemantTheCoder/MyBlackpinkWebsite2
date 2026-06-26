@@ -7,6 +7,8 @@
   <meta name="Description" content="The ultimate Blackpink fan wiki for Blinks — discography, member profiles, games, gallery, world tour map and more!">
   <title>Blackpink Wiki — The Ultimate Blink Resource</title>
   <link rel="stylesheet" href="styles.css?v=1782403755244">
+  <link rel="manifest" href="manifest.json">
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <script src="script.js?v=1782403755244" defer></script>
   <!-- SiteKit integration preserved -->
   <script>
@@ -67,9 +69,22 @@
       <a href="blink-id.html?v=20260625" class="btn">🪪 Blink ID</a>
       <a href="blink-wall.html" class="btn">📝 Blink Wall</a>
       <a href="vault.html?v=20260625" class="btn">🔒 Vault</a>
+      <a href="fanart.html" class="btn">🎨 Fan Art</a>
       <a href="feedback.html" class="btn">💬 Feedback</a>
       <a href="profile.html" class="btn" id="nav-profile-btn">👤 Profile/Login</a>
     </nav>
+
+      <!-- Birthday Countdown Card -->
+      <div class="glass-card" style="margin-bottom: 2rem; text-align: center;">
+        <h2 class="neon-text">🎂 Next Blink Birthday 🎂</h2>
+        <div id="birthday-info" style="margin-top: 1rem;">
+          <h3 id="birthday-name" style="font-size: 2rem; color: var(--bp-pink);">Loading...</h3>
+          <div id="birthday-timer" style="font-size: 1.5rem; font-family: monospace; letter-spacing: 2px; margin-top: 1rem; color: #fff;">
+            --:--:--:--
+          </div>
+          <button class="btn btn-glow" style="margin-top: 1.5rem;" onclick="triggerConfetti()">Celebrate!</button>
+        </div>
+      </div>
 
     <!-- About Blackpink Card -->
     <section class="glass-card reveal">
@@ -89,6 +104,17 @@
       </div>
     </section>
 
+    <!-- About Creator / Contact -->
+    <section class="glass-card reveal text-center" style="margin-top: 2rem;">
+      <h2>About the Creator</h2>
+      <p style="margin-bottom: 1rem;">
+        Created by Hemant. I am a huge Blink and built this site to celebrate Blackpink!
+      </p>
+      <p style="font-size: 1.1rem;">
+        Got suggestions or want to say hi? Contact me on Instagram: 
+        <a href="https://instagram.com/h.e.m.a.n.t_12" target="_blank" style="color: var(--bp-pink); font-weight: bold; text-decoration: none;">@h.e.m.a.n.t_12</a>
+      </p>
+    </section>
     <!-- Quick Links Grid -->
     <section class="glass-card reveal">
       <h2>Explore</h2>

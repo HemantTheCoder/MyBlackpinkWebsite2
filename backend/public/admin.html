@@ -169,6 +169,23 @@
     </div>
 
     <div class="glass-card" style="margin-top: 2rem;">
+      <h2>Fan Art Moderation</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Author</th>
+            <th>Caption</th>
+            <th>Image URL</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="gallery-tbody">
+          <tr><td colspan="4">Loading...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="glass-card" style="margin-top: 2rem;">
       <h2>Feedback & Suggestions</h2>
       <table>
         <thead>
@@ -297,6 +314,23 @@
             <td>${entry.type}</td>
             <td>${entry.message}</td>
             <td><button class="btn btn-danger" onclick="deleteItem('feedback', '${entry.id}')">Delete</button></td>
+          </tr>
+        `;
+      });
+
+      // Load Fan Art
+      const artRes = await fetch('/api/gallery');
+      const artData = await artRes.json();
+      const artTbody = document.getElementById('gallery-tbody');
+      artTbody.innerHTML = '';
+      if(artData.length === 0) artTbody.innerHTML = '<tr><td colspan="4">No fan art found.</td></tr>';
+      artData.forEach(art => {
+        artTbody.innerHTML += `
+          <tr>
+            <td>${art.author}</td>
+            <td>${art.caption}</td>
+            <td><a href="${art.url}" target="_blank" style="color: var(--bp-pink);">View Image</a></td>
+            <td><button class="btn btn-danger" onclick="deleteItem('gallery', '${art.id}')">Delete</button></td>
           </tr>
         `;
       });
