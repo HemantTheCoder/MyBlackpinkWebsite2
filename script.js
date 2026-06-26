@@ -2453,13 +2453,30 @@ window.initFeedback = function() {
       
       if (res.ok) {
         document.getElementById('fb-message').value = '';
-        if (typeof showToast === 'function') showToast('Feedback submitted! Thank you! 💗');
+        const btn = newForm.querySelector('button[type="submit"]');
+        if (btn) {
+          btn.textContent = 'Submitted! 💗';
+          setTimeout(() => btn.textContent = 'Submit to Admin', 3000);
+        }
+        if (typeof showToast === 'function') {
+          showToast('Feedback submitted! Thank you! 💗');
+        } else {
+          alert('Feedback submitted! Thank you! 💗');
+        }
       } else {
-        if (typeof showToast === 'function') showToast('Error submitting feedback.');
+        if (typeof showToast === 'function') {
+          showToast('Error submitting feedback.');
+        } else {
+          alert('Error submitting feedback.');
+        }
       }
     } catch (err) {
       console.error("Failed to post feedback:", err);
-      if (typeof showToast === 'function') showToast('Failed to post feedback.');
+      if (typeof showToast === 'function') {
+        showToast('Failed to post feedback.');
+      } else {
+        alert('Failed to post feedback.');
+      }
     }
   });
 };
