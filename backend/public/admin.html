@@ -184,6 +184,24 @@
         </tbody>
       </table>
     </div>
+
+    <div class="glass-card" style="margin-top: 2rem;">
+      <h2>Registered Blinks</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Username</th>
+            <th>Bias</th>
+            <th>DOB</th>
+            <th>Playlist</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="users-tbody">
+          <tr><td colspan="5">Loading...</td></tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 
   <div class="toast" id="toast">Action completed!</div>
@@ -279,6 +297,24 @@
             <td>${entry.type}</td>
             <td>${entry.message}</td>
             <td><button class="btn btn-danger" onclick="deleteItem('feedback', '${entry.id}')">Delete</button></td>
+          </tr>
+        `;
+      });
+
+      // Load Users
+      const usrRes = await fetch('/api/admin/users', { headers: { 'Authorization': `Bearer ${token}` }});
+      const usrData = await usrRes.json();
+      const usrTbody = document.getElementById('users-tbody');
+      usrTbody.innerHTML = '';
+      if(usrData.length === 0) usrTbody.innerHTML = '<tr><td colspan="5">No users found.</td></tr>';
+      usrData.forEach(user => {
+        usrTbody.innerHTML += `
+          <tr>
+            <td>${user.username}</td>
+            <td>${user.bias}</td>
+            <td>${user.dob || 'N/A'}</td>
+            <td>${user.playlistCount} tracks</td>
+            <td><button class="btn btn-danger" onclick="deleteItem('admin/users', '${user.id}')">Delete</button></td>
           </tr>
         `;
       });

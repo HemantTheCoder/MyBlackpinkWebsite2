@@ -50,6 +50,16 @@ let ytPlayerReady = false;
 window.onYouTubeIframeAPIReady = function () {
   const container = document.getElementById('yt-player');
   if (!container) return;
+  
+  // Use custom playlist if available
+  if (currentUser && currentUser.playlist && currentUser.playlist.length > 0) {
+    ytPlaylist = currentUser.playlist.map(t => ({
+      title: t.name,
+      artist: 'Custom',
+      videoId: t.url // url stores the videoId
+    }));
+  }
+
   ytPlayer = new YT.Player('yt-player', {
     height: '170',
     width: '296',
@@ -467,6 +477,8 @@ async function navigateTo(url, push) {
     if (document.getElementById('wall-form')) initBlinkWall();
     if (document.querySelector('.leaderboard-container')) initLeaderboard();
     if (document.getElementById('feedback-form')) initFeedback();
+    if (document.getElementById('user-login-form')) initLogin();
+    if (document.getElementById('profile-dashboard')) initProfile();
 
     if (document.getElementById('yt-player') && ytPlayerReady) {
       renderTracklist();
@@ -2480,3 +2492,236 @@ window.initFeedback = function() {
     }
   });
 };
+
+// =============================================
+// USER ACCOUNTS & PROFILE
+// =============================================
+let currentUser = null;
+
+async function fetchCurrentUser() {
+  const token = localStorage.getItem('user_token');
+  if (!token) return;
+  try {
+    const res = await fetch('https://myblackpinkwebsite2.onrender.com/api/me', {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    if (res.ok) {
+      currentUser = await res.json();
+      applyBiasTheme(currentUser.bias);
+      updateNavProfileLink(true);
+      
+      // If player is already ready but we just loaded the user, reload playlist
+      if (ytPlayerReady && typeof ytLoadTrack === 'function' && currentUser.playlist && currentUser.playlist.length > 0) {
+        ytPlaylist = currentUser.playlist.map(t => ({
+          title: t.name,
+          artist: 'Custom',
+          videoId: t.url
+        }));
+        ytLoadTrack(0);
+        renderTracklist();
+      }
+    } else {
+      localStorage.removeItem('user_token');
+      updateNavProfileLink(false);
+    }
+  } catch (e) {
+    console.error('Auth error:', e);
+  }
+}
+
+function updateNavProfileLink(isLoggedIn) {
+  const btn = document.getElementById('nav-profile-btn');
+  if (btn) {
+    btn.textContent = isLoggedIn ? `👤 ${currentUser.username}` : '👤 Profile/Login';
+  }
+}
+
+function applyBiasTheme(bias) {
+  document.body.classList.remove('theme-jisoo', 'theme-jennie', 'theme-rose', 'theme-lisa');
+  if (bias === 'Jisoo') document.body.classList.add('theme-jisoo');
+  if (bias === 'Jennie') document.body.classList.add('theme-jennie');
+  if (bias === 'Rosé') document.body.classList.add('theme-rose');
+  if (bias === 'Lisa') document.body.classList.add('theme-lisa');
+}
+
+window.initLogin = function() {
+  if (localStorage.getItem('user_token')) {
+    navigateTo('profile.html');
+    return;
+  }
+  
+  const loginForm = document.getElementById('user-login-form');
+  const regForm = document.getElementById('user-register-form');
+  
+  if (loginForm) {
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const username = document.getElementById('login-username').value;
+      const password = document.getElementById('login-password').value;
+      try {
+        const res = await fetch('https://myblackpinkwebsite2.onrender.com/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          localStorage.setItem('user_token', data.token);
+          await fetchCurrentUser();
+          navigateTo('profile.html');
+          if(typeof showToast === 'function') showToast(`Welcome back, ${data.username}!`);
+        } else {
+          alert(data.error || 'Login failed');
+        }
+      } catch (err) {
+        alert('Server error');
+      }
+    });
+  }
+
+  if (regForm) {
+    regForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const username = document.getElementById('reg-username').value;
+      const password = document.getElementById('reg-password').value;
+      const bias = document.getElementById('reg-bias').value;
+      const dob = document.getElementById('reg-dob').value;
+      try {
+        const res = await fetch('https://myblackpinkwebsite2.onrender.com/api/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password, bias, dob })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          localStorage.setItem('user_token', data.token);
+          await fetchCurrentUser();
+          navigateTo('profile.html');
+          if(typeof showToast === 'function') showToast(`Welcome to the Blink family, ${data.username}!`);
+        } else {
+          alert(data.error || 'Registration failed');
+        }
+      } catch (err) {
+        alert('Server error');
+      }
+    });
+  }
+};
+
+window.initProfile = async function() {
+  await fetchCurrentUser();
+  const token = localStorage.getItem('user_token');
+  if (!token || !currentUser) {
+    document.getElementById('profile-dashboard').style.display = 'none';
+    document.getElementById('profile-unauth').style.display = 'block';
+    return;
+  }
+  
+  document.getElementById('profile-dashboard').style.display = 'block';
+  document.getElementById('profile-unauth').style.display = 'none';
+  document.getElementById('profile-greeting').textContent = `Welcome, ${currentUser.username}!`;
+  
+  document.getElementById('update-bias').value = currentUser.bias || 'OT4';
+  if (currentUser.dob) document.getElementById('update-dob').value = currentUser.dob;
+
+  document.getElementById('profile-update-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const bias = document.getElementById('update-bias').value;
+    const dob = document.getElementById('update-dob').value;
+    const res = await fetch('https://myblackpinkwebsite2.onrender.com/api/me', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ bias, dob })
+    });
+    if (res.ok) {
+      currentUser.bias = bias;
+      currentUser.dob = dob;
+      applyBiasTheme(bias);
+      if(typeof showToast === 'function') showToast('Profile updated!');
+    }
+  });
+
+  renderPlaylistUI();
+};
+
+window.logoutUser = function() {
+  localStorage.removeItem('user_token');
+  currentUser = null;
+  applyBiasTheme('OT4');
+  updateNavProfileLink(false);
+  navigateTo('login.html');
+};
+
+function renderPlaylistUI() {
+  const container = document.getElementById('my-playlist-container');
+  if (!container) return;
+  container.innerHTML = '';
+  if (!currentUser.playlist || currentUser.playlist.length === 0) {
+    container.innerHTML = '<p style="color: #888;">Your playlist is empty.</p>';
+    return;
+  }
+  currentUser.playlist.forEach((track, idx) => {
+    container.innerHTML += `
+      <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.1); padding: 0.5rem 1rem; border-radius: 5px;">
+        <span>${idx + 1}. ${track.name}</span>
+        <button class="btn btn-danger" style="padding: 0.2rem 0.5rem; font-size: 0.8rem;" onclick="removeTrack(${idx})">X</button>
+      </div>
+    `;
+  });
+}
+
+window.addTrackToPlaylist = function() {
+  const sel = document.getElementById('playlist-track-select');
+  const track = {
+    name: sel.options[sel.selectedIndex].getAttribute('data-name'),
+    url: sel.value
+  };
+  if (!currentUser.playlist) currentUser.playlist = [];
+  currentUser.playlist.push(track);
+  renderPlaylistUI();
+};
+
+window.removeTrack = function(idx) {
+  currentUser.playlist.splice(idx, 1);
+  renderPlaylistUI();
+};
+
+window.savePlaylist = async function() {
+  const token = localStorage.getItem('user_token');
+  const res = await fetch('https://myblackpinkwebsite2.onrender.com/api/me/playlist', {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify({ playlist: currentUser.playlist })
+  });
+  if (res.ok) {
+    if(typeof showToast === 'function') showToast('Playlist saved!');
+    
+    // Update ytPlaylist immediately
+    if (currentUser && currentUser.playlist && currentUser.playlist.length > 0) {
+      ytPlaylist = currentUser.playlist.map(t => ({
+        title: t.name,
+        artist: 'Custom',
+        videoId: t.url
+      }));
+    }
+    
+    // If the music player is active on this page (e.g. index), reload it
+    if (document.getElementById('yt-player') && ytPlayerReady && typeof ytLoadTrack === 'function') {
+      ytLoadTrack(0);
+      renderTracklist();
+    }
+  } else {
+    alert('Failed to save playlist');
+  }
+};
+
+// Run fetchCurrentUser on initial load
+if (localStorage.getItem('user_token')) {
+  fetchCurrentUser();
+}

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login / Register | Blackpink</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  
+  <header class="hero">
+    <div class="hero-content">
+      <h1>Blink Account</h1>
+      <p style="font-size: 1.2rem; font-weight: 300; margin-top: 0.5rem; position:relative; z-index:1;">Join the community to unlock custom themes & playlists!</p>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="text-center" style="margin-bottom: 2rem;">
+      <a href="index.html" class="btn">&larr; Back to Home</a>
+    </div>
+
+    <div class="glass-card" style="max-width: 500px; margin: 0 auto;">
+      
+      <!-- Login Form -->
+      <div id="login-section">
+        <h2 style="text-align: center; margin-bottom: 1.5rem;">Login</h2>
+        <form id="user-login-form" style="display: flex; flex-direction: column; gap: 1rem;">
+          <input type="text" id="login-username" placeholder="Username" required style="width: 100%; padding: 1rem; border-radius: 10px; border: 1px solid var(--bp-pink); background: rgba(0,0,0,0.5); color: white; font-family: inherit;">
+          <input type="password" id="login-password" placeholder="Password" required style="width: 100%; padding: 1rem; border-radius: 10px; border: 1px solid var(--bp-pink); background: rgba(0,0,0,0.5); color: white; font-family: inherit;">
+          <button type="submit" class="btn btn-glow" style="margin-top: 1rem;">Login</button>
+        </form>
+        <p class="text-center" style="margin-top: 1.5rem;">Don't have an account? <a href="#" onclick="toggleAuthMode(); return false;" style="color: var(--bp-pink);">Register here</a></p>
+      </div>
+
+      <!-- Register Form -->
+      <div id="register-section" style="display: none;">
+        <h2 style="text-align: center; margin-bottom: 1.5rem;">Create Account</h2>
+        <form id="user-register-form" style="display: flex; flex-direction: column; gap: 1rem;">
+          <input type="text" id="reg-username" placeholder="Username" required style="width: 100%; padding: 1rem; border-radius: 10px; border: 1px solid var(--bp-pink); background: rgba(0,0,0,0.5); color: white; font-family: inherit;">
+          <input type="password" id="reg-password" placeholder="Password" required style="width: 100%; padding: 1rem; border-radius: 10px; border: 1px solid var(--bp-pink); background: rgba(0,0,0,0.5); color: white; font-family: inherit;">
+          
+          <label style="margin-top: 0.5rem; font-weight: 600;">Select your Bias:</label>
+          <select id="reg-bias" style="width: 100%; padding: 1rem; border-radius: 10px; border: 1px solid var(--bp-pink); background: rgba(0,0,0,0.8); color: white; font-family: inherit;" required>
+            <option value="OT4" style="background: #111; color: white;">OT4 (All Members)</option>
+            <option value="Jisoo" style="background: #111; color: white;">Jisoo</option>
+            <option value="Jennie" style="background: #111; color: white;">Jennie</option>
+            <option value="Rosé" style="background: #111; color: white;">Rosé</option>
+            <option value="Lisa" style="background: #111; color: white;">Lisa</option>
+          </select>
+
+          <label style="margin-top: 0.5rem; font-weight: 600;">Birthday (Optional for surprises!):</label>
+          <input type="date" id="reg-dob" style="width: 100%; padding: 1rem; border-radius: 10px; border: 1px solid var(--bp-pink); background: rgba(0,0,0,0.5); color: white; font-family: inherit; color-scheme: dark;">
+
+          <button type="submit" class="btn btn-glow" style="margin-top: 1rem;">Register</button>
+        </form>
+        <p class="text-center" style="margin-top: 1.5rem;">Already have an account? <a href="#" onclick="toggleAuthMode(); return false;" style="color: var(--bp-pink);">Login here</a></p>
+      </div>
+
+    </div>
+  </main>
+
+  <script>
+    function toggleAuthMode() {
+      const login = document.getElementById('login-section');
+      const reg = document.getElementById('register-section');
+      if (login.style.display === 'none') {
+        login.style.display = 'block';
+        reg.style.display = 'none';
+      } else {
+        login.style.display = 'none';
+        reg.style.display = 'block';
+      }
+    }
+  </script>
+  <script src="script.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Profile | Blackpink</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  
+  <header class="hero">
+    <div class="hero-content">
+      <h1>My Blink Profile</h1>
+      <p style="font-size: 1.2rem; font-weight: 300; margin-top: 0.5rem; position:relative; z-index:1;">Manage your bias and custom playlist</p>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="text-center" style="margin-bottom: 2rem;">
+      <a href="index.html" class="btn">&larr; Back to Home</a>
+    </div>
+
+    <div class="glass-card" style="max-width: 800px; margin: 0 auto; display: none;" id="profile-dashboard">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <h2 id="profile-greeting">Welcome!</h2>
+        <button class="btn btn-danger" onclick="logoutUser()">Logout</button>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+        
+        <!-- Profile Settings -->
+        <div class="glass-card">
+          <h3 style="margin-bottom: 1rem;">Profile Settings</h3>
+          <form id="profile-update-form" style="display: flex; flex-direction: column; gap: 1rem;">
+            <label style="font-weight: 600;">My Bias (Theme):</label>
+            <select id="update-bias" style="width: 100%; padding: 1rem; border-radius: 10px; border: 1px solid var(--bp-pink); background: rgba(0,0,0,0.8); color: white; font-family: inherit;">
+              <option value="OT4" style="background: #111; color: white;">OT4 (All Members)</option>
+              <option value="Jisoo" style="background: #111; color: white;">Jisoo</option>
+              <option value="Jennie" style="background: #111; color: white;">Jennie</option>
+              <option value="Rosé" style="background: #111; color: white;">Rosé</option>
+              <option value="Lisa" style="background: #111; color: white;">Lisa</option>
+            </select>
+
+            <label style="font-weight: 600;">Birthday:</label>
+            <input type="date" id="update-dob" style="width: 100%; padding: 1rem; border-radius: 10px; border: 1px solid var(--bp-pink); background: rgba(0,0,0,0.5); color: white; font-family: inherit; color-scheme: dark;">
+
+            <button type="submit" class="btn btn-glow" style="margin-top: 1rem;">Update Profile</button>
+          </form>
+        </div>
+
+        <!-- Custom Playlist Builder -->
+        <div class="glass-card">
+          <h3 style="margin-bottom: 1rem;">Custom Playlist Builder</h3>
+          <p style="font-size: 0.9rem; margin-bottom: 1rem; color: #aaa;">Add tracks here, and they will automatically load in your music player!</p>
+          
+          <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+            <select id="playlist-track-select" style="flex: 1; padding: 0.8rem; border-radius: 10px; border: 1px solid var(--bp-pink); background: rgba(0,0,0,0.8); color: white; font-family: inherit;">
+              <option value="IHNzEfMhkPA" data-name="How You Like That">How You Like That</option>
+              <option value="ioNng23DkIM" data-name="How You Like That (Dance Practice)">How You Like That (Dance Practice)</option>
+              <option value="POe9SOEKotk" data-name="Lovesick Girls">Lovesick Girls</option>
+              <option value="vRXZj0DzXIA" data-name="Ice Cream (with Selena Gomez)">Ice Cream (with Selena Gomez)</option>
+              <option value="dISNgvVpWlo" data-name="Whistle">Whistle</option>
+              <option value="bwmSjveL3Lc" data-name="Boombayah">Boombayah</option>
+              <option value="YudHcBIxlYw" data-name="FLOWER (Jisoo)">FLOWER (Jisoo)</option>
+            </select>
+            <button class="btn" onclick="addTrackToPlaylist()" style="padding: 0 1rem;">+</button>
+          </div>
+
+          <div id="my-playlist-container" style="background: rgba(0,0,0,0.3); border-radius: 10px; padding: 1rem; min-height: 150px; display: flex; flex-direction: column; gap: 0.5rem;">
+            <p>Loading playlist...</p>
+          </div>
+          
+          <button class="btn btn-glow" style="margin-top: 1rem; width: 100%;" onclick="savePlaylist()">Save Playlist</button>
+        </div>
+
+      </div>
+    </div>
+    
+    <div class="glass-card" style="max-width: 500px; margin: 0 auto; text-align: center;" id="profile-unauth">
+      <h2>Not Logged In</h2>
+      <p style="margin-bottom: 2rem;">You need to be logged in to view this page.</p>
+      <a href="login.html" class="btn btn-glow">Go to Login</a>
+    </div>
+
+  </main>
+
+  <script src="script.js" defer></script>
+</body>
+</html>

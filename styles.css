@@ -13,6 +13,35 @@
   --glass-border: rgba(255, 42, 133, 0.2);
 }
 
+/* Bias Themes */
+body.theme-jisoo {
+  --bp-pink: #d90036; /* Crimson */
+  --bp-pink-hover: #b3002b;
+  --bp-pink-glow: rgba(217, 0, 54, 0.6);
+  --glass-border: rgba(217, 0, 54, 0.2);
+}
+
+body.theme-jennie {
+  --bp-pink: #004d99; /* Midnight Blue */
+  --bp-pink-hover: #003366;
+  --bp-pink-glow: rgba(0, 77, 153, 0.6);
+  --glass-border: rgba(0, 77, 153, 0.2);
+}
+
+body.theme-rose {
+  --bp-pink: #e0bfb8; /* Champagne / Rose Gold */
+  --bp-pink-hover: #c4a199;
+  --bp-pink-glow: rgba(224, 191, 184, 0.6);
+  --glass-border: rgba(224, 191, 184, 0.2);
+}
+
+body.theme-lisa {
+  --bp-pink: #ccff00; /* Neon Green/Yellow */
+  --bp-pink-hover: #99cc00;
+  --bp-pink-glow: rgba(204, 255, 0, 0.6);
+  --glass-border: rgba(204, 255, 0, 0.2);
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
