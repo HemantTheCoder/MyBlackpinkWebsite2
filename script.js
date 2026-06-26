@@ -644,6 +644,16 @@ function saveHighScore(gameKey, currentScore) {
   } else {
     if (msgEl) msgEl.style.display = 'none';
   }
+
+  // GLOBAL LEADERBOARD INTEGRATION (Trivia Only for now)
+  if (gameKey === 'triviaHighScore') {
+    const username = localStorage.getItem('blink_id') || 'Anonymous Blink';
+    fetch('http://localhost:3000/api/leaderboard', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, score: currentScore })
+    }).catch(err => console.error('Failed to update global leaderboard:', err));
+  }
 }
 
 // =============================================
@@ -1915,8 +1925,8 @@ function initLightstickMode() {
   btn.id = 'hammer-bong-btn';
   btn.className = 'hammer-bong-btn';
   btn.innerHTML = '🔨'; 
-  btn.title = 'Concert Mode';
-  btn.onclick = toggleLightstickMode;
+  btn.title = 'Concert Mode (Under Development)';
+  btn.onclick = () => showToast('Concert Mode is currently under development! 🛠️', 3000);
   document.body.appendChild(btn);
 
   const overlay = document.createElement('div');

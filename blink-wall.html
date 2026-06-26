@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blink Wall | Blackpink</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="pages.css">
+  <style>
+    .wall-container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    
+    .message-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-bottom: 3rem;
+    }
+    
+    .message-form input,
+    .message-form select,
+    .message-form textarea {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid var(--bp-pink);
+      border-radius: 10px;
+      padding: 1rem;
+      color: white;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .message-form textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+    
+    .messages-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 1.5rem;
+    }
+    
+    .message-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--glass-border);
+      border-radius: 15px;
+      padding: 1.5rem;
+      position: relative;
+      transition: transform 0.3s;
+    }
+    
+    .message-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 15px var(--bp-pink-glow);
+    }
+    
+    .message-card.bias-jennie { border-top: 4px solid #4a90e2; }
+    .message-card.bias-jisoo { border-top: 4px solid #e74c3c; }
+    .message-card.bias-rose { border-top: 4px solid #f39c12; }
+    .message-card.bias-lisa { border-top: 4px solid #f1c40f; }
+    .message-card.bias-ot4 { border-top: 4px solid var(--bp-pink); }
+    
+    .msg-author {
+      font-weight: 800;
+      color: var(--bp-pink);
+      margin-bottom: 0.5rem;
+      font-size: 1.2rem;
+    }
+    
+    .msg-content {
+      font-size: 1rem;
+      line-height: 1.4;
+      margin-bottom: 1rem;
+    }
+    
+    .msg-bias {
+      position: absolute;
+      bottom: 10px;
+      right: 15px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <a href="index.html">BLACKPINK</a>
+    </div>
+    <nav>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="games.html">Games</a></li>
+        <li><a href="leaderboard.html">Leaderboard</a></li>
+        <li><a href="blink-wall.html">Blink Wall</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="wall-container">
+    <h1>Global Blink Wall</h1>
+    <p class="text-center" style="margin-bottom: 2rem;">Leave a message for Blackpink or other Blinks around the world!</p>
+    
+    <div class="glass-card">
+      <form class="message-form" id="wall-form">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <input type="text" id="msg-name" placeholder="Your Name or Blink ID" required>
+          <select id="msg-bias">
+            <option value="OT4">OT4 (All Members)</option>
+            <option value="Jennie">Jennie</option>
+            <option value="Jisoo">Jisoo</option>
+            <option value="Rosé">Rosé</option>
+            <option value="Lisa">Lisa</option>
+          </select>
+        </div>
+        <textarea id="msg-text" placeholder="Write your message here..." required maxlength="250"></textarea>
+        <button type="submit" class="btn btn-glow">Post Message</button>
+      </form>
+    </div>
+    
+    <div class="messages-grid" id="messages-grid">
+      <p class="text-center">Loading messages...</p>
+    </div>
+  </main>
+
+  <script src="script.js"></script>
+  <script>
+    // Specific logic for Blink Wall
+    const API_URL = 'http://localhost:3000/api';
+    
+    async function fetchMessages() {
+      const grid = document.getElementById('messages-grid');
+      try {
+        const res = await fetch(`${API_URL}/wall`);
+        const messages = await res.json();
+        
+        if (messages.length === 0) {
+          grid.innerHTML = '<p class="text-center" style="grid-column: 1 / -1;">No messages yet. Be the first to post!</p>';
+          return;
+        }
+        
+        grid.innerHTML = '';
+        messages.reverse().forEach(msg => {
+          const biasClass = 'bias-' + msg.bias.toLowerCase().replace('é', 'e');
+          const card = document.createElement('div');
+          card.className = `message-card ${biasClass}`;
+          card.innerHTML = `
+            <div class="msg-author">${msg.author}</div>
+            <div class="msg-content">${msg.message}</div>
+            <div class="msg-bias">Bias: ${msg.bias}</div>
+          `;
+          grid.appendChild(card);
+        });
+      } catch (err) {
+        console.error("Failed to fetch messages:", err);
+        grid.innerHTML = '<p class="text-center" style="grid-column: 1 / -1; color: red;">Failed to load messages. Is the backend running?</p>';
+      }
+    }
+    
+    document.getElementById('wall-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const author = document.getElementById('msg-name').value;
+      const bias = document.getElementById('msg-bias').value;
+      const message = document.getElementById('msg-text').value;
+      
+      try {
+        const res = await fetch(`${API_URL}/wall`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ author, bias, message })
+        });
+        
+        if (res.ok) {
+          document.getElementById('msg-text').value = '';
+          if (typeof showToast === 'function') showToast('Message posted! 💗');
+          fetchMessages();
+        }
+      } catch (err) {
+        console.error("Failed to post message:", err);
+        if (typeof showToast === 'function') showToast('Failed to post message.');
+      }
+    });
+    
+    // Load messages on startup
+    fetchMessages();
+  </script>
+</body>
+</html>

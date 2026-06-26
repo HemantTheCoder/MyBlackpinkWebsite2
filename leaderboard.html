@@ -97,50 +97,64 @@
       <a href="games.html?v=1782403788303" class="btn btn-glow">&larr; Back to Hub</a>
     </div>
 
-    <div class="leaderboard-container">
-      <h2 style="margin-bottom: 1rem; font-size: 2.5rem;">Your Personal Records</h2>
-      <p style="color: #aaa; margin-bottom: 3rem; font-size: 1.2rem;">These are your highest achievements stored locally on your device.</p>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; max-width: 1200px; margin: 0 auto;">
       
-      <div class="lb-card">
-        <div class="lb-title">🧠 Ultimate Trivia</div>
-        <div class="lb-score" id="score-trivia">0 <span style="font-size: 1rem; color: #fff;">/ 10</span></div>
+      <!-- Personal Records -->
+      <div class="leaderboard-container" style="padding: 2rem;">
+        <h2 style="margin-bottom: 1rem; font-size: 2rem;">Personal Records</h2>
+        
+        <div class="lb-card">
+          <div class="lb-title">🧠 Ultimate Trivia</div>
+          <div class="lb-score" id="score-trivia">0 <span style="font-size: 1rem; color: #fff;">/ 10</span></div>
+        </div>
+
+        <div class="lb-card">
+          <div class="lb-title">🎵 Guess The Song</div>
+          <div class="lb-score" id="score-emoji">0 <span style="font-size: 1rem; color: #fff;">streak</span></div>
+        </div>
+
+        <div class="lb-card">
+          <div class="lb-title">🧩 Photo Puzzle</div>
+          <div class="lb-score" id="score-puzzle">-- <span style="font-size: 1rem; color: #fff;">moves</span></div>
+        </div>
+
+        <div class="lb-card">
+          <div class="lb-title">🎤 Guess The Lyrics</div>
+          <div class="lb-score" id="score-lyrics">0 <span style="font-size: 1rem; color: #fff;">/ 10</span></div>
+        </div>
+
+        <div class="lb-card">
+          <div class="lb-title">👥 Silhouette</div>
+          <div class="lb-score" id="score-silhouette">0 <span style="font-size: 1rem; color: #fff;">pts</span></div>
+        </div>
+
+        <div class="lb-card">
+          <div class="lb-title">📅 Daily Challenge</div>
+          <div class="lb-score" id="score-daily">0 <span style="font-size: 1rem; color: #fff;">streak</span></div>
+        </div>
+
+        <button class="reset-btn" onclick="resetLeaderboards()">Reset Records</button>
       </div>
 
-      <div class="lb-card">
-        <div class="lb-title">🎵 Guess The Song</div>
-        <div class="lb-score" id="score-emoji">0 <span style="font-size: 1rem; color: #fff;">streak</span></div>
+      <!-- Global Records -->
+      <div class="leaderboard-container" style="padding: 2rem;">
+        <h2 style="margin-bottom: 1rem; font-size: 2rem;">Global Trivia Top 100</h2>
+        
+        <div id="global-leaderboard" style="display: flex; flex-direction: column; gap: 1rem; max-height: 600px; overflow-y: auto;">
+          <p class="text-center">Loading global scores...</p>
+        </div>
       </div>
 
-      <div class="lb-card">
-        <div class="lb-title">🧩 Photo Puzzle</div>
-        <div class="lb-score" id="score-puzzle">-- <span style="font-size: 1rem; color: #fff;">moves</span></div>
-      </div>
-
-      <div class="lb-card">
-        <div class="lb-title">🎤 Guess The Lyrics</div>
-        <div class="lb-score" id="score-lyrics">0 <span style="font-size: 1rem; color: #fff;">/ 10</span></div>
-      </div>
-
-      <div class="lb-card">
-        <div class="lb-title">=d Silhouette</div>
-        <div class="lb-score" id="score-silhouette">0 <span style="font-size: 1rem; color: #fff;">pts</span></div>
-      </div>
-
-      <div class="lb-card">
-        <div class="lb-title">=% Daily Challenge</div>
-        <div class="lb-score" id="score-daily">0 <span style="font-size: 1rem; color: #fff;">streak</span></div>
-      </div>
-
-      <button class="reset-btn" onclick="resetLeaderboards()">Reset All Records</button>
     </div>
   </main>
 
   <footer>
-    <p>Created with �x by <a href="https://github.com/HemantTheCoder" target="_blank">Hemant</a></p>
+    <p>Created with 💗 by <a href="https://github.com/HemantTheCoder" target="_blank">Hemant</a></p>
   </footer>
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
+      // Local Records
       const trivia = localStorage.getItem('triviaHighScore') || 0;
       const emoji = localStorage.getItem('emojiBestStreak') || 0;
       const puzzle = localStorage.getItem('puzzleBestMoves');
@@ -159,7 +173,37 @@
       } else {
         document.getElementById('score-puzzle').innerHTML = `-- <span style="font-size: 1rem; color: #fff;">moves</span>`;
       }
+
+      // Global Records Fetch
+      fetchGlobalLeaderboard();
     });
+
+    async function fetchGlobalLeaderboard() {
+      const glDiv = document.getElementById('global-leaderboard');
+      try {
+        const res = await fetch('http://localhost:3000/api/leaderboard');
+        const scores = await res.json();
+        
+        if (scores.length === 0) {
+          glDiv.innerHTML = '<p>No scores yet! Play trivia to be the first!</p>';
+          return;
+        }
+
+        glDiv.innerHTML = '';
+        scores.forEach((entry, index) => {
+          const rank = index + 1;
+          const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : `#${rank}`;
+          glDiv.innerHTML += `
+            <div class="lb-card" style="padding: 1rem; margin-bottom: 0;">
+              <div class="lb-title" style="font-size: 1.2rem;">${medal} ${entry.username}</div>
+              <div class="lb-score" style="font-size: 1.5rem;">${entry.score}</div>
+            </div>
+          `;
+        });
+      } catch (e) {
+        glDiv.innerHTML = '<p style="color: red;">Failed to load global leaderboard.</p>';
+      }
+    }
 
     function resetLeaderboards() {
       if(confirm("Are you sure you want to erase all your high scores?")) {
