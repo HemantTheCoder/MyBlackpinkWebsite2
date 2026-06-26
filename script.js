@@ -7,7 +7,7 @@ if (loc.indexOf('http://') == 0 && !loc.includes('localhost') && !loc.includes('
 // =============================================
 // YOUTUBE MUSIC PLAYER
 // =============================================
-const ytPlaylist = [
+const defaultYtPlaylist = [
   { title: "Whistle", artist: "BLACKPINK", videoId: "dISNgvVpWlo" },
   { title: "Boombayah", artist: "BLACKPINK", videoId: "bwmSjveL3Lc" },
   { title: "Playing With Fire", artist: "BLACKPINK", videoId: "9pdj4iJD08s" },
@@ -29,6 +29,8 @@ const ytPlaylist = [
   { title: "FLOWER", artist: "Jisoo", videoId: "YudHcBIxlYw" },
   { title: "All Eyes On Me", artist: "Jisoo", videoId: "NuxAOC6RU9c" }
 ];
+
+let ytPlaylist = [...defaultYtPlaylist];
 
 let ytPlayer = null;
 let ytCurrentTrack = 0;
@@ -2649,6 +2651,14 @@ window.logoutUser = function() {
   currentUser = null;
   applyBiasTheme('OT4');
   updateNavProfileLink(false);
+  
+  // Revert to normal playlist
+  ytPlaylist = [...defaultYtPlaylist];
+  if (ytPlayerReady && typeof ytLoadTrack === 'function') {
+    ytLoadTrack(0);
+    renderTracklist();
+  }
+  
   navigateTo('login.html');
 };
 
