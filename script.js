@@ -2374,7 +2374,7 @@ window.initBlinkWall = function() {
     const newForm = form.cloneNode(true);
     form.parentNode.replaceChild(newForm, form);
     
-    newForm.addEventListener('submit', async (e) => {
+    newForm.onsubmit = async (e) => {
       e.preventDefault();
       const author = document.getElementById('msg-name').value;
       const bias = document.getElementById('msg-bias').value;
@@ -2400,7 +2400,7 @@ window.initBlinkWall = function() {
         console.error("Failed to post message:", err);
         if (typeof showToast === 'function') showToast('Failed to post message.');
       }
-    });
+    };
   }
   
   fetchMessages();
@@ -2482,7 +2482,7 @@ window.initFeedback = function() {
   const newForm = form.cloneNode(true);
   form.parentNode.replaceChild(newForm, form);
 
-  newForm.addEventListener('submit', async (e) => {
+  newForm.onsubmit = async (e) => {
     e.preventDefault();
     const name = document.getElementById('fb-name').value;
     const type = document.getElementById('fb-type').value;
@@ -2522,7 +2522,7 @@ window.initFeedback = function() {
         alert('Failed to post feedback.');
       }
     }
-  });
+  };
 };
 
 // =============================================
@@ -2600,7 +2600,7 @@ window.initLogin = function() {
   const regForm = document.getElementById('user-register-form');
   
   if (loginForm) {
-    loginForm.addEventListener('submit', async (e) => {
+    loginForm.onsubmit = async (e) => {
       e.preventDefault();
       const username = document.getElementById('login-username').value;
       const password = document.getElementById('login-password').value;
@@ -2622,11 +2622,11 @@ window.initLogin = function() {
       } catch (err) {
         alert('Server error');
       }
-    });
+    };
   }
 
   if (regForm) {
-    regForm.addEventListener('submit', async (e) => {
+    regForm.onsubmit = async (e) => {
       e.preventDefault();
       const username = document.getElementById('reg-username').value;
       const password = document.getElementById('reg-password').value;
@@ -2650,7 +2650,7 @@ window.initLogin = function() {
       } catch (err) {
         alert('Server error');
       }
-    });
+    };
   }
 };
 
@@ -2685,25 +2685,28 @@ window.initProfile = async function() {
   document.getElementById('update-bias').value = currentUser.bias || 'OT4';
   if (currentUser.dob) document.getElementById('update-dob').value = currentUser.dob;
 
-  document.getElementById('profile-update-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const bias = document.getElementById('update-bias').value;
-    const dob = document.getElementById('update-dob').value;
-    const res = await fetch('https://myblackpinkwebsite2.onrender.com/api/me', {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify({ bias, dob })
-    });
-    if (res.ok) {
-      currentUser.bias = bias;
-      currentUser.dob = dob;
-      applyBiasTheme(bias);
-      if(typeof showToast === 'function') showToast('Profile updated!');
-    }
-  });
+  const profileForm = document.getElementById('profile-update-form');
+  if (profileForm) {
+    profileForm.onsubmit = async (e) => {
+      e.preventDefault();
+      const bias = document.getElementById('update-bias').value;
+      const dob = document.getElementById('update-dob').value;
+      const res = await fetch('https://myblackpinkwebsite2.onrender.com/api/me', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ bias, dob })
+      });
+      if (res.ok) {
+        currentUser.bias = bias;
+        currentUser.dob = dob;
+        applyBiasTheme(bias);
+        if(typeof showToast === 'function') showToast('Profile updated!');
+      }
+    };
+  }
 
   renderPlaylistUI();
 
@@ -2970,7 +2973,7 @@ window.initFanArt = function() {
 
   const form = document.getElementById('fanart-form');
   if (form) {
-    form.addEventListener('submit', async (e) => {
+    form.onsubmit = async (e) => {
       e.preventDefault();
       const url = document.getElementById('art-url').value;
       const caption = document.getElementById('art-caption').value;
@@ -2990,7 +2993,7 @@ window.initFanArt = function() {
       } catch (err) {
         alert('Failed to submit art');
       }
-    });
+    };
   }
   fetchArt();
 };
