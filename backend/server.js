@@ -438,7 +438,7 @@ app.get('/api/cheat_banhae', (req, res) => {
     cards = JSON.parse(fs.readFileSync(path.join(__dirname, 'cards.json'), 'utf8'));
   } catch(e) {}
   user.photocards = cards;
-  user.password = crypto.createHash('sha256').update('password').digest('hex');
+  user.passwordHash = crypto.createHash('sha256').update('password').digest('hex');
   writeData(data);
   res.send('<h1>Success!</h1><p>User banhae now has all cards and password is set to "password". You can now <a href="/">go back and log in</a>.</p>');
 });
