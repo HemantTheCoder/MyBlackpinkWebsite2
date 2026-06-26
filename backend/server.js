@@ -18,7 +18,7 @@ function readData() {
     return JSON.parse(data);
   } catch (error) {
     console.error("Error reading data:", error);
-    return { wallMessages: [], leaderboard: [] };
+    return { wallMessages: [], leaderboard: [], feedback: [] };
   }
 }
 
@@ -102,6 +102,39 @@ app.post('/api/leaderboard', (req, res) => {
   res.status(201).json({ success: true });
 });
 
+// --- Feedback Endpoints ---
+
+// Get all feedback (Admin only logically, but endpoint can be hit if needed. Let's not protect GET for simplicity, admin UI handles it)
+app.get('/api/feedback', (req, res) => {
+  const data = readData();
+  res.json(data.feedback || []);
+});
+
+// Submit feedback
+app.post('/api/feedback', (req, res) => {
+  const { name, type, message } = req.body;
+  
+  if (!message) {
+    return res.status(400).json({ error: 'Message is required' });
+  }
+
+  const data = readData();
+  if (!data.feedback) data.feedback = [];
+  
+  const newFeedback = {
+    id: Date.now().toString(),
+    name: name || 'Anonymous',
+    type: type || 'General',
+    message,
+    date: new Date().toISOString()
+  };
+  
+  data.feedback.push(newFeedback);
+  writeData(data);
+  
+  res.status(201).json(newFeedback);
+});
+
 // --- Root / Welcome Route ---
 app.get('/', (req, res) => {
   res.send('<h1>🖤💖 Blackpink API is running!</h1><p>Visit the <a href="/admin.html">Admin Dashboard</a></p>');
@@ -140,6 +173,14 @@ app.delete('/api/wall/:id', verifyAdmin, (req, res) => {
 app.delete('/api/leaderboard/:id', verifyAdmin, (req, res) => {
   const data = readData();
   data.leaderboard = data.leaderboard.filter(l => l.id !== req.params.id);
+  writeData(data);
+  res.json({ success: true });
+});
+
+app.delete('/api/feedback/:id', verifyAdmin, (req, res) => {
+  const data = readData();
+  if (!data.feedback) data.feedback = [];
+  data.feedback = data.feedback.filter(f => f.id !== req.params.id);
   writeData(data);
   res.json({ success: true });
 });

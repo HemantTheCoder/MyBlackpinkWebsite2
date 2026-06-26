@@ -167,6 +167,23 @@
         </tbody>
       </table>
     </div>
+
+    <div class="glass-card" style="margin-top: 2rem;">
+      <h2>Feedback & Suggestions</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Message</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="feedback-tbody">
+          <tr><td colspan="4">Loading...</td></tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 
   <div class="toast" id="toast">Action completed!</div>
@@ -245,6 +262,23 @@
             <td>${entry.username}</td>
             <td>${entry.score}</td>
             <td><button class="btn btn-danger" onclick="deleteItem('leaderboard', '${entry.id}')">Delete</button></td>
+          </tr>
+        `;
+      });
+
+      // Load Feedback
+      const fbRes = await fetch('/api/feedback');
+      const fbData = await fbRes.json();
+      const fbTbody = document.getElementById('feedback-tbody');
+      fbTbody.innerHTML = '';
+      if(fbData.length === 0) fbTbody.innerHTML = '<tr><td colspan="4">No feedback found.</td></tr>';
+      fbData.forEach(entry => {
+        fbTbody.innerHTML += `
+          <tr>
+            <td>${entry.name}</td>
+            <td>${entry.type}</td>
+            <td>${entry.message}</td>
+            <td><button class="btn btn-danger" onclick="deleteItem('feedback', '${entry.id}')">Delete</button></td>
           </tr>
         `;
       });

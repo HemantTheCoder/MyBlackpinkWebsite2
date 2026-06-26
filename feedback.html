@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Feedback | Blackpink</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  
+  <header class="hero">
+    <div class="hero-content">
+      <h1>Feedback & Suggestions</h1>
+      <p style="font-size: 1.2rem; font-weight: 300; margin-top: 0.5rem; position:relative; z-index:1;">Help us improve the Ultimate Blink Wiki!</p>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="text-center" style="margin-bottom: 2rem;">
+      <a href="index.html" class="btn">&larr; Back to Home</a>
+    </div>
+
+    <div class="glass-card" style="max-width: 600px; margin: 0 auto;">
+      <h2 style="text-align: center; margin-bottom: 1.5rem;">Submit Feedback</h2>
+      <form id="feedback-form" style="display: flex; flex-direction: column; gap: 1rem;">
+        <input type="text" id="fb-name" placeholder="Your Name or Blink ID (Optional)" style="width: 100%; padding: 1rem; border-radius: 10px; border: 1px solid var(--bp-pink); background: rgba(0,0,0,0.5); color: white; font-family: inherit;">
+        
+        <select id="fb-type" style="width: 100%; padding: 1rem; border-radius: 10px; border: 1px solid var(--bp-pink); background: rgba(0,0,0,0.5); color: white; font-family: inherit;" required>
+          <option value="" disabled selected>Select Feedback Type</option>
+          <option value="Suggestion" style="color: black;">Suggestion</option>
+          <option value="Bug Report" style="color: black;">Bug Report</option>
+          <option value="General" style="color: black;">General Feedback</option>
+        </select>
+
+        <textarea id="fb-message" placeholder="Write your feedback here..." rows="5" required style="width: 100%; padding: 1rem; border-radius: 10px; border: 1px solid var(--bp-pink); background: rgba(0,0,0,0.5); color: white; font-family: inherit; resize: vertical;"></textarea>
+        
+        <button type="submit" class="btn btn-glow" style="margin-top: 1rem;">Submit to Admin</button>
+      </form>
+    </div>
+  </main>
+
+  <script src="script.js" defer></script>
+</body>
+</html>

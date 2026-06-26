@@ -466,6 +466,7 @@ async function navigateTo(url, push) {
     if (document.getElementById('poll-opt-Square-Up')) initFanPoll();
     if (document.getElementById('wall-form')) initBlinkWall();
     if (document.querySelector('.leaderboard-container')) initLeaderboard();
+    if (document.getElementById('feedback-form')) initFeedback();
 
     if (document.getElementById('yt-player') && ytPlayerReady) {
       renderTracklist();
@@ -2427,4 +2428,38 @@ window.resetLeaderboards = function() {
     localStorage.removeItem('dailyBestStreak');
     location.reload();
   }
+};
+
+window.initFeedback = function() {
+  const form = document.getElementById('feedback-form');
+  if (!form) return;
+  
+  // Clean up any existing listeners by cloning
+  const newForm = form.cloneNode(true);
+  form.parentNode.replaceChild(newForm, form);
+
+  newForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const name = document.getElementById('fb-name').value;
+    const type = document.getElementById('fb-type').value;
+    const message = document.getElementById('fb-message').value;
+    
+    try {
+      const res = await fetch('https://myblackpinkwebsite2.onrender.com/api/feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, type, message })
+      });
+      
+      if (res.ok) {
+        document.getElementById('fb-message').value = '';
+        if (typeof showToast === 'function') showToast('Feedback submitted! Thank you! 💗');
+      } else {
+        if (typeof showToast === 'function') showToast('Error submitting feedback.');
+      }
+    } catch (err) {
+      console.error("Failed to post feedback:", err);
+      if (typeof showToast === 'function') showToast('Failed to post feedback.');
+    }
+  });
 };
