@@ -168,7 +168,7 @@ app.post('/api/login', async (req, res) => {
 
     res.json({ token: user.token, username: user.username, bias: user.bias, playlist: user.playlist });
   } catch (error) {
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: 'Server error: ' + error.message });
   }
 });
 
