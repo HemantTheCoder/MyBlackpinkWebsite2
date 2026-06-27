@@ -12,6 +12,7 @@ const WallMessage = require('./models/WallMessage');
 const Leaderboard = require('./models/Leaderboard');
 const Feedback = require('./models/Feedback');
 const GalleryArt = require('./models/GalleryArt');
+const Poll = require('./models/Poll');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -88,6 +89,35 @@ app.post('/api/leaderboard', async (req, res) => {
       await Leaderboard.create({ username, score });
     }
     res.status(201).json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// --- Poll Endpoints ---
+app.get('/api/poll', async (req, res) => {
+  try {
+    const polls = await Poll.find();
+    res.json(polls);
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+app.post('/api/poll', async (req, res) => {
+  const { choice } = req.body;
+  if (!choice) return res.status(400).json({ error: 'Choice is required' });
+
+  try {
+    let poll = await Poll.findOne({ option: choice });
+    if (poll) {
+      poll.votes += 1;
+      await poll.save();
+    } else {
+      poll = await Poll.create({ option: choice, votes: 1 });
+    }
+    const allPolls = await Poll.find();
+    res.status(200).json(allPolls);
   } catch (error) {
     res.status(500).json({ error: 'Server error' });
   }

@@ -1250,34 +1250,60 @@ function updateCountdown() {
 // =============================================
 // FAN POLL LOGIC (for index.html)
 // =============================================
-window.initFanPoll = function () {
+window.initFanPoll = async function () {
   const voted = localStorage.getItem('fanPollVote');
-  if (voted) showPollResults(voted, false);
+  try {
+    const res = await fetch(API_BASE + '/api/poll');
+    if (res.ok) {
+      const data = await res.json();
+      const counts = {};
+      data.forEach(d => counts[d.option] = d.votes);
+      showPollResults(voted, false, counts);
+    }
+  } catch (err) {
+    console.error('Failed to fetch poll data', err);
+    if (voted) showPollResults(voted, false, getPollCounts()); // fallback
+  }
 };
 
-window.castVote = function (choice) {
+window.castVote = async function (choice) {
   if (localStorage.getItem('fanPollVote')) {
     showToast('You already voted!', 2000);
     return;
   }
-  const counts = getPollCounts();
-  counts[choice] = (counts[choice] || 0) + 1;
-  localStorage.setItem('fanPollCounts', JSON.stringify(counts));
+  
   localStorage.setItem('fanPollVote', choice);
-  showPollResults(choice, true);
-  showToast('Vote cast! Thanks Blink!', 2000);
+  
+  try {
+    const res = await fetch(API_BASE + '/api/poll', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ choice })
+    });
+    if (res.ok) {
+      const data = await res.json();
+      const counts = {};
+      data.forEach(d => counts[d.option] = d.votes);
+      showPollResults(choice, true, counts);
+      showToast('Vote cast! Thanks Blink!', 2000);
+    }
+  } catch (err) {
+    showToast('Error saving vote.', 2000);
+  }
 };
 
 function getPollCounts() {
   try { return JSON.parse(localStorage.getItem('fanPollCounts') || '{}'); } catch (e) { return {}; }
 }
 
-function showPollResults(votedChoice, animate) {
+function showPollResults(votedChoice, animate, serverCounts = null) {
   const opts = ['Square Up', 'Kill This Love', 'Born Pink', 'Deadline'];
-  const counts = getPollCounts();
-  const total = opts.reduce(function (sum, o) { return sum + (counts[o] || 1); }, 0);
+  const counts = serverCounts || getPollCounts();
+  const total = opts.reduce(function (sum, o) { return sum + (counts[o] || 0); }, 0);
+  
   opts.forEach(function (opt) {
-    const pct = Math.round(((counts[opt] || 1) / total) * 100);
+    const votes = counts[opt] || 0;
+    const pct = total === 0 ? Math.round(100 / opts.length) : Math.round((votes / total) * 100);
     const safeId = opt.replace(/\s+/g, '-');
     const bar = document.getElementById('poll-bar-' + safeId);
     const pctEl = document.getElementById('poll-pct-' + safeId);
@@ -1290,9 +1316,8 @@ function showPollResults(votedChoice, animate) {
     if (optEl && opt === votedChoice) optEl.classList.add('voted');
   });
   const badge = document.getElementById('poll-voted-badge');
-  if (badge) badge.style.display = 'block';
+  if (badge && votedChoice) badge.style.display = 'block';
 }
-
 
 // =============================================
 // GALLERY PAGE
