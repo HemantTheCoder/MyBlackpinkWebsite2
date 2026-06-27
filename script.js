@@ -3080,7 +3080,7 @@ window.initPhotocards = function() {
         }
       }
     } catch(e) {
-      alert('Error pulling card');
+      alert('Error pulling card: ' + e.message);
     }
   });
 };
