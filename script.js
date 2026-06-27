@@ -2712,6 +2712,13 @@ window.initProfile = async function() {
   else if (plays > 50 || comments > 10) stanLevel = 'Blink 💖';
   else if (plays > 10 || comments > 2) stanLevel = 'Rookie 🖤';
 
+  const owned = currentUser.photocards ? currentUser.photocards.length : 0;
+  const pct = Math.min(100, Math.floor((owned / 170) * 100)); 
+  const pctEl = document.getElementById('profile-collection-pct');
+  const barEl = document.getElementById('profile-collection-bar');
+  if (pctEl) pctEl.textContent = `${pct}% (${owned}/170)`;
+  if (barEl) barEl.style.width = `${pct}%`;
+
   const badgeEl = document.getElementById('stan-level-badge');
   if (badgeEl) badgeEl.textContent = stanLevel;
   const playEl = document.getElementById('stat-plays');
@@ -3062,9 +3069,38 @@ window.initPhotocards = function() {
   
   window.updatePhotocardUI = function() {
     if (!currentUser || !document.getElementById('pull-card-btn')) return;
-    if (currentUser.lastPullDate === new Date().toDateString()) {
-      const b = document.getElementById('pull-card-btn');
-      const cd = document.getElementById('pull-countdown');
+    
+    // Update Streak and Pulls
+    const streakStr = document.getElementById('streak-counter');
+    const pullsStr = document.getElementById('pulls-available');
+    if (streakStr) streakStr.textContent = `🔥 ${currentUser.loginStreak || 0} Day Streak`;
+    if (pullsStr) pullsStr.textContent = `Pulls Available: ${currentUser.pullsAvailable || 0}`;
+    
+    // Update Progress
+    const owned = currentUser.photocards ? currentUser.photocards.length : 0;
+    const pct = Math.min(100, Math.floor((owned / 170) * 100)); // Total estimate 170
+    const pctEl = document.getElementById('collection-pct');
+    const barEl = document.getElementById('collection-bar');
+    if (pctEl) pctEl.textContent = `${pct}% (${owned}/170)`;
+    if (barEl) barEl.style.width = `${pct}%`;
+    
+    // Update Pity
+    const pityEl = document.getElementById('pity-counter');
+    if (pityEl) {
+      const sinceLeg = currentUser.pullsSinceLegendary || 0;
+      const sinceEpic = currentUser.pullsSinceEpic || 0;
+      if (sinceLeg >= 40) {
+        pityEl.textContent = `💎 ${50 - sinceLeg} pulls until guaranteed Legendary!`;
+        pityEl.style.color = '#ffd700'; // Gold
+      } else {
+        pityEl.textContent = `💎 ${10 - sinceEpic} pulls until guaranteed Epic!`;
+        pityEl.style.color = '#ff6b9e';
+      }
+    }
+
+    const b = document.getElementById('pull-card-btn');
+    const cd = document.getElementById('pull-countdown');
+    if ((currentUser.pullsAvailable || 0) <= 0) {
       if (b) b.style.display = 'none';
       if (cd) {
         cd.style.display = 'block';
@@ -3081,10 +3117,14 @@ window.initPhotocards = function() {
             const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
             const m = Math.floor((diff / 1000 / 60) % 60);
             const s = Math.floor((diff / 1000) % 60);
-            cd.innerHTML = `Next pull available in: <span style="color:var(--bp-pink);">${h}h ${m}m ${s}s</span>`;
+            cd.innerHTML = `Out of pulls! Resets in: <span style="color:var(--bp-pink);">${h}h ${m}m ${s}s</span>`;
           }
         }, 1000);
       }
+    } else {
+      if (b) b.style.display = 'inline-block';
+      if (cd) cd.style.display = 'none';
+      if (window.pullInterval) clearInterval(window.pullInterval);
     }
   };
   

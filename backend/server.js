@@ -222,17 +222,42 @@ async function verifyUser(req, res, next) {
   }
 }
 
-app.get('/api/me', verifyUser, (req, res) => {
+app.get('/api/me', verifyUser, async (req, res) => {
   let validCards = [];
   try {
     const allCards = JSON.parse(fs.readFileSync(path.join(__dirname, 'cards.json'), 'utf8'));
     const validUrls = new Set(allCards.map(c => c.url));
     if (req.user.photocards) {
       validCards = req.user.photocards.filter(c => validUrls.has(c.url));
-      // In a real app we'd save back to DB, but let's keep it simple
     }
   } catch(e) {
     validCards = req.user.photocards || [];
+  }
+  
+  // Daily Login & Streak Logic
+  const today = new Date().toDateString();
+  let loginDate = req.user.lastLoginDate ? new Date(req.user.lastLoginDate).toDateString() : null;
+  
+  if (loginDate !== today) {
+    if (loginDate) {
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      if (loginDate === yesterday.toDateString()) {
+        req.user.loginStreak += 1;
+      } else {
+        req.user.loginStreak = 1;
+      }
+    } else {
+      req.user.loginStreak = 1;
+    }
+    req.user.lastLoginDate = new Date();
+    
+    // Daily resets
+    req.user.pullsAvailable = 1; // Base pull
+    if (req.user.loginStreak % 3 === 0) req.user.pullsAvailable += 1; // Bonus
+    if (req.user.loginStreak % 7 === 0) req.user.pullsAvailable += 1; // Bigger bonus
+    
+    await req.user.save();
   }
 
   res.json({
@@ -245,7 +270,15 @@ app.get('/api/me', verifyUser, (req, res) => {
     commentsCount: req.user.commentsCount || 0,
     joined: req.user.joined,
     photocards: validCards,
-    lastPullDate: req.user.lastPullDate
+    duplicates: req.user.duplicates || [],
+    wishlist: req.user.wishlist || [],
+    notifications: req.user.notifications || [],
+    pullsSinceEpic: req.user.pullsSinceEpic || 0,
+    pullsSinceLegendary: req.user.pullsSinceLegendary || 0,
+    pullsAvailable: req.user.pullsAvailable !== undefined ? req.user.pullsAvailable : 1,
+    loginStreak: req.user.loginStreak || 0,
+    lastPullDate: req.user.lastPullDate,
+    lastLoginDate: req.user.lastLoginDate
   });
 });
 
@@ -600,11 +633,9 @@ app.post('/api/trades/:id/cancel', verifyUser, async (req, res) => {
 });
 
 app.post('/api/me/pull', verifyUser, async (req, res) => {
-  const today = new Date().toDateString();
-  const lastPull = req.user.lastPullDate ? new Date(req.user.lastPullDate).toDateString() : null;
-  
-  if (lastPull === today) {
-    return res.status(400).json({ error: 'You have already pulled your daily card today! Come back tomorrow.' });
+  if (req.user.pullsAvailable === undefined) req.user.pullsAvailable = 1;
+  if (req.user.pullsAvailable <= 0) {
+    return res.status(400).json({ error: 'You have no pulls available right now! Build your login streak or come back tomorrow.' });
   }
   
   let cards = [];
@@ -623,11 +654,31 @@ app.post('/api/me/pull', verifyUser, async (req, res) => {
   // Check owned cards to determine if duplicate
   const uniqueCollected = new Set((req.user.photocards || []).map(c => c.url));
   
-  const roll = Math.random() * 100;
+  // Pity System Logic
+  req.user.pullsAvailable -= 1;
+  req.user.pullsSinceEpic = (req.user.pullsSinceEpic || 0) + 1;
+  req.user.pullsSinceLegendary = (req.user.pullsSinceLegendary || 0) + 1;
+  
   let rarity = 'Common';
-  if (roll > 95) rarity = 'Legendary';
-  else if (roll > 80) rarity = 'Epic';
-  else if (roll > 55) rarity = 'Rare';
+  
+  if (req.user.pullsSinceLegendary >= 50) {
+    rarity = 'Legendary';
+    req.user.pullsSinceLegendary = 0;
+  } else if (req.user.pullsSinceEpic >= 10) {
+    rarity = 'Epic';
+    req.user.pullsSinceEpic = 0;
+  } else {
+    const roll = Math.random() * 100;
+    if (roll > 95) {
+      rarity = 'Legendary';
+      req.user.pullsSinceLegendary = 0;
+    }
+    else if (roll > 80) {
+      rarity = 'Epic';
+      req.user.pullsSinceEpic = 0;
+    }
+    else if (roll > 55) rarity = 'Rare';
+  }
   
   let pool = cards.filter(c => c.rarity === rarity);
   if (pool.length === 0) pool = cards;

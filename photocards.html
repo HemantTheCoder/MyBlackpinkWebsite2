@@ -136,6 +136,34 @@
       <button class="btn btn-outline" style="margin-left:1rem;" onclick="openMasterIndex()">Master Card Index 📖</button>
     </div>
 
+    <!-- Gacha Tutorial Modal -->
+    <div id="gacha-tutorial-modal" class="modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:1000;">
+      <div class="modal-content glass-card" style="margin:10% auto; padding:2rem; width:90%; max-width:500px; text-align:center;">
+        <h2 style="color:var(--bp-pink); margin-bottom:1rem;">Welcome to the Gacha! 🎁</h2>
+        <p style="margin-bottom:1rem; color:white;">
+          <strong>1. Streaks:</strong> Log in and pull consecutively to build your <em>Daily Streak</em>. Hit day 3 or 7 for bonus pulls!
+        </p>
+        <p style="margin-bottom:1rem; color:white;">
+          <strong>2. The Pity System:</strong> Keep pulling! If you go 10 pulls without an Epic, or 50 without a Legendary, your next pull is guaranteed! 💎
+        </p>
+        <p style="margin-bottom:2rem; color:white;">
+          <strong>3. Duplicates:</strong> Pulled a card you already own? Don't worry, it gets sent directly to your Trade Pile to swap with other Blinks!
+        </p>
+        <button class="btn btn-glow" style="width:100%;" onclick="closeGachaTutorial()">Start Pulling!</button>
+      </div>
+    </div>
+    <script>
+      function closeGachaTutorial() {
+        document.getElementById('gacha-tutorial-modal').style.display = 'none';
+        localStorage.setItem('hasSeenGachaTutorial', 'true');
+      }
+      document.addEventListener('DOMContentLoaded', () => {
+        if (!localStorage.getItem('hasSeenGachaTutorial')) {
+          document.getElementById('gacha-tutorial-modal').style.display = 'block';
+        }
+      });
+    </script>
+
     <!-- Master Index Modal -->
     <div id="master-index-modal" class="modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:1000; overflow-y:auto;">
       <div class="modal-content glass-card" style="margin:5% auto; padding:2rem; width:90%; max-width:800px; position:relative;">
@@ -150,8 +178,29 @@
     </div>
 
     <div class="glass-card gacha-container">
-      <h2>Your Daily Pull</h2>
-      <p style="color: #ccc; margin-bottom: 2rem;">You can pull one random photocard every day. Rarities range from Common to Legendary!</p>
+      <h2 style="color: var(--bp-pink); margin-bottom: 0.5rem;">Daily Photocard Pull</h2>
+      <p style="margin-bottom: 1.5rem; color: #ddd;">Try your luck! Will you pull a Legendary?</p>
+
+      <!-- Economy Dashboard -->
+      <div id="economy-dashboard" style="background:rgba(255,255,255,0.05); padding:1rem; border-radius:10px; margin-bottom:1.5rem;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+          <div id="streak-counter" style="font-weight:bold; color:var(--bp-pink);">🔥 0 Day Streak</div>
+          <div id="pulls-available" style="font-weight:bold; color:white; background:#ff6b9e; padding:0.2rem 0.8rem; border-radius:15px;">Pulls Available: 0</div>
+        </div>
+        <div style="text-align:left; margin-bottom:0.5rem; color:#aaa; font-size:0.9rem;">Collection Progress: <span id="collection-pct">0%</span></div>
+        <div style="width:100%; background:rgba(0,0,0,0.5); height:10px; border-radius:5px; overflow:hidden; margin-bottom:1rem;">
+          <div id="collection-bar" style="width:0%; height:100%; background:var(--bp-pink); transition:width 0.5s;"></div>
+        </div>
+        <div id="pity-counter" style="font-size:0.85rem; color:#ff6b9e;">💎 10 pulls until guaranteed Epic!</div>
+      </div>
+
+      <div class="pack-anim" id="pack-anim">
+        <!-- Replaced generic box with a cool pack illustration using CSS -->
+        <div class="bp-pack">
+          <div class="bp-pack-logo">BORN PINK</div>
+          <div class="bp-pack-text">PHOTOCARD PACK</div>
+        </div>
+      </div>
       
       <button id="pull-card-btn" class="btn btn-glow" style="font-size: 1.5rem; padding: 1rem 3rem;">PULL CARD 🎁</button>
       <div id="pull-countdown" style="display:none; margin-top: 1.5rem; color: #aaa; font-size: 1.2rem;"></div>

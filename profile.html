@@ -22,8 +22,21 @@
   </header>
 
   <main class="container">
-    <div class="text-center" style="margin-bottom: 2rem;">
-      <a href="index.html" class="btn">&larr; Back to Home</a>
+    <div class="glass-card text-center" style="margin-bottom: 2rem;">
+      <h2 id="profile-name" style="color: var(--bp-pink);">@User</h2>
+      <p id="profile-bias" style="color: #ccc; margin-bottom: 1rem;">Bias: ?</p>
+      
+      <!-- Progress Bar -->
+      <div style="background:rgba(255,255,255,0.05); padding:1rem; border-radius:10px; margin-bottom:1rem;">
+        <div style="text-align:left; margin-bottom:0.5rem; color:#aaa; font-size:0.9rem;">Collection Progress: <span id="profile-collection-pct">0%</span></div>
+        <div style="width:100%; background:rgba(0,0,0,0.5); height:10px; border-radius:5px; overflow:hidden;">
+          <div id="profile-collection-bar" style="width:0%; height:100%; background:var(--bp-pink); transition:width 0.5s;"></div>
+        </div>
+      </div>
+      
+      <div style="display:flex; justify-content:center; gap: 1rem; margin-top: 1rem; flex-wrap:wrap;">
+        <a href="index.html" class="btn">&larr; Back to Home</a>
+      </div>
     </div>
 
     <div class="glass-card" style="max-width: 800px; margin: 0 auto; display: none;" id="profile-dashboard">
