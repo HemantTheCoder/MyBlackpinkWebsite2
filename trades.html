@@ -184,10 +184,10 @@
       inv.innerHTML = '';
       selectedCardUrl = null;
       
-      if (!currentUser.photocards || currentUser.photocards.length === 0) {
-        inv.innerHTML = '<p>You have no cards to trade!</p>';
+      if (!currentUser.duplicates || currentUser.duplicates.length === 0) {
+        inv.innerHTML = '<p>You have no duplicate cards to trade!</p>';
       } else {
-        currentUser.photocards.forEach(c => {
+        currentUser.duplicates.forEach(c => {
           const img = document.createElement('img');
           img.src = c.url;
           img.className = 'inv-card';
@@ -237,13 +237,13 @@
       const inv = document.getElementById('accept-inv');
       inv.innerHTML = '';
       
-      let eligible = currentUser.photocards || [];
+      let eligible = currentUser.duplicates || [];
       if (requestedRarity !== 'Any') {
         eligible = eligible.filter(c => c.rarity === requestedRarity);
       }
       
       if (eligible.length === 0) {
-        inv.innerHTML = `<p style="grid-column:1/-1;">You don't have any ${requestedRarity} cards to offer!</p>`;
+        inv.innerHTML = `<p style="grid-column:1/-1;">You don't have any duplicate ${requestedRarity} cards to offer!</p>`;
       } else {
         eligible.forEach(c => {
           const img = document.createElement('img');

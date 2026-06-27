@@ -3122,16 +3122,33 @@ window.initPhotocards = function() {
             document.getElementById('pulled-card-rarity').textContent = data.card.rarity;
             document.getElementById('pulled-card-rarity').className = 'card-rarity ' + data.card.rarity.toLowerCase();
             
+            const dupMsg = document.getElementById('duplicate-msg');
+            const pullMsg = document.getElementById('pull-status-msg');
+            if (dupMsg && pullMsg) {
+              if (data.isDuplicate) {
+                dupMsg.style.display = 'block';
+                pullMsg.style.display = 'none';
+              } else {
+                dupMsg.style.display = 'none';
+                pullMsg.style.display = 'block';
+              }
+            }
+            
             if (data.card.rarity.toLowerCase() === 'legendary') {
               reveal.classList.add('reveal-anim', 'legendary');
             } else {
               reveal.classList.remove('reveal-anim', 'legendary');
             }
             
-            if(!currentUser.photocards) currentUser.photocards = [];
-            currentUser.photocards.push(data.card);
-            currentUser.lastPullDate = new Date().toDateString();
-            localStorage.setItem('bp_user', JSON.stringify(currentUser));
+            if (data.user) {
+              currentUser = data.user;
+              localStorage.setItem('bp_user', JSON.stringify(currentUser));
+            } else {
+              if(!currentUser.photocards) currentUser.photocards = [];
+              currentUser.photocards.push(data.card);
+              currentUser.lastPullDate = new Date().toDateString();
+              localStorage.setItem('bp_user', JSON.stringify(currentUser));
+            }
             
             if(window.triggerConfetti) window.triggerConfetti();
             window.updatePhotocardUI();

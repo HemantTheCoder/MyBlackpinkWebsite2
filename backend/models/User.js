@@ -10,6 +10,7 @@ const userSchema = new mongoose.Schema({
   playCount: { type: Number, default: 0 },
   commentsCount: { type: Number, default: 0 },
   photocards: { type: Array, default: [] },
+  duplicates: { type: Array, default: [] },
   lastPullDate: { type: Date, default: null },
   token: { type: String },
   joined: { type: Date, default: Date.now },

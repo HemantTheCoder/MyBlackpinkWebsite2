@@ -424,14 +424,16 @@ app.post('/api/trades', verifyUser, async (req, res) => {
   if (!offeredCardUrl || !requestedRarity) return res.status(400).json({ error: 'Missing parameters' });
   
   try {
-    // Check if user has card
-    const cardIndex = req.user.photocards.findIndex(c => c.url === offeredCardUrl);
-    if (cardIndex === -1) return res.status(400).json({ error: 'You do not own this card' });
+    // Check if user has card in duplicates
+    if (!req.user.duplicates) req.user.duplicates = [];
+    const cardIndex = req.user.duplicates.findIndex(c => c.url === offeredCardUrl);
+    if (cardIndex === -1) return res.status(400).json({ error: 'You do not own this card in your trade pile' });
     
-    const offeredCard = req.user.photocards[cardIndex];
+    const offeredCard = req.user.duplicates[cardIndex];
     
     // Remove card from inventory (Escrow)
-    req.user.photocards.splice(cardIndex, 1);
+    req.user.duplicates.splice(cardIndex, 1);
+    req.user.markModified('duplicates');
     await req.user.save();
     
     const trade = await Trade.create({
@@ -455,22 +457,38 @@ app.post('/api/trades/:id/accept', verifyUser, async (req, res) => {
     if (!trade || trade.status !== 'Open') return res.status(400).json({ error: 'Trade unavailable' });
     if (trade.creator === req.user.username) return res.status(400).json({ error: 'Cannot accept own trade' });
     
-    const cardIndex = req.user.photocards.findIndex(c => c.url === acceptedCardUrl);
-    if (cardIndex === -1) return res.status(400).json({ error: 'You do not own this card' });
+    if (!req.user.duplicates) req.user.duplicates = [];
+    const cardIndex = req.user.duplicates.findIndex(c => c.url === acceptedCardUrl);
+    if (cardIndex === -1) return res.status(400).json({ error: 'You do not own this card in your trade pile' });
     
-    const acceptedCard = req.user.photocards[cardIndex];
+    const acceptedCard = req.user.duplicates[cardIndex];
     if (trade.requestedRarity !== 'Any' && acceptedCard.rarity !== trade.requestedRarity) {
       return res.status(400).json({ error: `You must offer a ${trade.requestedRarity} card` });
     }
     
     // Swap
-    req.user.photocards.splice(cardIndex, 1);
-    req.user.photocards.push(trade.offeredCard);
+    req.user.duplicates.splice(cardIndex, 1);
+    const acceptorHasCard = req.user.photocards.some(c => c.url === trade.offeredCard.url);
+    if (acceptorHasCard) {
+      req.user.duplicates.push(trade.offeredCard);
+    } else {
+      req.user.photocards.push(trade.offeredCard);
+      req.user.markModified('photocards');
+    }
+    req.user.markModified('duplicates');
     await req.user.save();
     
     const creatorUser = await User.findOne({ username: trade.creator });
     if (creatorUser) {
-      creatorUser.photocards.push(acceptedCard);
+      if (!creatorUser.duplicates) creatorUser.duplicates = [];
+      const creatorHasCard = (creatorUser.photocards || []).some(c => c.url === acceptedCard.url);
+      if (creatorHasCard) {
+        creatorUser.duplicates.push(acceptedCard);
+      } else {
+        creatorUser.photocards.push(acceptedCard);
+        creatorUser.markModified('photocards');
+      }
+      creatorUser.markModified('duplicates');
       await creatorUser.save();
     }
     
@@ -491,7 +509,9 @@ app.post('/api/trades/:id/cancel', verifyUser, async (req, res) => {
     if (trade.creator !== req.user.username) return res.status(403).json({ error: 'Unauthorized' });
     
     // Return card
-    req.user.photocards.push(trade.offeredCard);
+    if (!req.user.duplicates) req.user.duplicates = [];
+    req.user.duplicates.push(trade.offeredCard);
+    req.user.markModified('duplicates');
     await req.user.save();
     
     trade.status = 'Cancelled';
@@ -518,11 +538,8 @@ app.post('/api/me/pull', verifyUser, async (req, res) => {
   
   if (cards.length === 0) return res.status(500).json({ error: 'No cards available' });
   
-  // Check if they collected all cards
+  // Check owned cards to determine if duplicate
   const uniqueCollected = new Set((req.user.photocards || []).map(c => c.url));
-  if (uniqueCollected.size >= cards.length) {
-    return res.status(400).json({ error: 'You have already collected all available cards! A true Blink!' });
-  }
   
   const roll = Math.random() * 100;
   let rarity = 'Common';
@@ -530,21 +547,25 @@ app.post('/api/me/pull', verifyUser, async (req, res) => {
   else if (roll > 80) rarity = 'Epic';
   else if (roll > 55) rarity = 'Rare';
   
-  // Try to pull a card they don't have if possible
   let pool = cards.filter(c => c.rarity === rarity);
   if (pool.length === 0) pool = cards;
   
-  let uncollectedPool = pool.filter(c => !uniqueCollected.has(c.url));
-  if (uncollectedPool.length === 0) uncollectedPool = pool; // fallback to dupes if they have all in this rarity
-  
-  const pulledCard = uncollectedPool[Math.floor(Math.random() * uncollectedPool.length)];
+  const pulledCard = pool[Math.floor(Math.random() * pool.length)];
+  const isDuplicate = uniqueCollected.has(pulledCard.url);
   
   try {
-    req.user.photocards.push(pulledCard);
+    if (isDuplicate) {
+      if (!req.user.duplicates) req.user.duplicates = [];
+      req.user.duplicates.push(pulledCard);
+      req.user.markModified('duplicates');
+    } else {
+      req.user.photocards.push(pulledCard);
+      req.user.markModified('photocards');
+    }
+    
     req.user.lastPullDate = new Date();
-    req.user.markModified('photocards');
     await req.user.save();
-    res.json({ success: true, card: pulledCard });
+    res.json({ success: true, card: pulledCard, isDuplicate, user: req.user });
   } catch (error) {
     res.status(500).json({ error: 'Server error: ' + error.message });
   }
