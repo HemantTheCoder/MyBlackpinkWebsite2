@@ -1,227 +1,192 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
+const mongoose = require('mongoose');
+
+// Import Models
+const User = require('./models/User');
+const WallMessage = require('./models/WallMessage');
+const Leaderboard = require('./models/Leaderboard');
+const Feedback = require('./models/Feedback');
+const GalleryArt = require('./models/GalleryArt');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const DATA_FILE = path.join(__dirname, 'data.json');
 
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Utility to read data
-function readData() {
-  try {
-    const data = fs.readFileSync(DATA_FILE, 'utf8');
-    return JSON.parse(data);
-  } catch (error) {
-    console.error("Error reading data:", error);
-    return { wallMessages: [], leaderboard: [], feedback: [], users: [] };
-  }
-}
-
-// Utility to write data
-function writeData(data) {
-  try {
-    fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2), 'utf8');
-  } catch (error) {
-    console.error("Error writing data:", error);
-  }
-}
+// Connect to MongoDB
+mongoose.connect(process.env.MONGODB_URI)
+  .then(() => console.log('Connected to MongoDB'))
+  .catch(err => console.error('Could not connect to MongoDB', err));
 
 // --- Blink Wall Endpoints ---
-
-// Get all messages
-app.get('/api/wall', (req, res) => {
-  const data = readData();
-  res.json(data.wallMessages);
+app.get('/api/wall', async (req, res) => {
+  try {
+    const messages = await WallMessage.find().sort({ date: 1 });
+    res.json(messages);
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
 });
 
-// Post a new message
-app.post('/api/wall', (req, res) => {
+app.post('/api/wall', async (req, res) => {
   const { author, message, bias } = req.body;
-  
   if (!author || !message) {
     return res.status(400).json({ error: 'Author and message are required' });
   }
 
-  const data = readData();
-  const newMessage = {
-    id: Date.now().toString(),
-    author,
-    message,
-    bias: bias || 'OT4',
-    date: new Date().toISOString()
-  };
-  
-  data.wallMessages.push(newMessage);
-
-  // If token is provided, increment user's comment count for Stan Level
-  const token = req.headers['authorization'];
-  if (token) {
-    const rawToken = token.replace('Bearer ', '');
-    const user = (data.users || []).find(u => u.token === rawToken);
-    if (user) {
-      user.commentsCount = (user.commentsCount || 0) + 1;
+  try {
+    const newMessage = await WallMessage.create({ author, message, bias: bias || 'OT4' });
+    
+    const token = req.headers['authorization'];
+    if (token) {
+      const rawToken = token.replace('Bearer ', '');
+      const user = await User.findOne({ token: rawToken });
+      if (user) {
+        user.commentsCount = (user.commentsCount || 0) + 1;
+        await user.save();
+      }
     }
+    res.status(201).json(newMessage);
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
   }
-
-  writeData(data);
-  
-  res.status(201).json(newMessage);
 });
 
-// --- Leaderboard Endpoints (Trivia Game) ---
-
-// Get top 100 leaderboard
-app.get('/api/leaderboard', (req, res) => {
-  const data = readData();
-  // Sort descending by score
-  const sorted = data.leaderboard.sort((a, b) => b.score - a.score).slice(0, 100);
-  res.json(sorted);
+// --- Leaderboard Endpoints ---
+app.get('/api/leaderboard', async (req, res) => {
+  try {
+    const sorted = await Leaderboard.find().sort({ score: -1 }).limit(100);
+    res.json(sorted);
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
 });
 
-// Submit a new score
-app.post('/api/leaderboard', (req, res) => {
+app.post('/api/leaderboard', async (req, res) => {
   const { username, score } = req.body;
-  
   if (!username || typeof score !== 'number') {
     return res.status(400).json({ error: 'Username and numeric score are required' });
   }
 
-  const data = readData();
-  
-  // Update if exists, else push new
-  const existing = data.leaderboard.find(entry => entry.username === username);
-  if (existing) {
-    if (score > existing.score) {
-      existing.score = score;
-      existing.date = new Date().toISOString();
+  try {
+    const existing = await Leaderboard.findOne({ username });
+    if (existing) {
+      if (score > existing.score) {
+        existing.score = score;
+        existing.date = new Date();
+        await existing.save();
+      }
+    } else {
+      await Leaderboard.create({ username, score });
     }
-  } else {
-    data.leaderboard.push({
-      id: Date.now().toString(),
-      username,
-      score,
-      date: new Date().toISOString()
-    });
+    res.status(201).json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
   }
-  
-  writeData(data);
-  res.status(201).json({ success: true });
 });
 
 // --- Feedback Endpoints ---
-
-// Get all feedback (Admin only logically, but endpoint can be hit if needed. Let's not protect GET for simplicity, admin UI handles it)
-app.get('/api/feedback', (req, res) => {
-  const data = readData();
-  res.json(data.feedback || []);
+app.get('/api/feedback', async (req, res) => {
+  try {
+    const feedback = await Feedback.find().sort({ date: -1 });
+    res.json(feedback);
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
 });
 
-// Submit feedback
-app.post('/api/feedback', (req, res) => {
+app.post('/api/feedback', async (req, res) => {
   const { name, type, message } = req.body;
-  
-  if (!message) {
-    return res.status(400).json({ error: 'Message is required' });
-  }
+  if (!message) return res.status(400).json({ error: 'Message is required' });
 
-  const data = readData();
-  if (!data.feedback) data.feedback = [];
-  
-  const newFeedback = {
-    id: Date.now().toString(),
-    name: name || 'Anonymous',
-    type: type || 'General',
-    message,
-    date: new Date().toISOString()
-  };
-  
-  data.feedback.push(newFeedback);
-  writeData(data);
-  
-  res.status(201).json(newFeedback);
+  try {
+    const newFeedback = await Feedback.create({
+      name: name || 'Anonymous',
+      type: type || 'General',
+      message
+    });
+    res.status(201).json(newFeedback);
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
 });
 
 // --- User Accounts ---
-app.post('/api/register', (req, res) => {
-  const { username, password, bias, dob } = req.body;
+app.post('/api/register', async (req, res) => {
+  const { username, email, password, bias, dob } = req.body;
   
-  if (!username || !password) {
-    return res.status(400).json({ error: 'Username and password required' });
+  if (!username || !password || !email) {
+    return res.status(400).json({ error: 'Username, email and password required' });
   }
 
-  const data = readData();
-  if (!data.users) data.users = [];
+  try {
+    const existingUser = await User.findOne({ username: { $regex: new RegExp(`^${username}$`, 'i') } });
+    if (existingUser) return res.status(400).json({ error: 'Username already taken' });
+    
+    const existingEmail = await User.findOne({ email: { $regex: new RegExp(`^${email}$`, 'i') } });
+    if (existingEmail) return res.status(400).json({ error: 'Email already registered' });
 
-  const existing = data.users.find(u => u.username.toLowerCase() === username.toLowerCase());
-  if (existing) {
-    return res.status(400).json({ error: 'Username already taken' });
+    const hash = crypto.createHash('sha256').update(password).digest('hex');
+    const token = crypto.randomBytes(16).toString('hex');
+    
+    const newUser = await User.create({
+      username,
+      email,
+      passwordHash: hash,
+      bias: bias || 'OT4',
+      dob: dob || '',
+      token
+    });
+
+    res.status(201).json({ token, username: newUser.username, bias: newUser.bias, playlist: newUser.playlist });
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
   }
-
-  const hash = crypto.createHash('sha256').update(password).digest('hex');
-  const token = crypto.randomBytes(16).toString('hex');
-  
-  const newUser = {
-    id: Date.now().toString(),
-    username,
-    passwordHash: hash,
-    bias: bias || 'OT4',
-    dob: dob || '',
-    playlist: [],
-    playCount: 0,
-    commentsCount: 0,
-    photocards: [],
-    lastPullDate: null,
-    token: token,
-    joined: new Date().toISOString()
-  };
-
-  data.users.push(newUser);
-  writeData(data);
-  
-  // Return user info and token (do not return hash)
-  res.status(201).json({ token, username: newUser.username, bias: newUser.bias, playlist: newUser.playlist });
 });
 
-app.post('/api/login', (req, res) => {
+app.post('/api/login', async (req, res) => {
   const { username, password } = req.body;
   if (!username || !password) return res.status(400).json({ error: 'Missing credentials' });
 
-  const data = readData();
-  if (!data.users) data.users = [];
-  
-  const user = data.users.find(u => u.username.toLowerCase() === username.toLowerCase());
-  if (!user) return res.status(401).json({ error: 'Invalid credentials' });
+  try {
+    const user = await User.findOne({ username: { $regex: new RegExp(`^${username}$`, 'i') } });
+    if (!user) return res.status(401).json({ error: 'Invalid credentials' });
 
-  const hash = crypto.createHash('sha256').update(password).digest('hex');
-  if (user.passwordHash !== hash) return res.status(401).json({ error: 'Invalid credentials' });
+    const hash = crypto.createHash('sha256').update(password).digest('hex');
+    if (user.passwordHash !== hash) return res.status(401).json({ error: 'Invalid credentials' });
 
-  // Generate a new token on login for better security
-  user.token = crypto.randomBytes(16).toString('hex');
-  writeData(data);
+    user.token = crypto.randomBytes(16).toString('hex');
+    await user.save();
 
-  res.json({ token: user.token, username: user.username, bias: user.bias, playlist: user.playlist });
+    res.json({ token: user.token, username: user.username, bias: user.bias, playlist: user.playlist });
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
 });
 
 // Middleware to authenticate user
-function verifyUser(req, res, next) {
+async function verifyUser(req, res, next) {
   const token = req.headers['authorization'];
   if (!token) return res.status(401).json({ error: 'Unauthorized' });
   
   const rawToken = token.replace('Bearer ', '');
-  const data = readData();
-  const user = (data.users || []).find(u => u.token === rawToken);
-  
-  if (user) {
-    req.user = user;
-    next();
-  } else {
-    res.status(403).json({ error: 'Invalid token' });
+  try {
+    const user = await User.findOne({ token: rawToken });
+    if (user) {
+      req.user = user;
+      next();
+    } else {
+      res.status(403).json({ error: 'Invalid token' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
   }
 }
 
@@ -232,15 +197,7 @@ app.get('/api/me', verifyUser, (req, res) => {
     const validUrls = new Set(allCards.map(c => c.url));
     if (req.user.photocards) {
       validCards = req.user.photocards.filter(c => validUrls.has(c.url));
-      // Self-heal the database if invalid cards were found
-      if (validCards.length !== req.user.photocards.length) {
-        const data = readData();
-        const u = data.users.find(x => x.id === req.user.id);
-        if (u) {
-          u.photocards = validCards;
-          writeData(data);
-        }
-      }
+      // In a real app we'd save back to DB, but let's keep it simple
     }
   } catch(e) {
     validCards = req.user.photocards || [];
@@ -248,6 +205,7 @@ app.get('/api/me', verifyUser, (req, res) => {
 
   res.json({
     username: req.user.username,
+    email: req.user.email,
     bias: req.user.bias,
     dob: req.user.dob,
     playlist: req.user.playlist,
@@ -259,132 +217,138 @@ app.get('/api/me', verifyUser, (req, res) => {
   });
 });
 
-app.post('/api/me/play', verifyUser, (req, res) => {
-  const data = readData();
-  const user = data.users.find(u => u.id === req.user.id);
-  user.playCount = (user.playCount || 0) + 1;
-  writeData(data);
-  res.json({ success: true, playCount: user.playCount });
+app.post('/api/me/play', verifyUser, async (req, res) => {
+  try {
+    req.user.playCount = (req.user.playCount || 0) + 1;
+    await req.user.save();
+    res.json({ success: true, playCount: req.user.playCount });
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
 });
 
-app.put('/api/me', verifyUser, (req, res) => {
+app.put('/api/me', verifyUser, async (req, res) => {
   const { bias, dob } = req.body;
-  const data = readData();
-  const user = data.users.find(u => u.id === req.user.id);
+  if (bias) req.user.bias = bias;
+  if (dob !== undefined) req.user.dob = dob;
   
-  if (bias) user.bias = bias;
-  if (dob !== undefined) user.dob = dob;
-  
-  writeData(data);
-  res.json({ success: true, bias: user.bias, dob: user.dob });
+  try {
+    await req.user.save();
+    res.json({ success: true, bias: req.user.bias, dob: req.user.dob });
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
 });
 
-app.put('/api/me/playlist', verifyUser, (req, res) => {
-  const { playlist } = req.body; // array of URLs or track objects
+app.put('/api/me/playlist', verifyUser, async (req, res) => {
+  const { playlist } = req.body;
   if (!Array.isArray(playlist)) return res.status(400).json({ error: 'Playlist must be an array' });
   
-  const data = readData();
-  const user = data.users.find(u => u.id === req.user.id);
-  user.playlist = playlist;
-  writeData(data);
-  
-  res.json({ success: true });
+  try {
+    req.user.playlist = playlist;
+    await req.user.save();
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
 });
 
-// --- Root / Welcome Route ---
+// --- Root ---
 app.get('/', (req, res) => {
   res.send('<h1>🖤💖 Blackpink API is running!</h1><p>Visit the <a href="/admin.html">Admin Dashboard</a></p>');
 });
 
 // --- Admin APIs ---
-const ADMIN_PASS = 'admin123';
-const ADMIN_TOKEN = 'secret-admin-token-99';
+const ADMIN_PASS = process.env.ADMIN_PASS || 'admin123';
+const ADMIN_TOKEN = process.env.ADMIN_TOKEN || 'secret-admin-token-99';
 
 app.post('/api/admin/login', (req, res) => {
   const { password } = req.body;
-  if (password === ADMIN_PASS) {
-    res.json({ token: ADMIN_TOKEN });
-  } else {
-    res.status(401).json({ error: 'Unauthorized' });
-  }
+  if (password === ADMIN_PASS) res.json({ token: ADMIN_TOKEN });
+  else res.status(401).json({ error: 'Unauthorized' });
 });
 
-// Middleware to check admin token
 function verifyAdmin(req, res, next) {
   const token = req.headers['authorization'];
-  if (token === `Bearer ${ADMIN_TOKEN}`) {
-    next();
-  } else {
-    res.status(403).json({ error: 'Forbidden' });
-  }
+  if (token === `Bearer ${ADMIN_TOKEN}`) next();
+  else res.status(403).json({ error: 'Forbidden' });
 }
 
-// Get all users for admin
-app.get('/api/admin/users', verifyAdmin, (req, res) => {
-  const data = readData();
-  const safeUsers = (data.users || []).map(u => ({
-    id: u.id,
-    username: u.username,
-    bias: u.bias,
-    dob: u.dob,
-    playlistCount: u.playlist ? u.playlist.length : 0,
-    joined: u.joined
-  }));
-  res.json(safeUsers);
+app.get('/api/admin/users', verifyAdmin, async (req, res) => {
+  try {
+    const users = await User.find({}, 'username email bias dob playlist joined photocards').lean();
+    const safeUsers = users.map(u => ({
+      id: u._id,
+      username: u.username,
+      email: u.email,
+      bias: u.bias,
+      dob: u.dob,
+      playlistCount: u.playlist ? u.playlist.length : 0,
+      joined: u.joined,
+      photocardsCollected: u.photocards ? u.photocards.length : 0 // Added for requirement
+    }));
+    res.json(safeUsers);
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
 });
 
-app.delete('/api/admin/users/:id', verifyAdmin, (req, res) => {
-  const data = readData();
-  if (!data.users) data.users = [];
-  data.users = data.users.filter(u => u.id !== req.params.id);
-  writeData(data);
-  res.json({ success: true });
+app.delete('/api/admin/users/:id', verifyAdmin, async (req, res) => {
+  try {
+    await User.findByIdAndDelete(req.params.id);
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
 });
 
-app.delete('/api/wall/:id', verifyAdmin, (req, res) => {
-  const data = readData();
-  data.wallMessages = data.wallMessages.filter(m => m.id !== req.params.id);
-  writeData(data);
-  res.json({ success: true });
+app.delete('/api/wall/:id', verifyAdmin, async (req, res) => {
+  try {
+    await WallMessage.findByIdAndDelete(req.params.id);
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
 });
 
-app.delete('/api/leaderboard/:id', verifyAdmin, (req, res) => {
-  const data = readData();
-  data.leaderboard = data.leaderboard.filter(l => l.id !== req.params.id);
-  writeData(data);
-  res.json({ success: true });
+app.delete('/api/leaderboard/:id', verifyAdmin, async (req, res) => {
+  try {
+    await Leaderboard.findByIdAndDelete(req.params.id);
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
 });
 
-app.delete('/api/feedback/:id', verifyAdmin, (req, res) => {
-  const data = readData();
-  if (!data.feedback) data.feedback = [];
-  data.feedback = data.feedback.filter(f => f.id !== req.params.id);
-  writeData(data);
-  res.json({ success: true });
-});
-
-
-app.listen(PORT, () => {
-  console.log(`Backend server running on http://localhost:${PORT}`);
+app.delete('/api/feedback/:id', verifyAdmin, async (req, res) => {
+  try {
+    await Feedback.findByIdAndDelete(req.params.id);
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
 });
 
 // --- Fan Art Gallery ---
-app.get('/api/gallery', (req, res) => {
-  const data = readData();
-  res.json(data.gallery || []);
+app.get('/api/gallery', async (req, res) => {
+  try {
+    const gallery = await GalleryArt.find().sort({ date: -1 });
+    res.json(gallery);
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
 });
 
-app.post('/api/gallery', (req, res) => {
+app.post('/api/gallery', async (req, res) => {
   const { url, caption, author } = req.body;
   if (!url || !caption) return res.status(400).json({ error: 'URL and caption required' });
-  const data = readData();
-  if (!data.gallery) data.gallery = [];
-  const newArt = { id: Date.now().toString(), url, caption, author: author || 'Anonymous', date: new Date().toISOString() };
-  data.gallery.unshift(newArt);
-  writeData(data);
-  res.status(201).json(newArt);
+  try {
+    const newArt = await GalleryArt.create({ url, caption, author: author || 'Anonymous' });
+    res.status(201).json(newArt);
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
 });
-
 
 // --- Photocard Endpoints ---
 app.get('/api/cards', (req, res) => {
@@ -396,11 +360,11 @@ app.get('/api/cards', (req, res) => {
   }
 });
 
-app.post('/api/me/pull', verifyUser, (req, res) => {
-  const data = readData();
-  const user = data.users.find(u => u.id === req.user.id);
+app.post('/api/me/pull', verifyUser, async (req, res) => {
   const today = new Date().toDateString();
-  if (user.lastPullDate === today) {
+  const lastPull = req.user.lastPullDate ? new Date(req.user.lastPullDate).toDateString() : null;
+  
+  if (lastPull === today) {
     return res.status(400).json({ error: 'You have already pulled your daily card today! Come back tomorrow.' });
   }
   
@@ -421,46 +385,33 @@ app.post('/api/me/pull', verifyUser, (req, res) => {
   const finalPool = pool.length > 0 ? pool : cards;
   const pulledCard = finalPool[Math.floor(Math.random() * finalPool.length)];
   
-  if (!user.photocards) user.photocards = [];
-  user.photocards.push(pulledCard);
-  user.lastPullDate = today;
-  writeData(data);
-  res.json({ success: true, card: pulledCard });
-});
-
-// --- Gallery Likes ---
-app.post('/api/gallery/:id/like', verifyUser, (req, res) => {
-  const data = readData();
-  if (!data.gallery) data.gallery = [];
-  const art = data.gallery.find(a => a.id === req.params.id);
-  if (!art) return res.status(404).json({ error: 'Art not found' });
-  
-  if (!art.likes) art.likes = [];
-  const userIndex = art.likes.indexOf(req.user.id);
-  if (userIndex > -1) {
-    art.likes.splice(userIndex, 1);
-  } else {
-    art.likes.push(req.user.id);
-  }
-  writeData(data);
-  res.json({ success: true, likes: art.likes });
-});
-
-// --- CHEAT FOR DEMO ---
-app.get('/api/cheat_banhae', (req, res) => {
-  const data = readData();
-  let user = (data.users || []).find(u => u.username === 'banhae');
-  if (!user) {
-    user = { id: Date.now().toString(), username: 'banhae', photocards: [], playlist: [] };
-    if(!data.users) data.users = [];
-    data.users.push(user);
-  }
-  let cards = [];
   try {
-    cards = JSON.parse(fs.readFileSync(path.join(__dirname, 'cards.json'), 'utf8'));
-  } catch(e) {}
-  user.photocards = cards;
-  user.passwordHash = crypto.createHash('sha256').update('password').digest('hex');
-  writeData(data);
-  res.send('<h1>Success!</h1><p>User banhae now has all cards and password is set to "password". You can now <a href="/">go back and log in</a>.</p>');
+    req.user.photocards.push(pulledCard);
+    req.user.lastPullDate = new Date();
+    req.user.markModified('photocards');
+    await req.user.save();
+    res.json({ success: true, card: pulledCard });
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+app.post('/api/gallery/:id/like', verifyUser, async (req, res) => {
+  try {
+    const art = await GalleryArt.findById(req.params.id);
+    if (!art) return res.status(404).json({ error: 'Art not found' });
+    
+    const userIndex = art.likes.indexOf(req.user.id);
+    if (userIndex > -1) art.likes.splice(userIndex, 1);
+    else art.likes.push(req.user.id);
+    
+    await art.save();
+    res.json({ success: true, likes: art.likes });
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+app.listen(PORT, () => {
+  console.log(`Backend server running on http://localhost:${PORT}`);
 });

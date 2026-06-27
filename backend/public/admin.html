@@ -208,14 +208,16 @@
         <thead>
           <tr>
             <th>Username</th>
+            <th>Email</th>
             <th>Bias</th>
             <th>DOB</th>
+            <th>Photocards</th>
             <th>Playlist</th>
             <th>Action</th>
           </tr>
         </thead>
         <tbody id="users-tbody">
-          <tr><td colspan="5">Loading...</td></tr>
+          <tr><td colspan="7">Loading...</td></tr>
         </tbody>
       </table>
     </div>
@@ -279,7 +281,7 @@
             <td>${msg.author}</td>
             <td>${msg.bias}</td>
             <td>${msg.message}</td>
-            <td><button class="btn btn-danger" onclick="deleteItem('wall', '${msg.id}')">Delete</button></td>
+            <td><button class="btn btn-danger" onclick="deleteItem('wall', '${msg._id}')">Delete</button></td>
           </tr>
         `;
       });
@@ -296,7 +298,7 @@
             <td>#${i + 1}</td>
             <td>${entry.username}</td>
             <td>${entry.score}</td>
-            <td><button class="btn btn-danger" onclick="deleteItem('leaderboard', '${entry.id}')">Delete</button></td>
+            <td><button class="btn btn-danger" onclick="deleteItem('leaderboard', '${entry._id}')">Delete</button></td>
           </tr>
         `;
       });
@@ -313,7 +315,7 @@
             <td>${entry.name}</td>
             <td>${entry.type}</td>
             <td>${entry.message}</td>
-            <td><button class="btn btn-danger" onclick="deleteItem('feedback', '${entry.id}')">Delete</button></td>
+            <td><button class="btn btn-danger" onclick="deleteItem('feedback', '${entry._id}')">Delete</button></td>
           </tr>
         `;
       });
@@ -330,7 +332,7 @@
             <td>${art.author}</td>
             <td>${art.caption}</td>
             <td><a href="${art.url}" target="_blank" style="color: var(--bp-pink);">View Image</a></td>
-            <td><button class="btn btn-danger" onclick="deleteItem('gallery', '${art.id}')">Delete</button></td>
+            <td><button class="btn btn-danger" onclick="deleteItem('gallery', '${art._id}')">Delete</button></td>
           </tr>
         `;
       });
@@ -340,13 +342,15 @@
       const usrData = await usrRes.json();
       const usrTbody = document.getElementById('users-tbody');
       usrTbody.innerHTML = '';
-      if(usrData.length === 0) usrTbody.innerHTML = '<tr><td colspan="5">No users found.</td></tr>';
+      if(usrData.length === 0) usrTbody.innerHTML = '<tr><td colspan="7">No users found.</td></tr>';
       usrData.forEach(user => {
         usrTbody.innerHTML += `
           <tr>
             <td>${user.username}</td>
+            <td>${user.email || 'N/A'}</td>
             <td>${user.bias}</td>
             <td>${user.dob || 'N/A'}</td>
+            <td>${user.photocardsCollected} cards</td>
             <td>${user.playlistCount} tracks</td>
             <td><button class="btn btn-danger" onclick="deleteItem('admin/users', '${user.id}')">Delete</button></td>
           </tr>

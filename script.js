@@ -2336,7 +2336,6 @@ window.downloadID = function() {
 // BLINK WALL & LEADERBOARD (SPA INITIALIZERS)
 // =============================================
 window.initBlinkWall = function() {
-  const API_URL = 'https://myblackpinkwebsite2.onrender.com/api';
   
   async function fetchMessages() {
     const grid = document.getElementById('messages-grid');
@@ -2629,6 +2628,7 @@ window.initLogin = function() {
     regForm.onsubmit = async (e) => {
       e.preventDefault();
       const username = document.getElementById('reg-username').value;
+      const email = document.getElementById('reg-email').value;
       const password = document.getElementById('reg-password').value;
       const bias = document.getElementById('reg-bias').value;
       const dob = document.getElementById('reg-dob').value;
@@ -2636,7 +2636,7 @@ window.initLogin = function() {
         const res = await fetch('https://myblackpinkwebsite2.onrender.com/api/register', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username, password, bias, dob })
+          body: JSON.stringify({ username, email, password, bias, dob })
         });
         const data = await res.json();
         if (res.ok) {
