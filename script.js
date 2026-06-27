@@ -3052,7 +3052,7 @@ window.initPhotocards = function() {
     try {
       const res = await fetch(`${API_BASE}/api/me/pull`, {
         method: 'POST',
-        headers: { 'Authorization': `Bearer ${currentUser.token}` }
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('user_token')}` }
       });
       const data = await res.json();
       if(res.ok) {
