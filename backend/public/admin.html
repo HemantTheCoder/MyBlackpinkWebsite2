@@ -269,7 +269,8 @@
     }
 
     async function loadData() {
-      // Load Wall
+      try {
+        // Load Wall
       const wallRes = await fetch('/api/wall');
       const wallData = await wallRes.json();
       const wallTbody = document.getElementById('wall-tbody');
@@ -356,6 +357,9 @@
           </tr>
         `;
       });
+      } catch (e) {
+        alert("Failed to load admin data. Is the database connected properly? Error: " + e.message);
+      }
     }
 
     async function deleteItem(type, id) {
