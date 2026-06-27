@@ -409,10 +409,75 @@ app.get('/api/collection/:username', async (req, res) => {
   }
 });
 
+// --- Cards Endpoint ---
+app.get('/api/cards', (req, res) => {
+  try {
+    const cards = JSON.parse(fs.readFileSync(path.join(__dirname, 'cards.json'), 'utf8'));
+    res.json(cards);
+  } catch(e) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// --- Wishlist Endpoints ---
+app.post('/api/wishlist', verifyUser, async (req, res) => {
+  const { cardId } = req.body;
+  if (!cardId) return res.status(400).json({ error: 'Missing cardId' });
+  
+  try {
+    if (!req.user.wishlist) req.user.wishlist = [];
+    const idx = req.user.wishlist.indexOf(cardId);
+    if (idx === -1) {
+      req.user.wishlist.push(cardId); // Add to wishlist
+    } else {
+      req.user.wishlist.splice(idx, 1); // Remove from wishlist
+    }
+    req.user.markModified('wishlist');
+    await req.user.save();
+    res.json({ success: true, wishlist: req.user.wishlist, user: req.user });
+  } catch(e) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// --- Notification Endpoints ---
+app.get('/api/notifications', verifyUser, (req, res) => {
+  res.json(req.user.notifications || []);
+});
+
+app.post('/api/notifications/read', verifyUser, async (req, res) => {
+  try {
+    if (req.user.notifications) {
+      req.user.notifications.forEach(n => n.read = true);
+      req.user.markModified('notifications');
+      await req.user.save();
+    }
+    res.json({ success: true, notifications: req.user.notifications });
+  } catch(e) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 // --- Trade Endpoints ---
 app.get('/api/trades', async (req, res) => {
   try {
-    const trades = await Trade.find({ status: 'Open' }).sort({ dateCreated: -1 });
+    let trades = await Trade.find({ status: 'Open' }).sort({ dateCreated: -1 }).lean();
+    
+    // Calculate how many users want each offered card
+    const allUsers = await User.find({}, 'wishlist');
+    
+    trades = trades.map(trade => {
+      let wantCount = 0;
+      if (trade.offeredCard && trade.offeredCard.id) {
+        allUsers.forEach(u => {
+          if (u.wishlist && u.wishlist.includes(trade.offeredCard.id)) {
+            wantCount++;
+          }
+        });
+      }
+      return { ...trade, wantCount };
+    });
+    
     res.json(trades);
   } catch(e) {
     res.status(500).json({ error: 'Server error' });
@@ -489,6 +554,17 @@ app.post('/api/trades/:id/accept', verifyUser, async (req, res) => {
         creatorUser.markModified('photocards');
       }
       creatorUser.markModified('duplicates');
+      
+      // Push Notification
+      if (!creatorUser.notifications) creatorUser.notifications = [];
+      creatorUser.notifications.push({
+        message: `@${req.user.username} accepted your trade and sent you a ${acceptedCard.rarity} card!`,
+        date: new Date(),
+        read: false,
+        link: '/profile.html'
+      });
+      creatorUser.markModified('notifications');
+      
       await creatorUser.save();
     }
     
@@ -537,6 +613,12 @@ app.post('/api/me/pull', verifyUser, async (req, res) => {
   } catch(e) {}
   
   if (cards.length === 0) return res.status(500).json({ error: 'No cards available' });
+  
+  // Limited Edition Banner Logic
+  const ACTIVE_BANNER = null; // Change this to activate a limited banner (e.g. "Debut Anniversary")
+  cards = cards.filter(c => !c.banner || c.banner === ACTIVE_BANNER);
+  
+  if (cards.length === 0) return res.status(500).json({ error: 'No cards available in current banner' });
   
   // Check owned cards to determine if duplicate
   const uniqueCollected = new Set((req.user.photocards || []).map(c => c.url));

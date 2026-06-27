@@ -3174,4 +3174,166 @@ document.addEventListener('DOMContentLoaded', () => {
   if (document.getElementById('birthday-timer')) initBirthdayCountdown();
   if (document.getElementById('fanart-grid')) initFanArt();
   if (document.getElementById('pull-card-btn')) initPhotocards();
+  initNotifications();
 });
+
+// --- Notifications Logic ---
+async function initNotifications() {
+  if (!currentUser || !currentUser.token) return;
+  
+  // Inject Bell Icon to top right
+  const bellContainer = document.createElement('div');
+  bellContainer.style.position = 'fixed';
+  bellContainer.style.top = '20px';
+  bellContainer.style.right = '20px';
+  bellContainer.style.zIndex = '9999';
+  
+  const bellBtn = document.createElement('button');
+  bellBtn.innerHTML = '🔔';
+  bellBtn.className = 'btn';
+  bellBtn.style.position = 'relative';
+  bellBtn.style.borderRadius = '50%';
+  bellBtn.style.padding = '0.5rem 0.8rem';
+  
+  const badge = document.createElement('span');
+  badge.style.position = 'absolute';
+  badge.style.top = '-5px';
+  badge.style.right = '-5px';
+  badge.style.background = 'red';
+  badge.style.color = 'white';
+  badge.style.borderRadius = '50%';
+  badge.style.padding = '2px 6px';
+  badge.style.fontSize = '0.7rem';
+  badge.style.display = 'none';
+  
+  const dropdown = document.createElement('div');
+  dropdown.className = 'glass-card';
+  dropdown.style.position = 'absolute';
+  dropdown.style.top = '50px';
+  dropdown.style.right = '0';
+  dropdown.style.width = '300px';
+  dropdown.style.display = 'none';
+  dropdown.style.maxHeight = '400px';
+  dropdown.style.overflowY = 'auto';
+  dropdown.style.zIndex = '10000';
+  
+  bellBtn.appendChild(badge);
+  bellContainer.appendChild(bellBtn);
+  bellContainer.appendChild(dropdown);
+  document.body.appendChild(bellContainer);
+  
+  // Fetch Notifications
+  try {
+    const res = await fetch(`${API_BASE}/api/notifications`, {
+      headers: { 'Authorization': `Bearer ${currentUser.token}` }
+    });
+    const notifs = await res.json();
+    
+    const unread = notifs.filter(n => !n.read).length;
+    if (unread > 0) {
+      badge.textContent = unread;
+      badge.style.display = 'block';
+    }
+    
+    bellBtn.onclick = async () => {
+      dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+      
+      if (dropdown.style.display === 'block') {
+        dropdown.innerHTML = '<h4 style="margin-bottom:1rem; color:var(--bp-pink);">Notifications</h4>';
+        if (notifs.length === 0) dropdown.innerHTML += '<p>No notifications.</p>';
+        
+        notifs.slice().reverse().forEach(n => {
+          const div = document.createElement('div');
+          div.style.padding = '0.5rem';
+          div.style.borderBottom = '1px solid rgba(255,255,255,0.1)';
+          div.style.fontSize = '0.9rem';
+          div.style.color = n.read ? '#aaa' : 'white';
+          div.innerHTML = `<div>${n.message}</div><div style="font-size:0.7rem; color:#888;">${new Date(n.date).toLocaleString()}</div>`;
+          dropdown.appendChild(div);
+        });
+        
+        // Mark as read
+        if (unread > 0) {
+          await fetch(`${API_BASE}/api/notifications/read`, {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${currentUser.token}` }
+          });
+          badge.style.display = 'none';
+        }
+      }
+    };
+  } catch(e) { console.error('Failed to load notifications'); }
+}
+// --- Master Card Index & Wishlist Logic ---
+async function openMasterIndex() {
+  const modal = document.getElementById('master-index-modal');
+  if (!modal) return;
+  
+  modal.style.display = 'block';
+  const grid = document.getElementById('master-index-grid');
+  grid.innerHTML = '<p style="color:white;text-align:center;">Loading master index...</p>';
+  
+  try {
+    const res = await fetch(`${API_BASE}/api/cards`);
+    const allCards = await res.json();
+    
+    grid.innerHTML = '';
+    const ownedIds = new Set((currentUser.photocards || []).map(c => c.id));
+    const wishlistIds = new Set(currentUser.wishlist || []);
+    
+    allCards.forEach(card => {
+      const wrapper = document.createElement('div');
+      wrapper.style.position = 'relative';
+      
+      const img = document.createElement('img');
+      img.src = card.url;
+      img.style.width = '100%';
+      img.style.borderRadius = '10px';
+      
+      const isOwned = ownedIds.has(card.id);
+      if (!isOwned) {
+        img.style.filter = 'grayscale(100%) brightness(0.4)';
+        img.style.cursor = 'pointer';
+        
+        // Wishlist logic
+        const heart = document.createElement('div');
+        heart.innerHTML = wishlistIds.has(card.id) ? '❤️' : '🤍';
+        heart.style.position = 'absolute';
+        heart.style.top = '5px';
+        heart.style.right = '5px';
+        heart.style.fontSize = '1.5rem';
+        heart.style.cursor = 'pointer';
+        heart.style.textShadow = '0 0 5px rgba(0,0,0,0.5)';
+        
+        const toggle = async (e) => {
+          e.stopPropagation();
+          const res = await fetch(`${API_BASE}/api/wishlist`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${currentUser.token}` },
+            body: JSON.stringify({ cardId: card.id })
+          });
+          const data = await res.json();
+          if (data.success) {
+            currentUser = data.user;
+            localStorage.setItem('bp_user', JSON.stringify(currentUser));
+            if (currentUser.wishlist.includes(card.id)) {
+              heart.innerHTML = '❤️';
+            } else {
+              heart.innerHTML = '🤍';
+            }
+          }
+        };
+        
+        heart.onclick = toggle;
+        img.onclick = toggle;
+        wrapper.appendChild(heart);
+      }
+      
+      wrapper.appendChild(img);
+      grid.appendChild(wrapper);
+    });
+    
+  } catch (err) {
+    grid.innerHTML = '<p style="color:red;text-align:center;">Failed to load master index.</p>';
+  }
+}

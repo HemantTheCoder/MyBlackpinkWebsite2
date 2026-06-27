@@ -11,6 +11,8 @@ const userSchema = new mongoose.Schema({
   commentsCount: { type: Number, default: 0 },
   photocards: { type: Array, default: [] },
   duplicates: { type: Array, default: [] },
+  wishlist: { type: Array, default: [] },
+  notifications: { type: Array, default: [] },
   lastPullDate: { type: Date, default: null },
   token: { type: String },
   joined: { type: Date, default: Date.now },

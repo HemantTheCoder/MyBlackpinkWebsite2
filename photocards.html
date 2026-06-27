@@ -133,6 +133,20 @@
       <a href="index.html" class="btn">&larr; Back to Home</a>
       <a href="profile.html" class="btn">View My Collection &rarr;</a>
       <a href="trades.html" class="btn btn-outline" style="margin-left:1rem;">Global Trade Hub 🔄</a>
+      <button class="btn btn-outline" style="margin-left:1rem;" onclick="openMasterIndex()">Master Card Index 📖</button>
+    </div>
+
+    <!-- Master Index Modal -->
+    <div id="master-index-modal" class="modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:1000; overflow-y:auto;">
+      <div class="modal-content glass-card" style="margin:5% auto; padding:2rem; width:90%; max-width:800px; position:relative;">
+        <span class="close" onclick="document.getElementById('master-index-modal').style.display='none'" style="position:absolute; top:1rem; right:1.5rem; font-size:2rem; cursor:pointer;">&times;</span>
+        <h2 style="color:var(--bp-pink); text-align:center; margin-bottom:1rem;">Master Card Index</h2>
+        <p style="text-align:center; margin-bottom:2rem; color:white;">Click an unowned card to add/remove from your Wishlist.</p>
+        
+        <div id="master-index-grid" class="binder-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(100px, 1fr)); gap:1rem;">
+          <!-- Master cards populated here -->
+        </div>
+      </div>
     </div>
 
     <div class="glass-card gacha-container">

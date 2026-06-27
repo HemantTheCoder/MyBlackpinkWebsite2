@@ -90,7 +90,35 @@
     <div id="trade-grid" class="trade-grid"></div>
   </main>
 
-  <!-- Create Trade Modal -->
+    <!-- Trading Tutorial Modal -->
+    <div id="trade-tutorial-modal" class="modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:1000;">
+      <div class="modal-content glass-card" style="margin:10% auto; padding:2rem; width:90%; max-width:500px; text-align:center;">
+        <h2 style="color:var(--bp-pink); margin-bottom:1rem;">Welcome to the Trade Hub! 🔄</h2>
+        <p style="margin-bottom:1rem; color:white;">
+          <strong>1. Zero Risk:</strong> You only trade cards from your <em>Trade Pile</em> (duplicates). Your main collection is 100% safe!
+        </p>
+        <p style="margin-bottom:1rem; color:white;">
+          <strong>2. Wishlists:</strong> Look for the "🔥 X users want this" badge. It means that card is highly demanded in the Master Index!
+        </p>
+        <p style="margin-bottom:2rem; color:white;">
+          <strong>3. Notifications:</strong> Keep an eye on the 🔔 icon in the top right. You'll be notified immediately when a trade is accepted.
+        </p>
+        <button class="btn btn-glow" style="width:100%;" onclick="closeTutorial()">Got it, let's trade!</button>
+      </div>
+    </div>
+    <script>
+      function closeTutorial() {
+        document.getElementById('trade-tutorial-modal').style.display = 'none';
+        localStorage.setItem('hasSeenTradeTutorial', 'true');
+      }
+      document.addEventListener('DOMContentLoaded', () => {
+        if (!localStorage.getItem('hasSeenTradeTutorial')) {
+          document.getElementById('trade-tutorial-modal').style.display = 'block';
+        }
+      });
+    </script>
+
+    <!-- Create Trade Form (Hidden by default) -->
   <div id="create-trade-modal">
     <div class="modal-content">
       <h2 style="color:var(--bp-pink);">Create Trade</h2>
@@ -162,12 +190,21 @@
           } else {
             btnHtml = `<button onclick="openAcceptTrade('${t._id}', '${t.requestedRarity}')" class="btn btn-glow" style="width:100%; padding:0.5rem;">Offer Card</button>`;
           }
-
+          const card = t.offeredCard;
+          const wantStr = (t.wantCount > 0) ? `<p style="color: #ff6b9e; font-size: 0.9rem; font-weight: bold;">🔥 ${t.wantCount} users want this</p>` : '';
+        
           div.innerHTML = `
-            <div style="font-weight:bold; margin-bottom:0.5rem;">@${t.creator} offers:</div>
-            <img src="${t.offeredCard.url}" alt="Card">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+              <img src="${card.url}" alt="Offered Card" style="width:100px; border-radius:8px;">
+              <div style="flex:1; margin-left:1rem;">
+                <h3 style="color:var(--bp-pink);">@${t.creator}</h3>
+                <p><strong>Offering:</strong> ${card.rarity}</p>
+                <p><strong>Looking For:</strong> ${t.requestedRarity}</p>
+                ${wantStr}
+                <p style="font-size:0.8rem; color:#aaa;">${new Date(t.dateCreated).toLocaleDateString()}</p>
+              </div>
+            </div>
             <div class="trade-details">
-              <div class="trade-req"><strong>Wants:</strong> ${t.requestedRarity} Card</div>
               ${btnHtml}
             </div>
           `;
