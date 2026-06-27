@@ -2787,6 +2787,16 @@ window.initProfile = async function() {
   }
 };
 
+window.shareCollection = function() {
+  if (!currentUser || !currentUser.username) return;
+  const link = window.location.origin + '/collection.html?user=' + encodeURIComponent(currentUser.username);
+  navigator.clipboard.writeText(link).then(() => {
+    showToast('Link copied! Share your collection anywhere!', 3000);
+  }).catch(() => {
+    prompt('Copy this link to share your collection:', link);
+  });
+};
+
 window.showFullCollection = function() {
   const modal = document.getElementById('collection-modal');
   const grid = document.getElementById('full-collection-grid');
@@ -3092,19 +3102,41 @@ window.initPhotocards = function() {
       });
       const data = await res.json();
       if(res.ok) {
-        document.getElementById('card-reveal').style.display = 'block';
-        document.getElementById('pulled-card-img').src = data.card.url;
-        document.getElementById('pulled-card-rarity').textContent = data.card.rarity;
-        document.getElementById('pulled-card-rarity').className = 'card-rarity ' + data.card.rarity.toLowerCase();
+        btn.style.display = 'none';
+        const packAnim = document.getElementById('pack-anim-container');
+        const pack = document.getElementById('card-pack');
+        const reveal = document.getElementById('card-reveal');
         
-        // Save to currentUser memory
-        if(!currentUser.photocards) currentUser.photocards = [];
-        currentUser.photocards.push(data.card);
-        currentUser.lastPullDate = new Date().toDateString();
-        localStorage.setItem('bp_user', JSON.stringify(currentUser));
+        packAnim.style.display = 'block';
+        pack.classList.add('shake-anim');
         
-        if(window.triggerConfetti) window.triggerConfetti();
-        window.updatePhotocardUI();
+        setTimeout(() => {
+          pack.classList.remove('shake-anim');
+          pack.classList.add('burst-anim');
+          
+          setTimeout(() => {
+            packAnim.style.display = 'none';
+            reveal.style.display = 'block';
+            
+            document.getElementById('pulled-card-img').src = data.card.url;
+            document.getElementById('pulled-card-rarity').textContent = data.card.rarity;
+            document.getElementById('pulled-card-rarity').className = 'card-rarity ' + data.card.rarity.toLowerCase();
+            
+            if (data.card.rarity.toLowerCase() === 'legendary') {
+              reveal.classList.add('reveal-anim', 'legendary');
+            } else {
+              reveal.classList.remove('reveal-anim', 'legendary');
+            }
+            
+            if(!currentUser.photocards) currentUser.photocards = [];
+            currentUser.photocards.push(data.card);
+            currentUser.lastPullDate = new Date().toDateString();
+            localStorage.setItem('bp_user', JSON.stringify(currentUser));
+            
+            if(window.triggerConfetti) window.triggerConfetti();
+            window.updatePhotocardUI();
+          }, 500);
+        }, 1500);
       } else {
         const cd = document.getElementById('pull-countdown');
         if (cd) {

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blink Collection</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .collection-header {
+      text-align: center;
+      margin-top: 3rem;
+      margin-bottom: 2rem;
+    }
+    .collection-header h1 {
+      font-size: 2.5rem;
+      color: var(--bp-pink);
+      text-shadow: 0 0 10px rgba(255, 138, 172, 0.5);
+    }
+    .stats-row {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin-top: 1rem;
+      color: #ccc;
+    }
+    .stats-row span {
+      background: rgba(255,255,255,0.1);
+      padding: 0.5rem 1.5rem;
+      border-radius: 20px;
+    }
+    
+    #public-photocards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+    
+    .pc-card {
+      position: relative;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      transition: transform 0.3s;
+    }
+    .pc-card:hover { transform: translateY(-5px) scale(1.02); }
+    .pc-card img { width: 100%; display: block; border-radius: 12px; }
+    .pc-card .rarity-badge {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      font-weight: bold;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(5px);
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+    .pc-card.legendary { box-shadow: 0 0 20px #f5b942; border: 2px solid #f5b942; }
+    .pc-card.epic { box-shadow: 0 0 15px #b742f5; border: 2px solid #b742f5; }
+    .pc-card.rare { box-shadow: 0 0 10px #4287f5; border: 2px solid #4287f5; }
+    .pc-card.common { border: 1px solid #555; }
+    
+    .pc-card.legendary .rarity-badge { color: #f5b942; }
+    .pc-card.epic .rarity-badge { color: #b742f5; }
+    .pc-card.rare .rarity-badge { color: #4287f5; }
+    .pc-card.common .rarity-badge { color: #ccc; }
+    
+    #error-msg { text-align: center; color: #ff6666; display: none; font-size: 1.2rem; margin-top: 2rem; }
+    #loading-msg { text-align: center; color: #aaa; font-size: 1.2rem; margin-top: 2rem; }
+  </style>
+</head>
+<body>
+
+  <header class="hero" style="min-height: 15vh;">
+    <div class="hero-content" style="padding-top: 3rem;">
+      <a href="index.html" class="btn btn-outline" style="position:absolute; top:20px; left:20px;">&larr; Home</a>
+    </div>
+  </header>
+
+  <main class="container">
+    <div id="loading-msg">Loading collection...</div>
+    <div id="error-msg">Collection not found.</div>
+    
+    <div id="collection-view" style="display: none;">
+      <div class="collection-header">
+        <h1><span id="c-username"></span>'s Binder</h1>
+        <div class="stats-row">
+          <span>Bias: <strong id="c-bias" style="color:var(--bp-pink);"></strong></span>
+          <span>Cards: <strong id="c-count">0</strong></span>
+        </div>
+      </div>
+      
+      <div class="glass-card">
+        <h3 style="margin-bottom: 1rem;">Photocard Collection</h3>
+        <div id="public-photocards-grid"></div>
+      </div>
+      
+      <div style="text-align: center; margin-top: 3rem;">
+        <p style="color: #aaa; margin-bottom: 1rem;">Want to start your own collection?</p>
+        <a href="login.html" class="btn btn-glow">Join Blackpink Hub</a>
+      </div>
+    </div>
+  </main>
+
+  <script src="script.js" defer></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const username = urlParams.get('user');
+      
+      if (!username) {
+        document.getElementById('loading-msg').style.display = 'none';
+        document.getElementById('error-msg').style.display = 'block';
+        return;
+      }
+      
+      try {
+        const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+          ? 'http://localhost:3000' 
+          : 'https://myblackpinkwebsite-production.up.railway.app';
+          
+        const res = await fetch(`${API_BASE}/api/collection/${username}`);
+        if (!res.ok) throw new Error('Not found');
+        
+        const data = await res.json();
+        
+        document.getElementById('loading-msg').style.display = 'none';
+        document.getElementById('collection-view').style.display = 'block';
+        
+        document.getElementById('c-username').textContent = data.username;
+        document.getElementById('c-bias').textContent = data.bias || 'OT4';
+        document.getElementById('c-count').textContent = data.photocards ? data.photocards.length : 0;
+        
+        const grid = document.getElementById('public-photocards-grid');
+        if (!data.photocards || data.photocards.length === 0) {
+          grid.innerHTML = '<p style="color:#aaa; text-align:center; grid-column: 1 / -1;">No photocards collected yet.</p>';
+        } else {
+          data.photocards.forEach(card => {
+            const div = document.createElement('div');
+            div.className = 'pc-card ' + (card.rarity ? card.rarity.toLowerCase() : 'common');
+            div.innerHTML = `
+              <img src="${card.url}" alt="${card.rarity} card">
+              <div class="rarity-badge">${card.rarity}</div>
+            `;
+            grid.appendChild(div);
+          });
+        }
+      } catch (e) {
+        document.getElementById('loading-msg').style.display = 'none';
+        document.getElementById('error-msg').style.display = 'block';
+      }
+    });
+  </script>
+</body>
+</html>

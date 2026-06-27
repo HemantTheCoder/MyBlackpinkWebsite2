@@ -13,6 +13,7 @@ const Leaderboard = require('./models/Leaderboard');
 const Feedback = require('./models/Feedback');
 const GalleryArt = require('./models/GalleryArt');
 const Poll = require('./models/Poll');
+const Trade = require('./models/Trade');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -388,6 +389,117 @@ app.get('/api/cards', (req, res) => {
     res.json(cards);
   } catch(e) {
     res.json([]);
+  }
+});
+
+app.get('/api/collection/:username', async (req, res) => {
+  try {
+    const user = await User.findOne({ username: req.params.username });
+    if (!user) return res.status(404).json({ error: 'User not found' });
+    
+    // Return only public data
+    res.json({
+      username: user.username,
+      bias: user.bias,
+      photocards: user.photocards || [],
+      playCount: user.playCount || 0
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// --- Trade Endpoints ---
+app.get('/api/trades', async (req, res) => {
+  try {
+    const trades = await Trade.find({ status: 'Open' }).sort({ dateCreated: -1 });
+    res.json(trades);
+  } catch(e) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+app.post('/api/trades', verifyUser, async (req, res) => {
+  const { offeredCardUrl, requestedRarity } = req.body;
+  if (!offeredCardUrl || !requestedRarity) return res.status(400).json({ error: 'Missing parameters' });
+  
+  try {
+    // Check if user has card
+    const cardIndex = req.user.photocards.findIndex(c => c.url === offeredCardUrl);
+    if (cardIndex === -1) return res.status(400).json({ error: 'You do not own this card' });
+    
+    const offeredCard = req.user.photocards[cardIndex];
+    
+    // Remove card from inventory (Escrow)
+    req.user.photocards.splice(cardIndex, 1);
+    await req.user.save();
+    
+    const trade = await Trade.create({
+      creator: req.user.username,
+      offeredCard,
+      requestedRarity
+    });
+    
+    res.json({ success: true, trade, user: req.user });
+  } catch(e) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+app.post('/api/trades/:id/accept', verifyUser, async (req, res) => {
+  const { acceptedCardUrl } = req.body;
+  if (!acceptedCardUrl) return res.status(400).json({ error: 'Missing card' });
+  
+  try {
+    const trade = await Trade.findById(req.params.id);
+    if (!trade || trade.status !== 'Open') return res.status(400).json({ error: 'Trade unavailable' });
+    if (trade.creator === req.user.username) return res.status(400).json({ error: 'Cannot accept own trade' });
+    
+    const cardIndex = req.user.photocards.findIndex(c => c.url === acceptedCardUrl);
+    if (cardIndex === -1) return res.status(400).json({ error: 'You do not own this card' });
+    
+    const acceptedCard = req.user.photocards[cardIndex];
+    if (trade.requestedRarity !== 'Any' && acceptedCard.rarity !== trade.requestedRarity) {
+      return res.status(400).json({ error: `You must offer a ${trade.requestedRarity} card` });
+    }
+    
+    // Swap
+    req.user.photocards.splice(cardIndex, 1);
+    req.user.photocards.push(trade.offeredCard);
+    await req.user.save();
+    
+    const creatorUser = await User.findOne({ username: trade.creator });
+    if (creatorUser) {
+      creatorUser.photocards.push(acceptedCard);
+      await creatorUser.save();
+    }
+    
+    trade.status = 'Completed';
+    trade.acceptedBy = req.user.username;
+    await trade.save();
+    
+    res.json({ success: true, user: req.user });
+  } catch(e) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+app.post('/api/trades/:id/cancel', verifyUser, async (req, res) => {
+  try {
+    const trade = await Trade.findById(req.params.id);
+    if (!trade || trade.status !== 'Open') return res.status(400).json({ error: 'Trade unavailable' });
+    if (trade.creator !== req.user.username) return res.status(403).json({ error: 'Unauthorized' });
+    
+    // Return card
+    req.user.photocards.push(trade.offeredCard);
+    await req.user.save();
+    
+    trade.status = 'Cancelled';
+    await trade.save();
+    
+    res.json({ success: true, user: req.user });
+  } catch(e) {
+    res.status(500).json({ error: 'Server error' });
   }
 });
 

@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trade Hub | Blackpink</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .trade-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+    .trade-card {
+      background: rgba(255,255,255,0.05);
+      border-radius: 12px;
+      padding: 1rem;
+      border: 1px solid rgba(255,255,255,0.1);
+      position: relative;
+    }
+    .trade-card img {
+      width: 100%;
+      border-radius: 8px;
+    }
+    .trade-details {
+      margin-top: 1rem;
+    }
+    .trade-req {
+      font-size: 0.9rem;
+      color: #aaa;
+      margin-bottom: 0.5rem;
+    }
+    
+    #create-trade-modal {
+      display: none;
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.8);
+      z-index: 1000;
+      align-items: center; justify-content: center;
+    }
+    #accept-trade-modal {
+      display: none;
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.8);
+      z-index: 1000;
+      align-items: center; justify-content: center;
+    }
+    .modal-content {
+      background: #1a1a1a;
+      padding: 2rem;
+      border-radius: 15px;
+      max-width: 500px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+      border: 1px solid var(--bp-pink);
+    }
+    
+    .inv-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 1rem;
+    }
+    .inv-card {
+      border: 2px solid transparent;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .inv-card img { width: 100%; border-radius: 6px; }
+    .inv-card.selected { border-color: var(--bp-pink); box-shadow: 0 0 10px var(--bp-pink); }
+  </style>
+</head>
+<body>
+
+  <header class="hero" style="min-height: 15vh;">
+    <div class="hero-content" style="padding-top: 3rem;">
+      <a href="profile.html" class="btn btn-outline" style="position:absolute; top:20px; left:20px;">&larr; Profile</a>
+      <h1 style="font-size: 2.5rem;">Global Trade Hub</h1>
+    </div>
+  </header>
+
+  <main class="container">
+    <div style="text-align: center; margin-bottom: 2rem;">
+      <button onclick="openCreateTrade()" class="btn btn-glow">➕ Create Trade Offer</button>
+    </div>
+
+    <div id="loading" style="text-align:center; color:#aaa;">Loading trades...</div>
+    <div id="trade-grid" class="trade-grid"></div>
+  </main>
+
+  <!-- Create Trade Modal -->
+  <div id="create-trade-modal">
+    <div class="modal-content">
+      <h2 style="color:var(--bp-pink);">Create Trade</h2>
+      <p>Select a card from your inventory to offer:</p>
+      <div id="create-inv" class="inv-grid"></div>
+      
+      <div style="margin-top:1.5rem;">
+        <label>What do you want in return?</label>
+        <select id="trade-req-rarity" style="width:100%; padding:0.5rem; margin-top:0.5rem; background:#333; color:#fff; border:none; border-radius:5px;">
+          <option value="Any">Any Rarity</option>
+          <option value="Common">Common</option>
+          <option value="Rare">Rare</option>
+          <option value="Epic">Epic</option>
+          <option value="Legendary">Legendary</option>
+        </select>
+      </div>
+      
+      <div style="margin-top:1.5rem; display:flex; gap:1rem; justify-content:flex-end;">
+        <button onclick="document.getElementById('create-trade-modal').style.display='none'" class="btn">Cancel</button>
+        <button onclick="submitTrade()" class="btn btn-glow">Post Offer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Accept Trade Modal -->
+  <div id="accept-trade-modal">
+    <div class="modal-content">
+      <h2 style="color:var(--bp-pink);">Accept Trade</h2>
+      <p id="accept-req-text"></p>
+      <div id="accept-inv" class="inv-grid"></div>
+      
+      <div style="margin-top:1.5rem; display:flex; gap:1rem; justify-content:flex-end;">
+        <button onclick="document.getElementById('accept-trade-modal').style.display='none'" class="btn">Cancel</button>
+        <button onclick="confirmAcceptTrade()" class="btn btn-glow">Confirm Trade</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js" defer></script>
+  <script>
+    let currentTradeTarget = null;
+    let selectedCardUrl = null;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      setTimeout(loadTrades, 500); // wait for script.js to load currentUser
+    });
+
+    async function loadTrades() {
+      const grid = document.getElementById('trade-grid');
+      document.getElementById('loading').style.display = 'none';
+      grid.innerHTML = '';
+      
+      try {
+        const res = await fetch(`${API_BASE}/api/trades`);
+        const trades = await res.json();
+        
+        if (trades.length === 0) {
+          grid.innerHTML = '<p style="color:#aaa; text-align:center; grid-column:1/-1;">No open trades right now.</p>';
+          return;
+        }
+        
+        trades.forEach(t => {
+          const div = document.createElement('div');
+          div.className = 'trade-card';
+          
+          let btnHtml = '';
+          if (currentUser && currentUser.username === t.creator) {
+            btnHtml = `<button onclick="cancelTrade('${t._id}')" class="btn" style="width:100%; padding:0.5rem; background:#ff4444; border:none;">Cancel Trade</button>`;
+          } else {
+            btnHtml = `<button onclick="openAcceptTrade('${t._id}', '${t.requestedRarity}')" class="btn btn-glow" style="width:100%; padding:0.5rem;">Offer Card</button>`;
+          }
+
+          div.innerHTML = `
+            <div style="font-weight:bold; margin-bottom:0.5rem;">@${t.creator} offers:</div>
+            <img src="${t.offeredCard.url}" alt="Card">
+            <div class="trade-details">
+              <div class="trade-req"><strong>Wants:</strong> ${t.requestedRarity} Card</div>
+              ${btnHtml}
+            </div>
+          `;
+          grid.appendChild(div);
+        });
+      } catch (e) {
+        grid.innerHTML = '<p style="color:red; text-align:center; grid-column:1/-1;">Error loading trades.</p>';
+      }
+    }
+
+    function openCreateTrade() {
+      if (!currentUser) return alert('Please login first!');
+      const inv = document.getElementById('create-inv');
+      inv.innerHTML = '';
+      selectedCardUrl = null;
+      
+      if (!currentUser.photocards || currentUser.photocards.length === 0) {
+        inv.innerHTML = '<p>You have no cards to trade!</p>';
+      } else {
+        currentUser.photocards.forEach(c => {
+          const img = document.createElement('img');
+          img.src = c.url;
+          img.className = 'inv-card';
+          img.onclick = (e) => {
+            document.querySelectorAll('#create-inv .inv-card').forEach(el => el.classList.remove('selected'));
+            e.target.classList.add('selected');
+            selectedCardUrl = c.url;
+          };
+          inv.appendChild(img);
+        });
+      }
+      document.getElementById('create-trade-modal').style.display = 'flex';
+    }
+
+    async function submitTrade() {
+      if (!selectedCardUrl) return alert('Select a card to offer!');
+      const reqRarity = document.getElementById('trade-req-rarity').value;
+      
+      try {
+        const res = await fetch(`${API_BASE}/api/trades`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('user_token')}` },
+          body: JSON.stringify({ offeredCardUrl: selectedCardUrl, requestedRarity: reqRarity })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          localStorage.setItem('bp_user', JSON.stringify(data.user));
+          currentUser = data.user;
+          document.getElementById('create-trade-modal').style.display = 'none';
+          showToast('Trade posted!', 2000);
+          loadTrades();
+        } else {
+          alert(data.error);
+        }
+      } catch (e) {
+        alert('Error creating trade');
+      }
+    }
+
+    function openAcceptTrade(tradeId, requestedRarity) {
+      if (!currentUser) return alert('Please login first!');
+      currentTradeTarget = tradeId;
+      selectedCardUrl = null;
+      
+      document.getElementById('accept-req-text').innerHTML = `This user wants a <strong>${requestedRarity}</strong> card. Choose one from your inventory:`;
+      
+      const inv = document.getElementById('accept-inv');
+      inv.innerHTML = '';
+      
+      let eligible = currentUser.photocards || [];
+      if (requestedRarity !== 'Any') {
+        eligible = eligible.filter(c => c.rarity === requestedRarity);
+      }
+      
+      if (eligible.length === 0) {
+        inv.innerHTML = `<p style="grid-column:1/-1;">You don't have any ${requestedRarity} cards to offer!</p>`;
+      } else {
+        eligible.forEach(c => {
+          const img = document.createElement('img');
+          img.src = c.url;
+          img.className = 'inv-card';
+          img.onclick = (e) => {
+            document.querySelectorAll('#accept-inv .inv-card').forEach(el => el.classList.remove('selected'));
+            e.target.classList.add('selected');
+            selectedCardUrl = c.url;
+          };
+          inv.appendChild(img);
+        });
+      }
+      
+      document.getElementById('accept-trade-modal').style.display = 'flex';
+    }
+
+    async function confirmAcceptTrade() {
+      if (!selectedCardUrl) return alert('Select a card to offer!');
+      try {
+        const res = await fetch(`${API_BASE}/api/trades/${currentTradeTarget}/accept`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('user_token')}` },
+          body: JSON.stringify({ acceptedCardUrl: selectedCardUrl })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          localStorage.setItem('bp_user', JSON.stringify(data.user));
+          currentUser = data.user;
+          document.getElementById('accept-trade-modal').style.display = 'none';
+          showToast('Trade completed!', 2000);
+          loadTrades();
+        } else {
+          alert(data.error);
+        }
+      } catch (e) {
+        alert('Error accepting trade');
+      }
+    }
+
+    async function cancelTrade(tradeId) {
+      if (!confirm('Cancel this trade and return the card to your inventory?')) return;
+      try {
+        const res = await fetch(`${API_BASE}/api/trades/${tradeId}/cancel`, {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${localStorage.getItem('user_token')}` }
+        });
+        const data = await res.json();
+        if (res.ok) {
+          localStorage.setItem('bp_user', JSON.stringify(data.user));
+          currentUser = data.user;
+          showToast('Trade cancelled.', 2000);
+          loadTrades();
+        }
+      } catch (e) {
+        alert('Error cancelling trade');
+      }
+    }
+  </script>
+</body>
+</html>
