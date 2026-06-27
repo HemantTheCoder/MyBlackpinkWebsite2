@@ -619,17 +619,17 @@ function startSpeedTimer() {
   speedTimeLeft = 10;
   const display = document.getElementById('timer-display');
   const fill = document.getElementById('timer-bar-fill');
-  if (display) { display.textContent = speedTimeLeft; display.classList.remove('danger'); }
-  if (fill) { fill.style.width = '100%'; fill.classList.remove('danger'); }
+  if (display) { display.textContent = speedTimeLeft; display.classList.remove('timer-danger'); }
+  if (fill) { fill.style.width = '100%'; fill.classList.remove('timer-danger'); }
   speedTimer = setInterval(function () {
     speedTimeLeft--;
     if (display) {
       display.textContent = speedTimeLeft;
-      if (speedTimeLeft <= 3) display.classList.add('danger');
+      if (speedTimeLeft <= 3) display.classList.add('timer-danger');
     }
     if (fill) {
       fill.style.width = (speedTimeLeft / 10 * 100) + '%';
-      if (speedTimeLeft <= 3) fill.classList.add('danger');
+      if (speedTimeLeft <= 3) fill.classList.add('timer-danger');
     }
     if (speedTimeLeft <= 0) {
       clearInterval(speedTimer);
