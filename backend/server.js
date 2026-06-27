@@ -376,15 +376,26 @@ app.post('/api/me/pull', verifyUser, async (req, res) => {
   
   if (cards.length === 0) return res.status(500).json({ error: 'No cards available' });
   
+  // Check if they collected all cards
+  const uniqueCollected = new Set((req.user.photocards || []).map(c => c.url));
+  if (uniqueCollected.size >= cards.length) {
+    return res.status(400).json({ error: 'You have already collected all available cards! A true Blink!' });
+  }
+  
   const roll = Math.random() * 100;
   let rarity = 'Common';
   if (roll > 95) rarity = 'Legendary';
   else if (roll > 80) rarity = 'Epic';
   else if (roll > 55) rarity = 'Rare';
   
-  const pool = cards.filter(c => c.rarity === rarity);
-  const finalPool = pool.length > 0 ? pool : cards;
-  const pulledCard = finalPool[Math.floor(Math.random() * finalPool.length)];
+  // Try to pull a card they don't have if possible
+  let pool = cards.filter(c => c.rarity === rarity);
+  if (pool.length === 0) pool = cards;
+  
+  let uncollectedPool = pool.filter(c => !uniqueCollected.has(c.url));
+  if (uncollectedPool.length === 0) uncollectedPool = pool; // fallback to dupes if they have all in this rarity
+  
+  const pulledCard = uncollectedPool[Math.floor(Math.random() * uncollectedPool.length)];
   
   try {
     req.user.photocards.push(pulledCard);
@@ -393,7 +404,7 @@ app.post('/api/me/pull', verifyUser, async (req, res) => {
     await req.user.save();
     res.json({ success: true, card: pulledCard });
   } catch (error) {
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: 'Server error: ' + error.message });
   }
 });
 
