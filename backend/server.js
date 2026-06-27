@@ -18,7 +18,8 @@ const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'public'))); // For admin.html
+app.use(express.static(path.join(__dirname, '..'))); // For the rest of the frontend (index.html, login.html)
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI)
