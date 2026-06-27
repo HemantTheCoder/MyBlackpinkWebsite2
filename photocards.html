@@ -58,6 +58,51 @@
     }
     
     /* Animation Styles */
+    .bp-pack {
+      background: linear-gradient(135deg, #111, #222);
+      border: 2px solid var(--bp-pink);
+      border-radius: 10px;
+      width: 200px;
+      height: 300px;
+      margin: 0 auto 2rem auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 20px rgba(255,107,158,0.3);
+      position: relative;
+      overflow: hidden;
+    }
+    .bp-pack::before {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 50%; height: 100%;
+      background: rgba(255,255,255,0.1);
+      transform: skewX(-20deg);
+      animation: shine 3s infinite;
+    }
+    @keyframes shine {
+      100% { left: 200%; }
+    }
+    .bp-pack-logo {
+      font-family: 'Arial Black', sans-serif;
+      font-size: 2rem;
+      color: var(--bp-pink);
+      letter-spacing: 2px;
+      text-shadow: 0 0 10px var(--bp-pink);
+      margin-bottom: 0.5rem;
+      transform: rotate(-5deg);
+      text-align: center;
+      line-height: 1.1;
+    }
+    .bp-pack-text {
+      color: white;
+      font-size: 0.9rem;
+      letter-spacing: 4px;
+      opacity: 0.8;
+      text-align: center;
+    }
     .card-pack {
       width: 200px;
       height: 300px;
