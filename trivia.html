@@ -55,14 +55,6 @@
       color: #ff3333 !important;
       animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
     }
-    .option-btn.correct {
-      background: rgba(0, 255, 136, 0.2) !important;
-      border-color: #00ff88 !important;
-      color: #00ff88 !important;
-      transform: scale(1.05);
-      box-shadow: 0 0 30px rgba(0, 255, 136, 0.4);
-      animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-    }
     @keyframes shake {
       10%, 90% { transform: translate3d(-2px, 0, 0); }
       20%, 80% { transform: translate3d(4px, 0, 0); }
@@ -108,6 +100,13 @@
       font-weight: bold;
       font-size: 1.2rem;
       box-shadow: 0 5px 15px var(--bp-pink-glow);
+    }
+    @media (max-width: 600px) {
+      .game-container { padding: 2rem 1rem; width: 100%; box-sizing: border-box; }
+      .options-grid { grid-template-columns: 1fr; margin-top: 2rem; gap: 1rem; }
+      #question-text { font-size: 1.5rem; }
+      .option-btn { font-size: 1.2rem; padding: 1.5rem; }
+      .fan-rank { font-size: 2rem; }
     }
   </style>
 

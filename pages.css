@@ -1800,12 +1800,18 @@
     .feedback-box.wrong   { background: rgba(255,68,68,0.12); border: 1px solid #ff4444; color: #ff4444; }
 
     @media (max-width: 600px) {
-      .options-grid { grid-template-columns: 1fr; }
+      .options-grid { grid-template-columns: 1fr; gap: 0.8rem; }
       .pb-grid { grid-template-columns: 1fr; }
-      .game-container { padding: 2rem 1.2rem; }
+      .game-container { padding: 2rem 1rem; width: 100%; box-sizing: border-box; }
       #dc-question { font-size: 1.4rem; }
       .countdown-block { min-width: 56px; padding: 0.6rem; }
       .countdown-num { font-size: 1.8rem; }
+      
+      /* Game specific elements */
+      .lyric-card { padding: 1.5rem 1rem; }
+      #lyric-text { font-size: 1.5rem; }
+      .silhouette-frame { width: 100%; max-width: 280px; height: 320px; margin: 0 auto 1.5rem; }
+      .member-grid { grid-template-columns: repeat(2, 1fr) !important; }
     }
   
 
