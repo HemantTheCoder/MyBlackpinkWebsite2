@@ -182,16 +182,21 @@
       <p style="margin-bottom: 1.5rem; color: #ddd;">Try your luck! Will you pull a Legendary?</p>
 
       <!-- Economy Dashboard -->
-      <div id="economy-dashboard" style="background:rgba(255,255,255,0.05); padding:1rem; border-radius:10px; margin-bottom:1.5rem;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
-          <div id="streak-counter" style="font-weight:bold; color:var(--bp-pink);">🔥 0 Day Streak</div>
-          <div id="pulls-available" style="font-weight:bold; color:white; background:#ff6b9e; padding:0.2rem 0.8rem; border-radius:15px;">Pulls Available: 0</div>
+      <div id="economy-dashboard" style="background:rgba(20, 20, 20, 0.8); border: 1px solid rgba(255,107,158,0.3); padding: 1.5rem; border-radius: 15px; margin: 0 auto 2rem auto; max-width: 600px; box-shadow: 0 4px 15px rgba(0,0,0,0.5);">
+        <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap: 1rem; margin-bottom:1.5rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem;">
+          <div id="streak-counter" style="font-weight:bold; color:var(--bp-pink); font-size: 1.1rem;">🔥 0 Day Streak</div>
+          <div id="pulls-available" style="font-weight:bold; color:white; background:var(--bp-pink); padding:0.4rem 1rem; border-radius:20px; font-size: 1rem; box-shadow: 0 0 10px rgba(255,107,158,0.5);">Pulls Available: 0</div>
         </div>
-        <div style="text-align:left; margin-bottom:0.5rem; color:#aaa; font-size:0.9rem;">Collection Progress: <span id="collection-pct">0%</span></div>
-        <div style="width:100%; background:rgba(0,0,0,0.5); height:10px; border-radius:5px; overflow:hidden; margin-bottom:1rem;">
-          <div id="collection-bar" style="width:0%; height:100%; background:var(--bp-pink); transition:width 0.5s;"></div>
+        
+        <div style="text-align:left; margin-bottom:0.5rem; color:#ccc; font-size:0.95rem; display: flex; justify-content: space-between;">
+          <span>Collection Progress</span>
+          <span id="collection-pct" style="font-weight:bold; color: white;">0%</span>
         </div>
-        <div id="pity-counter" style="font-size:0.85rem; color:#ff6b9e;">💎 10 pulls until guaranteed Epic!</div>
+        <div style="width:100%; background:rgba(0,0,0,0.8); height:12px; border-radius:6px; overflow:hidden; margin-bottom:1.5rem; border: 1px solid rgba(255,255,255,0.1);">
+          <div id="collection-bar" style="width:0%; height:100%; background:linear-gradient(90deg, #ff6b9e, #ff8da6); transition:width 0.5s; box-shadow: 0 0 10px #ff6b9e;"></div>
+        </div>
+        
+        <div id="pity-counter" style="font-size:0.9rem; color:#ff6b9e; font-weight: 500; text-align: center; background: rgba(255,107,158,0.1); padding: 0.5rem; border-radius: 8px;">💎 10 pulls until guaranteed Epic!</div>
       </div>
 
       <div class="pack-anim" id="pack-anim">
