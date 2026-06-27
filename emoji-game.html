@@ -8,25 +8,35 @@
   <script src="script.js?v=1782403755244" defer></script>
   <style>
     .game-container {
-      background: var(--glass-bg);
-      border: 1px solid var(--glass-border);
+      background: rgba(20, 20, 20, 0.7);
+      border: 1px solid rgba(255,42,133,0.3);
       border-radius: 20px;
       padding: 4rem;
       max-width: 900px;
       margin: 0 auto;
       text-align: center;
-      box-shadow: 0 15px 40px rgba(0,0,0,0.6);
-      backdrop-filter: blur(12px);
+      box-shadow: 0 15px 40px rgba(0,0,0,0.8), inset 0 0 50px rgba(255,42,133,0.1);
+      backdrop-filter: blur(15px);
     }
     .emoji-display {
       font-size: 5rem;
-      letter-spacing: 10px;
-      margin: 3rem 0;
-      text-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
-      background: rgba(0, 0, 0, 0.3);
-      padding: 2rem;
+      letter-spacing: 15px;
+      margin: 3rem auto;
+      text-shadow: 0 0 20px rgba(255, 255, 255, 0.6);
+      background: linear-gradient(145deg, #1a1a1a, #0a0a0d);
+      padding: 3rem 2rem;
       border-radius: 20px;
-      border: 2px dashed var(--bp-pink);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+      position: relative;
+      overflow: hidden;
+    }
+    .emoji-display::after {
+      content: '';
+      position: absolute;
+      top: -50%; left: -50%; width: 200%; height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
+      pointer-events: none;
     }
     .options-grid {
       display: grid;
@@ -35,30 +45,45 @@
     }
     .option-btn {
       background: rgba(255, 255, 255, 0.05);
-      border: 2px solid var(--glass-border);
+      border: 1px solid rgba(255,255,255,0.1);
       color: white;
       padding: 1.5rem;
-      border-radius: 15px;
+      border-radius: 12px;
       font-size: 1.2rem;
       font-weight: bold;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
     .option-btn:hover {
-      background: rgba(255, 42, 133, 0.2);
+      background: rgba(255, 42, 133, 0.15);
       border-color: var(--bp-pink);
-      transform: translateY(-3px);
-      box-shadow: 0 5px 15px var(--bp-pink-glow);
+      transform: translateY(-4px) scale(1.02);
+      box-shadow: 0 10px 20px rgba(255,42,133,0.2);
     }
     .option-btn.correct {
       background: rgba(0, 255, 136, 0.2) !important;
       border-color: #00ff88 !important;
       color: #00ff88 !important;
+      transform: scale(1.05);
+      box-shadow: 0 0 30px rgba(0, 255, 136, 0.4);
+      animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
     }
     .option-btn.wrong {
       background: rgba(255, 51, 51, 0.2) !important;
       border-color: #ff3333 !important;
       color: #ff3333 !important;
+      animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+    }
+    @keyframes shake {
+      10%, 90% { transform: translate3d(-2px, 0, 0); }
+      20%, 80% { transform: translate3d(4px, 0, 0); }
+      30%, 50%, 70% { transform: translate3d(-8px, 0, 0); }
+      40%, 60% { transform: translate3d(8px, 0, 0); }
+    }
+    @keyframes pop {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); box-shadow: 0 0 40px var(--bp-pink); }
+      100% { transform: scale(1.05); }
     }
     #game-result, #game-active {
       display: none;

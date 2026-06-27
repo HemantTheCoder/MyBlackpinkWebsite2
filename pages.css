@@ -1123,21 +1123,22 @@
       box-shadow: 0 0 8px var(--bp-pink-glow);
     }
     .lyric-card {
-      background: rgba(255,42,133,0.06);
-      border: 1px solid rgba(255,42,133,0.2);
-      border-radius: 18px;
-      padding: 2.2rem 2rem;
+      background: linear-gradient(135deg, rgba(20,20,20,0.8), rgba(40,40,40,0.6));
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 20px;
+      padding: 3rem 2rem;
       margin: 0 0 2.5rem;
       position: relative;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.5), inset 0 0 50px rgba(255,42,133,0.05);
+      backdrop-filter: blur(20px);
+      overflow: hidden;
     }
     .lyric-card::before {
-      content: '🎵';
+      content: '';
       position: absolute;
-      top: -14px; left: 50%;
-      transform: translateX(-50%);
-      font-size: 1.6rem;
-      background: #0a0a0d;
-      padding: 0 8px;
+      top: -50%; left: -50%; width: 200%; height: 200%;
+      background: radial-gradient(circle, rgba(255,42,133,0.15) 0%, transparent 60%);
+      pointer-events: none;
     }
     .lyric-label {
       font-size: 0.8rem;
@@ -1207,12 +1208,24 @@
       color: #00ff88 !important;
       transform: scale(1.04) !important;
       box-shadow: 0 0 30px rgba(0,255,136,0.35) !important;
+      animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
     }
     .option-btn.wrong {
       background: rgba(255,51,51,0.15) !important;
-      border-color: #ff4444 !important;
-      color: #ff4444 !important;
-      transform: scale(0.96) !important;
+      border-color: #ff3333 !important;
+      color: #ff3333 !important;
+      animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+    }
+    @keyframes shake {
+      10%, 90% { transform: translate3d(-2px, 0, 0); }
+      20%, 80% { transform: translate3d(4px, 0, 0); }
+      30%, 50%, 70% { transform: translate3d(-8px, 0, 0); }
+      40%, 60% { transform: translate3d(8px, 0, 0); }
+    }
+    @keyframes pop {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); box-shadow: 0 0 40px var(--bp-pink); }
+      100% { transform: scale(1.05); }
     }
     .option-btn:disabled { pointer-events: none; }
     .fan-rank {
