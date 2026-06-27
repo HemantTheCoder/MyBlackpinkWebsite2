@@ -755,9 +755,13 @@ function renderPuzzleBoard() {
   const board = document.getElementById('board');
   if (!board) return;
   board.innerHTML = '';
+  const validMoves = getValidPuzzleMoves(puzzleEmptyIdx);
   puzzleTiles.forEach(function (val, idx) {
     const div = document.createElement('div');
     div.className = 'tile';
+    if (validMoves.includes(idx) && !puzzleComplete) {
+      div.classList.add('movable');
+    }
     if (val === 8) {
       div.classList.add('empty');
     } else {
@@ -779,6 +783,7 @@ function handleTileClick(idx) {
 function checkPuzzleWin() {
   for (let i = 0; i < 8; i++) { if (puzzleTiles[i] !== i) return; }
   puzzleComplete = true;
+  triggerConfetti();
   document.getElementById('board').children[8].classList.remove('empty');
   document.getElementById('board').children[8].style.backgroundPosition = '100% 100%';
   document.getElementById('puzzle-result').style.display = 'block';
