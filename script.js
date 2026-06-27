@@ -132,7 +132,7 @@ window.ytLoadTrack = function (idx) {
     // Track play for Stan Level
     const token = localStorage.getItem('user_token');
     if (token) {
-      fetch(`${API_URL}/me/play`, {
+      fetch(`${API_BASE}/api/me/play`, {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}` }
       }).catch(err => console.log('Error tracking play:', err));
@@ -2342,7 +2342,7 @@ window.initBlinkWall = function() {
     const grid = document.getElementById('messages-grid');
     if (!grid) return;
     try {
-      const res = await fetch(`${API_URL}/wall`);
+      const res = await fetch(`${API_BASE}/api/wall`);
       const messages = await res.json();
       
       if (messages.length === 0) {
@@ -2385,7 +2385,7 @@ window.initBlinkWall = function() {
         const token = localStorage.getItem('user_token');
         if (token) headers['Authorization'] = `Bearer ${token}`;
 
-        const res = await fetch(`${API_URL}/wall`, {
+        const res = await fetch(`${API_BASE}/api/wall`, {
           method: 'POST',
           headers,
           body: JSON.stringify({ author, bias, message })
@@ -2952,7 +2952,7 @@ window.initFanArt = function() {
 
   async function fetchArt() {
     try {
-      const res = await fetch(`${API_URL}/gallery`);
+      const res = await fetch(`${API_BASE}/api/gallery`);
       const art = await res.json();
       grid.innerHTML = '';
       if(art.length === 0) {
@@ -2980,7 +2980,7 @@ window.initFanArt = function() {
       const caption = document.getElementById('art-caption').value;
       const author = currentUser ? currentUser.username : 'Anonymous Blink';
       try {
-        const res = await fetch(`${API_URL}/gallery`, {
+        const res = await fetch(`${API_BASE}/api/gallery`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ url, caption, author })
@@ -3002,7 +3002,7 @@ window.initFanArt = function() {
 window.toggleLike = async function(id) {
   if (!currentUser) return alert('Please login to like fan art!');
   try {
-    const res = await fetch(`${API_URL}/gallery/${id}/like`, {
+    const res = await fetch(`${API_BASE}/api/gallery/${id}/like`, {
       method: 'POST',
       headers: { 'Authorization': `Bearer ${currentUser.token}` }
     });
@@ -3050,7 +3050,7 @@ window.initPhotocards = function() {
   btn.addEventListener('click', async () => {
     if(!currentUser) return alert('Please login first!');
     try {
-      const res = await fetch(`${API_URL}/me/pull`, {
+      const res = await fetch(`${API_BASE}/api/me/pull`, {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${currentUser.token}` }
       });
