@@ -76,14 +76,13 @@
     </nav>
 
       <!-- Next Birthday Card -->
-      <div class="glass-card text-center" style="max-width: 500px; margin: 0 auto 2rem; padding: 1.5rem; animation: pulse 3s infinite;">
-        <h2 class="neon-text" style="font-size: 1.5rem; margin-bottom: 0.5rem;">🎂 Next Blink Birthday 🎂</h2>
-        <div id="birthday-info">
-          <h3 id="birthday-name" style="font-size: 1.5rem; color: var(--bp-pink); margin: 0;">Loading...</h3>
-          <div id="birthday-timer" style="font-size: 1.2rem; font-family: monospace; letter-spacing: 1px; margin-top: 0.5rem; color: #fff;">
+      <div class="glass-card" style="max-width: 800px; margin: 0 auto 2rem; padding: 0.8rem 1.5rem; animation: pulse 3s infinite; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+        <h2 class="neon-text" style="font-size: 1.2rem; margin: 0;">🎂 Upcoming Member Birthday: <span id="birthday-name" style="color: var(--bp-pink);">Loading...</span></h2>
+        <div style="display: flex; align-items: center; gap: 15px;">
+          <div id="birthday-timer" style="font-size: 1.2rem; font-family: monospace; letter-spacing: 1px; color: #fff; margin: 0;">
             --:--:--:--
           </div>
-          <button class="btn btn-glow" style="margin-top: 1rem; padding: 0.5rem 1rem; font-size: 0.9rem;" onclick="triggerConfetti()">Celebrate!</button>
+          <button class="btn btn-glow" style="padding: 0.4rem 1rem; font-size: 0.9rem; margin: 0;" onclick="triggerConfetti()">Celebrate!</button>
         </div>
       </div>
 
