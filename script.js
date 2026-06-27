@@ -1,3 +1,4 @@
+const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:') ? 'http://localhost:3000' : 'https://myblackpinkwebsite2.onrender.com';
 // Redirect to https
 var loc = window.location.href + '';
 if (loc.indexOf('http://') == 0 && !loc.includes('localhost') && !loc.includes('127.0.0.1') && !loc.includes('file://')) {
@@ -691,7 +692,7 @@ function saveHighScore(gameKey, currentScore) {
   // GLOBAL LEADERBOARD INTEGRATION (Trivia Only for now)
   if (gameKey === 'triviaHighScore') {
     const username = localStorage.getItem('blink_id') || 'Anonymous Blink';
-    fetch('https://myblackpinkwebsite2.onrender.com/api/leaderboard', {
+    fetch(`${API_BASE}/api/leaderboard`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, score: currentScore })
@@ -2434,7 +2435,7 @@ window.initLeaderboard = function() {
     const glDiv = document.getElementById('global-leaderboard');
     if (!glDiv) return;
     try {
-      const res = await fetch('https://myblackpinkwebsite2.onrender.com/api/leaderboard');
+      const res = await fetch(`${API_BASE}/api/leaderboard`);
       const scores = await res.json();
       
       if (scores.length === 0) {
@@ -2488,7 +2489,7 @@ window.initFeedback = function() {
     const message = document.getElementById('fb-message').value;
     
     try {
-      const res = await fetch('https://myblackpinkwebsite2.onrender.com/api/feedback', {
+      const res = await fetch(`${API_BASE}/api/feedback`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, type, message })
@@ -2533,7 +2534,7 @@ async function fetchCurrentUser() {
   const token = localStorage.getItem('user_token');
   if (!token) return;
   try {
-    const res = await fetch('https://myblackpinkwebsite2.onrender.com/api/me', {
+    const res = await fetch(`${API_BASE}/api/me`, {
       headers: { 'Authorization': `Bearer ${token}` }
     });
     if (res.ok) {
@@ -2604,7 +2605,7 @@ window.initLogin = function() {
       const username = document.getElementById('login-username').value;
       const password = document.getElementById('login-password').value;
       try {
-        const res = await fetch('https://myblackpinkwebsite2.onrender.com/api/login', {
+        const res = await fetch(`${API_BASE}/api/login`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ username, password })
@@ -2633,7 +2634,7 @@ window.initLogin = function() {
       const bias = document.getElementById('reg-bias').value;
       const dob = document.getElementById('reg-dob').value;
       try {
-        const res = await fetch('https://myblackpinkwebsite2.onrender.com/api/register', {
+        const res = await fetch(`${API_BASE}/api/register`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ username, email, password, bias, dob })
@@ -2691,7 +2692,7 @@ window.initProfile = async function() {
       e.preventDefault();
       const bias = document.getElementById('update-bias').value;
       const dob = document.getElementById('update-dob').value;
-      const res = await fetch('https://myblackpinkwebsite2.onrender.com/api/me', {
+      const res = await fetch(`${API_BASE}/api/me`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -2846,7 +2847,7 @@ window.removeTrack = function(idx) {
 
 window.savePlaylist = async function() {
   const token = localStorage.getItem('user_token');
-  const res = await fetch('https://myblackpinkwebsite2.onrender.com/api/me/playlist', {
+  const res = await fetch(`${API_BASE}/api/me/playlist`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
