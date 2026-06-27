@@ -1050,6 +1050,12 @@ function selectSilhouetteAnswer(selectedName, btnElement) {
   buttons.forEach(function (b) { b.style.pointerEvents = 'none'; });
   const img = document.getElementById('silhouette-img');
   if (img) img.style.filter = 'none';
+  const flash = document.getElementById('reveal-flash');
+  if (flash) {
+    flash.classList.remove('flash-active');
+    void flash.offsetWidth;
+    flash.classList.add('flash-active');
+  }
   if (selectedName === member.name) {
     btnElement.classList.add('correct');
     const pts = Math.max(1, 3 - silhouetteHintsUsed);
