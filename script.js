@@ -3368,8 +3368,20 @@ async function openMasterIndex() {
         img.onclick = toggle;
         wrapper.appendChild(heart);
       }
+      const rarityLabel = document.createElement('div');
+      rarityLabel.textContent = card.rarity;
+      rarityLabel.style.textAlign = 'center';
+      rarityLabel.style.fontSize = '0.8rem';
+      rarityLabel.style.marginTop = '0.2rem';
       
+      let rarityColor = '#ccc';
+      if (card.rarity === 'Legendary') rarityColor = '#ffd700';
+      if (card.rarity === 'Epic') rarityColor = '#ff6b9e';
+      if (card.rarity === 'Rare') rarityColor = '#6be2ff';
+      rarityLabel.style.color = rarityColor;
+
       wrapper.appendChild(img);
+      wrapper.appendChild(rarityLabel);
       grid.appendChild(wrapper);
     });
     
