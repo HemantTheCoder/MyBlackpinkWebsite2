@@ -992,7 +992,7 @@ let silhouetteRounds = [];
 let silhouetteCurrentRound = 0;
 let silhouetteScore = 0;
 let silhouetteHintsUsed = 0;
-const blurLevels = [20, 10, 4, 0];
+const blurLevels = [45, 20, 8, 0];
 
 window.initSilhouetteGame = function () {
   const startEl = document.getElementById('silhouette-start');
@@ -1022,7 +1022,7 @@ function loadSilhouetteRound() {
   const img = document.getElementById('silhouette-img');
   if (img) {
     img.src = member.url;
-    img.style.filter = 'brightness(0.08) contrast(2) blur(' + blurLevels[0] + 'px)';
+    img.style.filter = 'blur(' + blurLevels[0] + 'px) saturate(0.8) contrast(1.2)';
   }
   document.getElementById('silhouette-score-text').textContent = silhouetteScore;
   document.getElementById('silhouette-round-counter').textContent = silhouetteCurrentRound + 1;
@@ -1043,7 +1043,7 @@ window.useHint = function () {
   if (silhouetteHintsUsed >= 3) return;
   silhouetteHintsUsed++;
   const img = document.getElementById('silhouette-img');
-  if (img) img.style.filter = 'brightness(0.15) contrast(1.5) blur(' + blurLevels[silhouetteHintsUsed] + 'px)';
+  if (img) img.style.filter = 'blur(' + blurLevels[silhouetteHintsUsed] + 'px) saturate(1) contrast(1.1)';
   const hintsEl = document.getElementById('silhouette-hints-left');
   if (hintsEl) hintsEl.textContent = 3 - silhouetteHintsUsed;
   showToast('Hint used! Blur reduced (' + (3 - silhouetteHintsUsed) + ' left)', 1200);
