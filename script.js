@@ -363,11 +363,27 @@ function initScrollReveal() {
 }
 
 // =============================================
+// NAV HIGHLIGHT
+// =============================================
+function highlightActiveNav() {
+  const currentPath = window.location.pathname.split('/').pop() || 'index.html';
+  document.querySelectorAll('.btn-group a').forEach(link => {
+    const href = link.getAttribute('href');
+    if (!href) return;
+    const linkPath = href.split('?')[0].split('/').pop();
+    if (linkPath === currentPath || (currentPath === '' && linkPath === 'index.html')) {
+      link.classList.add('active');
+    } else {
+      link.classList.remove('active');
+    }
+  });
+}
+
+// =============================================
 // SPA ROUTING
 // =============================================
 document.addEventListener('DOMContentLoaded', function () {
   initBiasEngine();
-    initLightstickMode();
   initLightstickMode();
   initDailyStreak();
   initAll();
@@ -381,7 +397,7 @@ function initAll() {
   initPetalRain();
   initLightstickCanvas();
   initScrollReveal();
-    initBiasEngine();
+  highlightActiveNav();
   eraIdx = parseInt(localStorage.getItem(ERA_KEY) || '0');
   applyEra();
   const playerCollapsed = localStorage.getItem('playerCollapsed') === 'true';
@@ -489,6 +505,7 @@ async function navigateTo(url, push) {
     }
 
     initScrollReveal();
+    highlightActiveNav();
     eraIdx = parseInt(localStorage.getItem(ERA_KEY) || '0');
     applyEra();
 
@@ -2577,6 +2594,8 @@ async function fetchCurrentUser() {
       currentUser = await res.json();
       applyBiasTheme(currentUser.bias);
       updateNavProfileLink(true);
+      // Initialize notifications now that user is authenticated
+      setTimeout(initNotifications, 100);
       
       // If player is already ready but we just loaded the user, reload playlist
       if (ytPlayerReady && typeof ytLoadTrack === 'function' && currentUser.playlist && currentUser.playlist.length > 0) {
@@ -2650,13 +2669,13 @@ window.initLogin = function() {
         if (res.ok) {
           localStorage.setItem('user_token', data.token);
           await fetchCurrentUser();
-          navigateTo('profile.html');
-          if(typeof showToast === 'function') showToast(`Welcome back, ${data.username}!`);
+          await navigateTo('profile.html');
+          setTimeout(() => showToast(`Welcome back, ${data.username}! 💖`), 400);
         } else {
-          alert(data.error || 'Login failed');
+          showToast(data.error || 'Login failed ❌', 4000);
         }
       } catch (err) {
-        alert('Server error');
+        showToast('Server error. Please try again.', 4000);
       }
     };
   }
@@ -2679,13 +2698,13 @@ window.initLogin = function() {
         if (res.ok) {
           localStorage.setItem('user_token', data.token);
           await fetchCurrentUser();
-          navigateTo('profile.html');
-          if(typeof showToast === 'function') showToast(`Welcome to the Blink family, ${data.username}!`);
+          await navigateTo('profile.html');
+          setTimeout(() => showToast(`Welcome to the Blink family, ${data.username}! 🖤💖`), 400);
         } else {
-          alert(data.error || 'Registration failed');
+          showToast(data.error || 'Registration failed ❌', 4000);
         }
       } catch (err) {
-        alert('Server error');
+        showToast('Server error. Please try again.', 4000);
       }
     };
   }
@@ -2757,7 +2776,10 @@ window.initProfile = async function() {
         currentUser.bias = bias;
         currentUser.dob = dob;
         applyBiasTheme(bias);
-        if(typeof showToast === 'function') showToast('Profile updated!');
+        // Also update the visible profile header card
+        const profileBiasEl = document.getElementById('profile-bias');
+        if (profileBiasEl) profileBiasEl.textContent = `Bias: ${bias}`;
+        if(typeof showToast === 'function') showToast('Profile updated! ✨');
       }
     };
   }
@@ -2936,7 +2958,7 @@ window.savePlaylist = async function() {
       renderTracklist();
     }
   } else {
-    alert('Failed to save playlist');
+    showToast('Failed to save playlist ❌', 4000);
   }
 };
 
@@ -3063,11 +3085,12 @@ window.initFanArt = function() {
 };
 
 window.toggleLike = async function(id) {
-  if (!currentUser) return alert('Please login to like fan art!');
+  const token = localStorage.getItem('user_token');
+  if (!currentUser || !token) return showToast('Please login to like fan art! 💖', 3000);
   try {
     const res = await fetch(`${API_BASE}/api/gallery/${id}/like`, {
       method: 'POST',
-      headers: { 'Authorization': `Bearer ${currentUser.token}` }
+      headers: { 'Authorization': `Bearer ${token}` }
     });
     if (res.ok) window.initFanArt();
   } catch(e) {}
@@ -3220,19 +3243,18 @@ window.initPhotocards = function() {
   });
 };
 
-document.addEventListener('DOMContentLoaded', () => {
-  if (document.getElementById('birthday-timer')) initBirthdayCountdown();
-  if (document.getElementById('fanart-grid')) initFanArt();
-  if (document.getElementById('pull-card-btn')) initPhotocards();
-  initNotifications();
-});
+// Notifications are initialized from fetchCurrentUser() after auth succeeds.
 
 // --- Notifications Logic ---
 async function initNotifications() {
-  if (!currentUser || !currentUser.token) return;
+  const token = localStorage.getItem('user_token');
+  if (!token) return;
+  // Prevent duplicate bell icons if called more than once
+  if (document.getElementById('notif-bell-container')) return;
   
   // Inject Bell Icon to top right
   const bellContainer = document.createElement('div');
+  bellContainer.id = 'notif-bell-container';
   bellContainer.style.position = 'fixed';
   bellContainer.style.top = '20px';
   bellContainer.style.right = '20px';
@@ -3275,7 +3297,7 @@ async function initNotifications() {
   // Fetch Notifications
   try {
     const res = await fetch(`${API_BASE}/api/notifications`, {
-      headers: { 'Authorization': `Bearer ${currentUser.token}` }
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('user_token')}` }
     });
     const notifs = await res.json();
     
@@ -3306,7 +3328,7 @@ async function initNotifications() {
         if (unread > 0) {
           await fetch(`${API_BASE}/api/notifications/read`, {
             method: 'POST',
-            headers: { 'Authorization': `Bearer ${currentUser.token}` }
+            headers: { 'Authorization': `Bearer ${localStorage.getItem('user_token')}` }
           });
           badge.style.display = 'none';
         }
@@ -3357,9 +3379,10 @@ async function openMasterIndex() {
         
         const toggle = async (e) => {
           e.stopPropagation();
+          const wToken = localStorage.getItem('user_token');
           const res = await fetch(`${API_BASE}/api/wishlist`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${currentUser.token}` },
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${wToken}` },
             body: JSON.stringify({ cardId: card.id })
           });
           const data = await res.json();

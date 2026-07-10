@@ -166,6 +166,16 @@ a:hover {
   transform: translateY(-3px) scale(1.05);
 }
 
+/* Active nav button for the current page */
+.btn-group a.active {
+  background: var(--bp-pink);
+  color: var(--bp-black) !important;
+  box-shadow: 0 0 20px var(--bp-pink-glow);
+  transform: scale(1.05);
+  font-weight: 800;
+  pointer-events: none; /* Can't re-click current page */
+}
+
 .btn-glow {
   background: linear-gradient(135deg, var(--bp-pink), #ff66b2);
   color: #fff !important;
