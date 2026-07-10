@@ -3110,9 +3110,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
+
 // =============================================
 // KONAMI CODE EASTER EGGS
 // =============================================
+
+function spawnEmojiRain(emojis) {
+  for (let i = 0; i < 30; i++) {
+    const el = document.createElement('div');
+    el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+    el.style.position = 'fixed';
+    el.style.left = Math.random() * 100 + 'vw';
+    el.style.top = '-50px';
+    el.style.fontSize = (Math.random() * 20 + 20) + 'px';
+    el.style.zIndex = '999999';
+    el.style.pointerEvents = 'none';
+    el.style.transition = 'top ' + (Math.random() * 2 + 2) + 's cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+    document.body.appendChild(el);
+    
+    // Trigger animation next frame
+    requestAnimationFrame(() => {
+      setTimeout(() => {
+        el.style.top = '120vh';
+      }, 10);
+    });
+    
+    // Cleanup
+    setTimeout(() => el.remove(), 5000);
+  }
+}
+
 let secretBuffer = '';
 document.addEventListener('keydown', (e) => {
   secretBuffer += e.key.toLowerCase();
