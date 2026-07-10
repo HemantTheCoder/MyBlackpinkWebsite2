@@ -367,16 +367,30 @@ function initScrollReveal() {
 // =============================================
 function highlightActiveNav() {
   const currentPath = window.location.pathname.split('/').pop() || 'index.html';
+  let activeLink = null;
   document.querySelectorAll('.btn-group a').forEach(link => {
     const href = link.getAttribute('href');
     if (!href) return;
     const linkPath = href.split('?')[0].split('/').pop();
     if (linkPath === currentPath || (currentPath === '' && linkPath === 'index.html')) {
       link.classList.add('active');
+      activeLink = link;
     } else {
       link.classList.remove('active');
     }
   });
+  // Scroll the active nav item into view in the horizontal strip
+  if (activeLink) {
+    setTimeout(() => {
+      const nav = activeLink.closest('.btn-group');
+      if (nav) {
+        const linkOffset = activeLink.offsetLeft;
+        const linkWidth  = activeLink.offsetWidth;
+        const navWidth   = nav.offsetWidth;
+        nav.scrollTo({ left: linkOffset - navWidth / 2 + linkWidth / 2, behavior: 'smooth' });
+      }
+    }, 80);
+  }
 }
 
 // =============================================

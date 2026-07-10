@@ -121,25 +121,43 @@ a:hover {
   border: 1px solid var(--glass-border);
   border-radius: 20px;
   padding: 2.5rem;
-  margin-bottom: 2rem;
+  margin-bottom: 3rem;
   box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5), inset 0 0 10px rgba(255, 42, 133, 0.05);
-  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease, border-color 0.4s ease;
+  transition: box-shadow 0.4s ease, border-color 0.4s ease, transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.glass-card:hover {
+/* Only lift cards that are actual links or explicitly interactive */
+a.glass-card:hover,
+.glass-card.lift:hover {
   transform: translateY(-8px) scale(1.02);
+}
+
+/* All hoverable cards get the glow/border effect */
+.glass-card:hover {
   box-shadow: 0 15px 40px 0 var(--bp-pink-glow);
-  border-color: var(--bp-pink);
+  border-color: rgba(255, 42, 133, 0.5);
 }
 
 /* Buttons */
 .btn-group {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 1rem;
-  margin: 2rem 0;
+  flex-wrap: nowrap;            /* Single row — no more multi-row wall */
+  overflow-x: auto;
+  overflow-y: hidden;
+  justify-content: flex-start;
+  gap: 0.6rem;
+  margin: 1.5rem 0 2.5rem;
+  padding: 0.5rem 0.25rem 1rem; /* bottom padding for scrollbar gap */
+  /* Hide native scrollbar while keeping scroll */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  -webkit-overflow-scrolling: touch;
+  /* Fade at edges to hint scrollability */
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 3%, black 97%, transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0%, black 3%, black 97%, transparent 100%);
 }
+.btn-group::-webkit-scrollbar { display: none; }
+.btn-group > * { flex-shrink: 0; } /* Items never shrink */
 
 .btn {
   background: rgba(255, 42, 133, 0.15);
@@ -1933,18 +1951,19 @@ body.era-deadline {
 
 .virtual-lightstick {
   font-size: 10rem;
-  
   filter: drop-shadow(0 0 40px var(--bp-pink));
   cursor: pointer;
   user-select: none;
   transition: transform 0.1s;
+  animation: lightstickPulse 2s ease-in-out infinite alternate;
 }
 .virtual-lightstick:active {
   transform: scale(0.9) rotate(-10deg);
 }
 
-
-  100% { filter: drop-shadow(0 0 60px var(--bp-pink)) brightness(1.5); transform: scale(1.05); }
+@keyframes lightstickPulse {
+  from { filter: drop-shadow(0 0 30px var(--bp-pink)) brightness(1);   transform: scale(1); }
+  to   { filter: drop-shadow(0 0 60px var(--bp-pink)) brightness(1.5); transform: scale(1.05); }
 }
 
 /* Scrollbar and Selection Styles */
@@ -1976,10 +1995,11 @@ body.era-deadline {
   h1 { font-size: 2rem !important; }
   h2 { font-size: 1.6rem !important; }
   .container { padding: 1rem; }
-  .glass-card { padding: 1.5rem; box-sizing: border-box; width: 100%; margin-bottom: 1.5rem; }
+  .glass-card { padding: 1.5rem; box-sizing: border-box; width: 100%; margin-bottom: 2rem; }
   .blink-wall-grid, .era-grid { grid-template-columns: 1fr; }
-  .btn-group { gap: 0.5rem; margin: 1rem 0; }
-  .btn { padding: 8px 16px; font-size: 0.85rem; }
+  /* Preserve the horizontal-scroll nav; just shrink the gap & button text */
+  .btn-group { gap: 0.5rem; margin: 1rem 0 1.5rem; padding: 0.4rem 0.25rem 0.8rem; }
+  .btn { padding: 8px 14px; font-size: 0.8rem; letter-spacing: 0.5px; }
   
   /* Timeline fixes */
   .timeline-line { left: 20px; }
