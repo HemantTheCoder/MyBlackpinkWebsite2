@@ -38,7 +38,7 @@ const defaultYtPlaylist = [
   { title: "Mantra", artist: "Jennie", videoId: "bB3-CUMERIU" },
   { title: "On The Ground", artist: "Rosé", videoId: "CKZvWhCqx1s" },
   { title: "APT.", artist: "Rosé & Bruno Mars", videoId: "ekr2nIex040" },
-    { title: "BLACKPINK Lofi Mix", artist: "Chill Vibes", videoId: "3Kz3q8F_qM4" },
+    { title: "BLACKPINK Lofi Mix", artist: "Chill Vibes", videoId: "vYXMpst8JP4" },
   { title: "Hard To Love", artist: "Rosé", videoId: "rAhdioquBnI" },
   { title: "LALISA", artist: "Lisa", videoId: "awkkyBH2zEo" },
   { title: "ROCKSTAR", artist: "Lisa", videoId: "hbcGx4MGUMg" },
