@@ -3104,6 +3104,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
+
 // =============================================
 // KONAMI CODE EASTER EGGS
 // =============================================
@@ -3143,7 +3144,7 @@ document.addEventListener('keydown', (e) => {
     secretBuffer = '';
     showToast(message, 3000);
     spawnEmojiRain(emojis);
-    document.body.style.boxShadow = inset 0 0 50px ;
+    document.body.style.boxShadow = `inset 0 0 50px ${color}`;
     setTimeout(() => document.body.style.boxShadow = 'none', 1000);
   }
 });
@@ -3155,10 +3156,10 @@ function initMascot() {
   if (document.getElementById('virtual-mascot')) return;
   const mascot = document.createElement('div');
   mascot.id = 'virtual-mascot';
-  mascot.innerHTML = 
+  mascot.innerHTML = `
     <div style="font-size: 2.5rem; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5)); cursor: pointer; transition: transform 0.2s; user-select: none;" id="mascot-img">🐻</div>
     <div id="mascot-bubble" style="position:absolute; top:-35px; right:-20px; background:white; color:black; padding:4px 8px; border-radius:10px; font-size:0.7rem; font-weight:bold; opacity:0; transition:opacity 0.3s; white-space:nowrap; pointer-events:none; box-shadow:0 2px 10px rgba(0,0,0,0.3);"></div>
-  ;
+  `;
   mascot.style.position = 'fixed';
   mascot.style.bottom = '20px';
   mascot.style.right = '20px';
@@ -3171,14 +3172,14 @@ function initMascot() {
   if (!document.getElementById('mascot-style')) {
     const style = document.createElement('style');
     style.id = 'mascot-style';
-    style.textContent = 
+    style.textContent = `
       @keyframes floatMascot {
         0%, 100% { transform: translateY(0); }
         50% { transform: translateY(-10px); }
       }
       #virtual-mascot:hover #mascot-img { transform: scale(1.15) rotate(-5deg); }
       #virtual-mascot:active #mascot-img { transform: scale(0.9); }
-    ;
+    `;
     document.head.appendChild(style);
   }
 
@@ -3258,7 +3259,7 @@ function initCursorTrail() {
       const dx = Math.cos(angle) * dist;
       const dy = Math.sin(angle) * dist - 30; // float up a bit
       
-      heart.style.transform = 	ranslate(px, px) scale(0.5);
+      heart.style.transform = `translate(${dx}px, ${dy}px) scale(0.5)`;
       heart.style.opacity = '0';
     }, 10);
     
@@ -3281,7 +3282,7 @@ window.addEXP = function(amount, reason) {
   if (newLevel.level > currentLevel.level) {
     triggerLevelUp(newLevel);
   } else {
-    showToast(+ EXP: , 3000);
+    showToast(`+${amount} EXP: ${reason}`, 3000);
   }
 }
 
@@ -3305,13 +3306,13 @@ function triggerLevelUp(levelInfo) {
   modal.style.justifyContent = 'center';
   modal.style.animation = 'toastSlide 0.5s ease-out';
   
-  modal.innerHTML = 
+  modal.innerHTML = `
     <h1 style="color:var(--bp-pink); font-size:4rem; margin-bottom:1rem; text-shadow:0 0 20px var(--bp-pink-glow); text-transform:uppercase;">LEVEL UP!</h1>
     <p style="color:#fff; font-size:1.5rem; margin-bottom:0.5rem;">You are now a</p>
-    <h2 style="color:#fff; font-size:3rem; margin-bottom:2rem; letter-spacing:2px;"></h2>
+    <h2 style="color:#fff; font-size:3rem; margin-bottom:2rem; letter-spacing:2px;">${levelInfo.name}</h2>
     <p style="color:#aaa; max-width:500px; text-align:center; line-height:1.6; margin-bottom:3rem;">Your dedication to BLACKPINK is paying off. Keep streaming, collecting, and chatting!</p>
     <button class="btn btn-glow" style="font-size:1.2rem; padding:1rem 2.5rem;" onclick="this.parentElement.remove()">Continue 🖤💖</button>
-  ;
+  `;
   document.body.appendChild(modal);
   
   // Confetti
