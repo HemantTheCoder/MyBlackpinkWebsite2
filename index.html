@@ -1,27 +1,27 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="Author" content="Hemant">
   <meta name="Description" content="The ultimate BLACKPINK fan experience! Explore the discography, play mini-games, collect virtual photocards in the Gacha, and unlock the Vault. Made for Blinks, by a Blink.">
-  <meta name="keywords" content="BLACKPINK, Blink, K-pop, Fan Website, Blackpink Games, Photocard Gacha, K-pop Wiki, Jisoo, Jennie, RosÃ©, Lisa">
+  <meta name="keywords" content="BLACKPINK, Blink, K-pop, Fan Website, Blackpink Games, Photocard Gacha, K-pop Wiki, Jisoo, Jennie, Rosé, Lisa">
   
   <!-- Open Graph / Facebook / Reddit -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://myblackpinkwebsite.vercel.app/">
-  <meta property="og:title" content="BLACKPINK Hub â€” Games, Lore & Photocard Gacha!">
+  <meta property="og:title" content="BLACKPINK Hub — Games, Lore & Photocard Gacha!">
   <meta property="og:description" content="The ultimate BLACKPINK fan experience! Play mini-games, collect virtual photocards, and unlock the Vault.">
   <meta property="og:image" content="https://commons.wikimedia.org/wiki/Special:FilePath/Blackpink_PUBG_210321.jpg?width=1200">
 
   <!-- Twitter / X -->
   <meta property="twitter:card" content="summary_large_image">
   <meta property="twitter:url" content="https://myblackpinkwebsite.vercel.app/">
-  <meta property="twitter:title" content="BLACKPINK Hub â€” Games, Lore & Photocard Gacha!">
+  <meta property="twitter:title" content="BLACKPINK Hub — Games, Lore & Photocard Gacha!">
   <meta property="twitter:description" content="The ultimate BLACKPINK fan experience! Play mini-games, collect virtual photocards, and unlock the Vault.">
   <meta property="twitter:image" content="https://commons.wikimedia.org/wiki/Special:FilePath/Blackpink_PUBG_210321.jpg?width=1200">
 
-  <title>BLACKPINK Hub â€” The Ultimate Blink Experience</title>
+  <title>BLACKPINK Hub — The Ultimate Blink Experience</title>
   <link rel="stylesheet" href="styles.css?v=1782403755244">
   <link rel="manifest" href="manifest.json">
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -76,31 +76,50 @@
   <main class="container">
 
     <!-- Navigation Buttons -->
-    <nav class="btn-group">
-      <a href="index.html?v=1782403788303" class="btn">&#127968; Home</a>
-      <a href="aboutmembers.html?v=1782403788303" class="btn">&#127915; Members</a>
-      <a href="discography.html?v=1782403788303" class="btn">&#127925; Discography</a>
-      <a href="timeline.html?v=1782403788303" class="btn">&#128197; Timeline</a>
-      <a href="records.html?v=1782403788303" class="btn">&#127942; Records</a>
-      <a href="gallery.html?v=1782403788303" class="btn">&#128247; Gallery</a>
-      <a href="worldtour.html?v=1782403788303" class="btn">&#127758; World Tour</a>
-      <a href="videos.html?v=1782403788303" class="btn">&#127909; Videos</a>
-      <a href="games.html?v=1782403788303" class="btn">&#127918; Games</a>
-      <a href="quiz.html" class="btn">âœ¨ Quiz</a>
-      <a href="quote-generator.html?v=1782403788303" class="btn">&#128172; Quote Generator</a>
-      <a href="aboutme.html?v=1782403788303" class="btn">&#129492; About Me!</a>
-      <a href="blink-id.html?v=20260625" class="btn">ðŸªª Blink ID</a>
-      <a href="blink-wall.html" class="btn">ðŸ“ Blink Wall</a>
-      <a href="vault.html?v=20260625" class="btn">ðŸ”’ Vault</a>
-      <a href="fanart.html" class="btn">ðŸŽ¨ Fan Art</a>
-      <a href="photocards.html" class="btn">ðŸŽ´ Photocards</a>
-      <a href="feedback.html" class="btn">ðŸ’¬ Feedback</a>
-      <a href="profile.html" class="btn" id="nav-profile-btn">ðŸ‘¤ Profile/Login</a>
+    <nav class="horizontal-scroll-nav" style="overflow-x: auto; padding-bottom: 5px;">
+      <a href="index.html" class="btn active-btn">🏠 HOME</a>
+      <a href="members.html" class="btn">🎫 MEMBERS</a>
+      <a href="discography.html" class="btn">🎵 DISCOGRAPHY</a>
+      <a href="timeline.html" class="btn">📅 TIMELINE</a>
+      <a href="records.html" class="btn">🏆 RECORDS</a>
+      <a href="gallery.html" class="btn">📸 GALLERY</a>
+      <a href="tour.html" class="btn">🌎 WORLD TOUR</a>
+      <a href="games.html" class="btn">🎮 GAMES</a>
+      <a href="merch.html" class="btn">🛍️ MERCH</a>
+      <a href="aboutme.html?v=1782403788303" class="btn">🧗 About Me!</a>
+      <a href="blink-id.html?v=20260625" class="btn">🪪 Blink ID</a>
+      <a href="blink-wall.html" class="btn">📝 Blink Wall</a>
+      <a href="vault.html?v=20260625" class="btn">🔒 Vault</a>
+      <a href="fanart.html" class="btn">🎨 Fan Art</a>
+      <a href="feedback.html" class="btn">💬 Feedback</a>
+      <a href="study.html" class="btn" style="color:var(--bp-pink);">🎧 Study Mode</a>
+      <a href="photobooth.html" class="btn" style="color:var(--bp-pink);">📸 Photo Booth</a>
+      <a href="setlist.html" class="btn" style="color:var(--bp-pink);">🎤 Setlist Builder</a>
+      <a href="quiz.html" class="btn" style="color:var(--bp-pink);">🧠 Quiz</a>
+      <a href="photocards.html" class="btn">🎴 Photocards</a>
+      <a href="profile.html" class="btn" id="nav-profile-btn">👤 Profile/Login</a>
     </nav>
 
-      <!-- Next Birthday Card -->
-      <div class="glass-card" style="max-width: 800px; margin: 0 auto 2rem; padding: 0.8rem 1.5rem; animation: pulse 3s infinite; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
-        <h2 class="neon-text" style="font-size: 1.2rem; margin: 0;">ðŸŽ‚ Upcoming Member Birthday: <span id="birthday-name" style="color: var(--bp-pink);">Loading...</span></h2>
+    <!-- Song of the Day -->
+    <section class="glass-card reveal" id="sotd-card" style="max-width:800px; margin:0 auto 3rem;">
+      <div class="sotd-day-badge">🎵 Song of the Day</div>
+      <div style="display:flex; align-items:center; gap:1.5rem; flex-wrap:wrap;">
+        <div class="sotd-thumb">
+          <img id="sotd-img" src="" alt="Song of the Day" style="width:100px; height:100px; border-radius:15px; object-fit:cover; box-shadow:0 0 15px rgba(255,105,180,0.5);">
+        </div>
+        <div style="flex:1;">
+          <div id="sotd-title" style="font-size:1.4rem; font-weight:800; color:#fff; margin-bottom:0.3rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Loading...</div>
+          <div id="sotd-artist" style="color:var(--bp-pink); font-size:0.9rem; margin-bottom:0.5rem; text-transform:uppercase; letter-spacing:1px;">BLACKPINK</div>
+          <div style="font-size:0.75rem; color:#888;">Updates every day ✨</div>
+        </div>
+        <button class="btn btn-glow pulse" id="sotd-play-btn" style="padding:0.5rem 1.5rem; font-size:1.1rem; border-radius:30px;">▶ PLAY NOW</button>
+      </div>
+    </section>
+
+    <!-- Upcoming Birthday -->
+    <section class="glass-card reveal" style="max-width: 800px; margin: 0 auto 3rem;">
+      <div style="display: flex; flex-direction: column; align-items: center; justify-content: space-between; gap: 1rem; width: 100%;">
+        <h2 class="neon-text" style="font-size: 1.2rem; margin: 0;">🎂 Upcoming Member Birthday: <span id="birthday-name" style="color: var(--bp-pink);">Loading...</span></h2>
         <div style="display: flex; align-items: center; gap: 15px;">
           <div id="birthday-timer" style="font-size: 1.2rem; font-family: monospace; letter-spacing: 1px; color: #fff; margin: 0;">
             --:--:--:--
@@ -109,34 +128,18 @@
         </div>
       </div>
 
-    <!-- Song of the Day -->
-    <section class="glass-card reveal" id="sotd-card" style="max-width:800px; margin:0 auto 3rem;">
-      <div class="sotd-day-badge">ðŸŽµ Song of the Day</div>
-      <div style="display:flex; align-items:center; gap:1.5rem; flex-wrap:wrap;">
-        <div class="sotd-thumb">
-          <img id="sotd-thumb" src="" alt="Album art" onerror="this.style.display='none'">
-        </div>
-        <div style="flex:1; min-width:0;">
-          <div id="sotd-title" style="font-size:1.4rem; font-weight:800; color:#fff; margin-bottom:0.3rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Loading...</div>
-          <div id="sotd-artist" style="font-size:0.95rem; color:var(--bp-pink); font-weight:600;"></div>
-          <div style="font-size:0.78rem; color:#666; margin-top:0.3rem;">Updates every day âœ¨</div>
-        </div>
-        <button class="btn btn-glow" id="sotd-play-btn" onclick="playSongOfDay()" style="flex-shrink:0;">â–¶ Play Now</button>
-      </div>
-    </section>
-
     <!-- About Blackpink Card -->
     <section class="glass-card reveal">
       <h2>About Blackpink</h2>
       <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Blackpink_PUBG_210321.jpg?width=800" alt="Blackpink Group" class="featured-img">
       <p style="text-align: justify; margin-bottom: 1.5rem;">
-        <strong>Blackpink</strong> (Hangul: ë¸”ëž™í•‘í¬; commonly stylized as BLACKPINK or BLÎ›Æ†KPIÐ˜K) is a South Korean girl group formed by YG Entertainment, consisting of members <strong>Jisoo, Jennie, RosÃ©, and Lisa</strong>. The group debuted in August 2016 with their single album <em>Square One</em>, which featured "Whistle" and "Boombayah".
+        <strong>Blackpink</strong> (Hangul: 블랙핑크; commonly stylized as BLACKPINK or BLΛƆKPIИK) is a South Korean girl group formed by YG Entertainment, consisting of members <strong>Jisoo, Jennie, Rosé, and Lisa</strong>. The group debuted in August 2016 with their single album <em>Square One</em>, which featured "Whistle" and "Boombayah".
       </p>
       <p style="text-align: justify; margin-bottom: 1.5rem;">
         Blackpink has broken numerous online records throughout their career. Their music videos for "Kill This Love" (2019) and "How You Like That" each set records for the most-viewed music video within the first 24 hours of release, with the latter breaking three and setting two Guinness World Records. They are also the first music group and Korean act to have three music videos with at least one billion views on YouTube.
       </p>
       <p style="text-align: justify; margin-bottom: 1.5rem;">
-        <strong>Recent Activities (2025-2026):</strong> Blackpink completed their massively successful <em>"Deadline" World Tour</em> in early 2026. Their 2026 title track <strong>"GO"</strong> from the third mini-album, <em>Deadline</em>, features songwriting credits from all four members alongside Chris Martin! While the members renewed their group contracts with YG Entertainment, they have all established their own successful agencies for solo activities: Jennie (OA/ODD ATELIER), Lisa (LLOUD), Jisoo (BLISSOO), and RosÃ© (THEBLACKLABEL).
+        <strong>Recent Activities (2025-2026):</strong> Blackpink completed their massively successful <em>"Deadline" World Tour</em> in early 2026. Their 2026 title track <strong>"GO"</strong> from the third mini-album, <em>Deadline</em>, features songwriting credits from all four members alongside Chris Martin! While the members renewed their group contracts with YG Entertainment, they have all established their own successful agencies for solo activities: Jennie (OA/ODD ATELIER), Lisa (LLOUD), Jisoo (BLISSOO), and Rosé (THEBLACKLABEL).
       </p>
       <div class="text-center" style="margin-top: 2rem;">
         <a href="https://en.wikipedia.org/wiki/Blackpink" class="btn primary" target="_blank">Read More on Wikipedia</a>
@@ -155,7 +158,7 @@
         <a href="timeline.html?v=1782403788303" class="glass-card" style="text-align:center; padding:2rem 1rem; text-decoration:none; margin-bottom:0;">
           <div style="font-size:2.5rem; margin-bottom:0.75rem;">&#128197;</div>
           <div style="font-weight:800; color:#fff; margin-bottom:0.5rem;">Timeline</div>
-          <div style="font-size:0.85rem; color:#aaa;">2016 â†’ 2026 history</div>
+          <div style="font-size:0.85rem; color:#aaa;">2016 → 2026 history</div>
         </a>
         <a href="records.html?v=1782403788303" class="glass-card" style="text-align:center; padding:2rem 1rem; text-decoration:none; margin-bottom:0;">
           <div style="font-size:2.5rem; margin-bottom:0.75rem;">&#127942;</div>
@@ -189,28 +192,28 @@
           <div class="poll-bar" id="poll-bar-Square-Up"></div>
           <div class="poll-label">
             <span>&#127987; Square Up</span>
-            <span class="poll-pct" id="poll-pct-Square-Up">â€”</span>
+            <span class="poll-pct" id="poll-pct-Square-Up">—</span>
           </div>
         </div>
         <div class="poll-option" id="poll-opt-Kill-This-Love" onclick="castVote('Kill This Love')">
           <div class="poll-bar" id="poll-bar-Kill-This-Love"></div>
           <div class="poll-label">
             <span>&#128148; Kill This Love</span>
-            <span class="poll-pct" id="poll-pct-Kill-This-Love">â€”</span>
+            <span class="poll-pct" id="poll-pct-Kill-This-Love">—</span>
           </div>
         </div>
         <div class="poll-option" id="poll-opt-Born-Pink" onclick="castVote('Born Pink')">
           <div class="poll-bar" id="poll-bar-Born-Pink"></div>
           <div class="poll-label">
             <span>&#127897; Born Pink</span>
-            <span class="poll-pct" id="poll-pct-Born-Pink">â€”</span>
+            <span class="poll-pct" id="poll-pct-Born-Pink">—</span>
           </div>
         </div>
         <div class="poll-option" id="poll-opt-Deadline" onclick="castVote('Deadline')">
           <div class="poll-bar" id="poll-bar-Deadline"></div>
           <div class="poll-label">
             <span>&#9889; Deadline</span>
-            <span class="poll-pct" id="poll-pct-Deadline">â€”</span>
+            <span class="poll-pct" id="poll-pct-Deadline">—</span>
           </div>
         </div>
       </div>
@@ -225,7 +228,7 @@
           <strong>Blink of the Month</strong> is our way of celebrating the most passionate, creative, and dedicated fans in our community! Every month, we spotlight one special Blink right here on the homepage.
         </p>
         <div style="background: rgba(255, 255, 255, 0.05); padding: 1.5rem; border-radius: 15px; border: 1px solid var(--glass-border); text-align: left; max-width: 600px; margin: 0 auto;">
-          <h3 style="color: var(--bp-pink); margin-bottom: 1rem; font-size: 1.3rem;">âœ¨ How to get featured:</h3>
+          <h3 style="color: var(--bp-pink); margin-bottom: 1rem; font-size: 1.3rem;">✨ How to get featured:</h3>
           <ul style="list-style: none; padding: 0; font-size: 1.05rem; line-height: 1.8;">
             <li><span style="color: var(--bp-pink);">1.</span> Be active in the Blackpink fandom and show your love!</li>
             <li><span style="color: var(--bp-pink);">2.</span> Score high on our <a href="games.html?v=1782403788303" style="color: #fff; text-decoration: underline;">Blink Games Leaderboard</a>.</li>
@@ -255,52 +258,13 @@
 
   </main>
 
-  <footer style="margin-top:4rem; border-top:1px solid var(--glass-border);">
-    <div class="container" style="padding-top:3rem; padding-bottom:3rem;">
-      <div style="display:grid; grid-template-columns:1.4fr 1fr 1fr; gap:3rem; margin-bottom:3rem; align-items:start;">
-        <!-- Brand -->
-        <div>
-          <div style="font-size:1.3rem; font-weight:900; color:var(--bp-pink); margin-bottom:0.75rem; letter-spacing:1px;">ðŸ’– BLACKPINK HUB</div>
-          <p style="color:#666; font-size:0.88rem; line-height:1.75; max-width:260px;">The ultimate fan experience for Blinks everywhere. Created with love for the greatest girl group of all time.</p>
-          <div style="display:flex; gap:1rem; margin-top:1.25rem;">
-            <a href="https://instagram.com/blackpinkofficial" target="_blank" style="color:#aaa; font-size:1.3rem; transition:color 0.2s;" onmouseenter="this.style.color='var(--bp-pink)'" onmouseleave="this.style.color='#aaa'">&#128247;</a>
-            <a href="https://twitter.com/BLACKPINK" target="_blank" style="color:#aaa; font-size:1.3rem; transition:color 0.2s;" onmouseenter="this.style.color='var(--bp-pink)'" onmouseleave="this.style.color='#aaa'">&#120143;</a>
-            <a href="https://youtube.com/blackpink" target="_blank" style="color:#aaa; font-size:1.3rem; transition:color 0.2s;" onmouseenter="this.style.color='var(--bp-pink)'" onmouseleave="this.style.color='#aaa'">&#128250;</a>
-          </div>
-        </div>
-        <!-- Explore links -->
-        <div>
-          <div style="font-size:0.7rem; font-weight:800; text-transform:uppercase; letter-spacing:2px; color:var(--bp-pink); margin-bottom:1rem;">Explore</div>
-          <nav style="display:flex; flex-direction:column; gap:0.55rem;">
-            <a href="discography.html" style="color:#888; font-size:0.88rem; transition:color 0.2s;" onmouseenter="this.style.color='#fff'" onmouseleave="this.style.color='#888'">&#127925; Discography</a>
-            <a href="timeline.html" style="color:#888; font-size:0.88rem; transition:color 0.2s;" onmouseenter="this.style.color='#fff'" onmouseleave="this.style.color='#888'">&#128197; Timeline</a>
-            <a href="records.html" style="color:#888; font-size:0.88rem; transition:color 0.2s;" onmouseenter="this.style.color='#fff'" onmouseleave="this.style.color='#888'">&#127942; Records</a>
-            <a href="gallery.html" style="color:#888; font-size:0.88rem; transition:color 0.2s;" onmouseenter="this.style.color='#fff'" onmouseleave="this.style.color='#888'">&#128247; Gallery</a>
-            <a href="worldtour.html" style="color:#888; font-size:0.88rem; transition:color 0.2s;" onmouseenter="this.style.color='#fff'" onmouseleave="this.style.color='#888'">&#127758; World Tour</a>
-          </nav>
-        </div>
-        <!-- Community links -->
-        <div>
-          <div style="font-size:0.7rem; font-weight:800; text-transform:uppercase; letter-spacing:2px; color:var(--bp-pink); margin-bottom:1rem;">Community</div>
-          <nav style="display:flex; flex-direction:column; gap:0.55rem;">
-            <a href="games.html" style="color:#888; font-size:0.88rem; transition:color 0.2s;" onmouseenter="this.style.color='#fff'" onmouseleave="this.style.color='#888'">&#127918; Games</a>
-            <a href="photocards.html" style="color:#888; font-size:0.88rem; transition:color 0.2s;" onmouseenter="this.style.color='#fff'" onmouseleave="this.style.color='#888'">&#127924; Photocard Gacha</a>
-            <a href="blink-wall.html" style="color:#888; font-size:0.88rem; transition:color 0.2s;" onmouseenter="this.style.color='#fff'" onmouseleave="this.style.color='#888'">&#128221; Blink Wall</a>
-            <a href="fanart.html" style="color:#888; font-size:0.88rem; transition:color 0.2s;" onmouseenter="this.style.color='#fff'" onmouseleave="this.style.color='#888'">&#127912; Fan Art</a>
-            <a href="profile.html" style="color:#888; font-size:0.88rem; transition:color 0.2s;" onmouseenter="this.style.color='#fff'" onmouseleave="this.style.color='#888'">&#128100; My Profile</a>
-          </nav>
-        </div>
-      </div>
-      <!-- Bottom bar -->
-      <div style="border-top:1px solid rgba(255,255,255,0.06); padding-top:1.5rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
-        <p style="color:#444; font-size:0.82rem; margin:0;">Created with &#128150; by <a href="https://github.com/HemantTheCoder" target="_blank" style="color:var(--bp-pink);">Hemant</a> &nbsp;&middot;&nbsp; Not affiliated with BLACKPINK or YG Entertainment.</p>
-        <div style="display:flex; align-items:center; gap:0.5rem; color:#444; font-size:0.78rem;">
-          <span>&#128065; Views:</span>
-          <a href="index.html" target="_blank">
-            <img src="https://hitwebcounter.com/counter/counter.php?page=7691742&style=0001&nbdigits=4&type=page&initCount=0" title="Total Website Hits" alt="Web Hits" style="border:0; height:18px;">
-          </a>
-        </div>
-      </div>
+  <footer>
+    <p>Created with &#128150; by <a href="https://github.com/HemantTheCoder" target="_blank">Hemant</a></p>
+    <div style="margin-top: 1rem;">
+      <p style="font-size: 0.9rem; margin-bottom: 0.5rem;">Page Views:</p>
+      <a href="index.html?v=1782403788303" target="_blank">
+        <img src="https://hitwebcounter.com/counter/counter.php?page=7691742&style=0001&nbdigits=4&type=page&initCount=0" title="Total Website Hits" alt="Web Hits" border="0">
+      </a>
     </div>
   </footer>
 
@@ -314,10 +278,7 @@
   <div id="music-player">
     <div class="player-toggle" onclick="toggleMusicPlayer()">
       <span class="player-toggle-label">&#127925; BLACKPINK Music</span>
-      <div style="display:flex; align-items:center; gap:10px;">
-        <button class="btn btn-glow" style="padding: 2px 8px; font-size: 0.7rem; letter-spacing: 0; background: #000; border: 1px solid var(--bp-pink);" onclick="event.stopPropagation(); showToast('Concert Mode is currently in development! ðŸš§', 4000);" title="Concert Mode (Coming Soon)">ðŸŽ«</button>
-        <span id="player-toggle-icon">&#9660;</span>
-      </div>
+      <span id="player-toggle-icon">&#9660;</span>
     </div>
     <div id="player-body">
       <div class="player-track-info">
@@ -332,7 +293,6 @@
         <button class="ctrl-btn" onclick="ytPrev()" title="Previous">&#9198;</button>
         <button class="ctrl-btn play-pause" id="yt-play-btn" onclick="ytPlayPause()" title="Play/Pause">&#9654;</button>
         <button class="ctrl-btn" onclick="ytNext()" title="Next">&#9197;</button>
-        <button class="ctrl-btn" onclick="showToast('Karaoke/Fanchant Mode is currently in development! ðŸš§', 4000)" title="Karaoke Mode (Coming Soon)">ðŸŽ¤</button>
       </div>
       <div class="player-tracklist" id="player-tracklist"></div>
     </div>
@@ -347,4 +307,3 @@
 
 </body>
 </html>
-

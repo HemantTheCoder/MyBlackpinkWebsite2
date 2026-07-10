@@ -36,9 +36,9 @@ const defaultYtPlaylist = [
   { title: "Ready For Love", artist: "BLACKPINK", videoId: "ruaAvL8hYI0" },
   { title: "SOLO", artist: "Jennie", videoId: "b73BI9eUkjM" },
   { title: "Mantra", artist: "Jennie", videoId: "bB3-CUMERIU" },
-  { title: "On The Ground", artist: "RosÃƒÂ©", videoId: "CKZvWhCqx1s" },
-  { title: "APT.", artist: "RosÃƒÂ© & Bruno Mars", videoId: "ekr2nIex040" },
-  { title: "Hard To Love", artist: "RosÃƒÂ©", videoId: "rAhdioquBnI" },
+  { title: "On The Ground", artist: "Rosé", videoId: "CKZvWhCqx1s" },
+  { title: "APT.", artist: "Rosé & Bruno Mars", videoId: "ekr2nIex040" },
+  { title: "Hard To Love", artist: "Rosé", videoId: "rAhdioquBnI" },
   { title: "LALISA", artist: "Lisa", videoId: "awkkyBH2zEo" },
   { title: "ROCKSTAR", artist: "Lisa", videoId: "hbcGx4MGUMg" },
   { title: "MONEY", artist: "Lisa", videoId: "dNCWe_6HAM8" },
@@ -363,41 +363,11 @@ function initScrollReveal() {
 }
 
 // =============================================
-// NAV HIGHLIGHT
-// =============================================
-function highlightActiveNav() {
-  const currentPath = window.location.pathname.split('/').pop() || 'index.html';
-  let activeLink = null;
-  document.querySelectorAll('.btn-group a').forEach(link => {
-    const href = link.getAttribute('href');
-    if (!href) return;
-    const linkPath = href.split('?')[0].split('/').pop();
-    if (linkPath === currentPath || (currentPath === '' && linkPath === 'index.html')) {
-      link.classList.add('active');
-      activeLink = link;
-    } else {
-      link.classList.remove('active');
-    }
-  });
-  // Scroll the active nav item into view in the horizontal strip
-  if (activeLink) {
-    setTimeout(() => {
-      const nav = activeLink.closest('.btn-group');
-      if (nav) {
-        const linkOffset = activeLink.offsetLeft;
-        const linkWidth  = activeLink.offsetWidth;
-        const navWidth   = nav.offsetWidth;
-        nav.scrollTo({ left: linkOffset - navWidth / 2 + linkWidth / 2, behavior: 'smooth' });
-      }
-    }, 80);
-  }
-}
-
-// =============================================
 // SPA ROUTING
 // =============================================
 document.addEventListener('DOMContentLoaded', function () {
   initBiasEngine();
+    initLightstickMode();
   initLightstickMode();
   initDailyStreak();
   initAll();
@@ -411,11 +381,7 @@ function initAll() {
   initPetalRain();
   initLightstickCanvas();
   initScrollReveal();
-  highlightActiveNav();
-  initSongOfDay();
-  initMascot();
-  initCursorTrail();
-  initGlobalSearch();
+    initBiasEngine();
   eraIdx = parseInt(localStorage.getItem(ERA_KEY) || '0');
   applyEra();
   const playerCollapsed = localStorage.getItem('playerCollapsed') === 'true';
@@ -523,10 +489,6 @@ async function navigateTo(url, push) {
     }
 
     initScrollReveal();
-    highlightActiveNav();
-    initSongOfDay();
-  initMascot();
-  initCursorTrail();
     eraIdx = parseInt(localStorage.getItem(ERA_KEY) || '0');
     applyEra();
 
@@ -566,7 +528,7 @@ function setupClickEffect() {
     if (e.target.closest('a') || e.target.closest('button') || e.target.closest('iframe')) return;
     const spark = document.createElement('div');
     spark.className = 'sparkle-effect';
-    spark.textContent = typeof biasEmoji !== 'undefined' ? biasEmoji : 'Ã¢Å“Â¨';
+    spark.textContent = typeof biasEmoji !== 'undefined' ? biasEmoji : '✨';
     spark.style.left = (e.clientX - 10) + 'px';
     spark.style.top = (e.clientY - 10) + 'px';
     spark.style.fontSize = '20px';
@@ -1288,60 +1250,34 @@ function updateCountdown() {
 // =============================================
 // FAN POLL LOGIC (for index.html)
 // =============================================
-window.initFanPoll = async function () {
+window.initFanPoll = function () {
   const voted = localStorage.getItem('fanPollVote');
-  try {
-    const res = await fetch(API_BASE + '/api/poll');
-    if (res.ok) {
-      const data = await res.json();
-      const counts = {};
-      data.forEach(d => counts[d.option] = d.votes);
-      showPollResults(voted, false, counts);
-    }
-  } catch (err) {
-    console.error('Failed to fetch poll data', err);
-    if (voted) showPollResults(voted, false, getPollCounts()); // fallback
-  }
+  if (voted) showPollResults(voted, false);
 };
 
-window.castVote = async function (choice) {
+window.castVote = function (choice) {
   if (localStorage.getItem('fanPollVote')) {
     showToast('You already voted!', 2000);
     return;
   }
-  
+  const counts = getPollCounts();
+  counts[choice] = (counts[choice] || 0) + 1;
+  localStorage.setItem('fanPollCounts', JSON.stringify(counts));
   localStorage.setItem('fanPollVote', choice);
-  
-  try {
-    const res = await fetch(API_BASE + '/api/poll', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ choice })
-    });
-    if (res.ok) {
-      const data = await res.json();
-      const counts = {};
-      data.forEach(d => counts[d.option] = d.votes);
-      showPollResults(choice, true, counts);
-      showToast('Vote cast! Thanks Blink!', 2000);
-    }
-  } catch (err) {
-    showToast('Error saving vote.', 2000);
-  }
+  showPollResults(choice, true);
+  showToast('Vote cast! Thanks Blink!', 2000);
 };
 
 function getPollCounts() {
   try { return JSON.parse(localStorage.getItem('fanPollCounts') || '{}'); } catch (e) { return {}; }
 }
 
-function showPollResults(votedChoice, animate, serverCounts = null) {
+function showPollResults(votedChoice, animate) {
   const opts = ['Square Up', 'Kill This Love', 'Born Pink', 'Deadline'];
-  const counts = serverCounts || getPollCounts();
-  const total = opts.reduce(function (sum, o) { return sum + (counts[o] || 0); }, 0);
-  
+  const counts = getPollCounts();
+  const total = opts.reduce(function (sum, o) { return sum + (counts[o] || 1); }, 0);
   opts.forEach(function (opt) {
-    const votes = counts[opt] || 0;
-    const pct = total === 0 ? Math.round(100 / opts.length) : Math.round((votes / total) * 100);
+    const pct = Math.round(((counts[opt] || 1) / total) * 100);
     const safeId = opt.replace(/\s+/g, '-');
     const bar = document.getElementById('poll-bar-' + safeId);
     const pctEl = document.getElementById('poll-pct-' + safeId);
@@ -1354,8 +1290,9 @@ function showPollResults(votedChoice, animate, serverCounts = null) {
     if (optEl && opt === votedChoice) optEl.classList.add('voted');
   });
   const badge = document.getElementById('poll-voted-badge');
-  if (badge && votedChoice) badge.style.display = 'block';
+  if (badge) badge.style.display = 'block';
 }
+
 
 // =============================================
 // GALLERY PAGE
@@ -1406,7 +1343,7 @@ window.initGallery = function () {
       <div class="lb-container">
         <div class="lb-top-bar">
           <div class="lb-counter"><strong id="lb-cur">1</strong> / <strong id="lb-total">11</strong></div>
-          <button class="lb-close" id="lb-close">Ã¢Å“â€¢</button>
+          <button class="lb-close" id="lb-close">✕</button>
         </div>
         <div class="lb-img-wrap">
           <img id="lb-img" src="" alt="">
@@ -1529,7 +1466,7 @@ window.initDiscography = function () {
 window.initWorldTour = function () {
   if (!document.getElementById('tour-map')) return;
   if (typeof L === 'undefined') {
-    // Leaflet not loaded yet Ã¢â‚¬â€ retry after delay
+    // Leaflet not loaded yet — retry after delay
     setTimeout(window.initWorldTour, 500);
     return;
   }
@@ -1586,13 +1523,13 @@ window.initWorldTour = function () {
 
   bpStops.forEach(function (s) {
     L.marker(s.coords, { icon: makeIcon('#ff2a85') })
-      .bindPopup('<div style="background:#1a0025;border:1px solid #ff2a85;border-radius:10px;padding:0.8rem;color:#fff;min-width:160px;"><strong style="color:#ff2a85">Ã°Å¸Å’Â¸ ' + s.city + '</strong><br><span style="color:#ddd;font-size:0.85rem;">' + s.venue + '</span><br><span style="color:#aaa;font-size:0.8rem;">Ã°Å¸â€œâ€¦ ' + s.date + '</span></div>', { maxWidth: 220 })
+      .bindPopup('<div style="background:#1a0025;border:1px solid #ff2a85;border-radius:10px;padding:0.8rem;color:#fff;min-width:160px;"><strong style="color:#ff2a85">🌸 ' + s.city + '</strong><br><span style="color:#ddd;font-size:0.85rem;">' + s.venue + '</span><br><span style="color:#aaa;font-size:0.8rem;">📅 ' + s.date + '</span></div>', { maxWidth: 220 })
       .addTo(bpLayer);
   });
 
   dlStops.forEach(function (s) {
     L.marker(s.coords, { icon: makeIcon('#a855f7') })
-      .bindPopup('<div style="background:#0a001a;border:1px solid #a855f7;border-radius:10px;padding:0.8rem;color:#fff;min-width:160px;"><strong style="color:#a855f7">Ã¢Å¡Â¡ ' + s.city + '</strong><br><span style="color:#ddd;font-size:0.85rem;">' + s.venue + '</span><br><span style="color:#aaa;font-size:0.8rem;">Ã°Å¸â€œâ€¦ ' + s.date + '</span></div>', { maxWidth: 220 })
+      .bindPopup('<div style="background:#0a001a;border:1px solid #a855f7;border-radius:10px;padding:0.8rem;color:#fff;min-width:160px;"><strong style="color:#a855f7">⚡ ' + s.city + '</strong><br><span style="color:#ddd;font-size:0.85rem;">' + s.venue + '</span><br><span style="color:#aaa;font-size:0.8rem;">📅 ' + s.date + '</span></div>', { maxWidth: 220 })
       .addTo(dlLayer);
   });
 
@@ -1629,37 +1566,37 @@ window.initQuoteGenerator = function () {
   if (!document.getElementById('quote-display')) return;
 
   const quotes = [
-    { text: "Don't know what to do, it's true Ã¢â‚¬â€ I'm stuck on you.", member: 'BLACKPINK', song: "Don't Know What To Do" },
+    { text: "Don't know what to do, it's true — I'm stuck on you.", member: 'BLACKPINK', song: "Don't Know What To Do" },
     { text: "We were born to be alone, but why do I come back to you?", member: 'BLACKPINK', song: 'Lovesick Girls' },
     { text: "I'm the one they call a savage.", member: 'BLACKPINK', song: 'Pretty Savage' },
-    { text: "How you like that? Look at you now Ã¢â‚¬â€ you're so beautiful.", member: 'BLACKPINK', song: 'How You Like That' },
+    { text: "How you like that? Look at you now — you're so beautiful.", member: 'BLACKPINK', song: 'How You Like That' },
     { text: "Boombayah! Call me monster, I'm a savage beast.", member: 'BLACKPINK', song: 'Boombayah' },
     { text: "I set fire to the rain, yeah I like it like that.", member: 'BLACKPINK', song: 'Playing With Fire' },
-    { text: "Kill this love Ã¢â‚¬â€ before it kills us first.", member: 'BLACKPINK', song: 'Kill This Love' },
+    { text: "Kill this love — before it kills us first.", member: 'BLACKPINK', song: 'Kill This Love' },
     { text: "Baby I'm a savage. Slightly crazy, totally amazing.", member: 'BLACKPINK', song: 'Pretty Savage' },
-    { text: "Ice cream, chillin' chillin', drip on top.", member: 'RosÃƒÂ© & Selena Gomez', song: 'Ice Cream' },
+    { text: "Ice cream, chillin' chillin', drip on top.", member: 'Rosé & Selena Gomez', song: 'Ice Cream' },
     { text: "Whistle baby, whistle baby, let me know.", member: 'BLACKPINK', song: 'Whistle' },
-    { text: "On the ground, on the ground Ã¢â‚¬â€ only on the ground.", member: 'RosÃƒÂ©', song: 'On The Ground' },
+    { text: "On the ground, on the ground — only on the ground.", member: 'Rosé', song: 'On The Ground' },
     { text: "Money, that's what I want. Money, that's what I need.", member: 'Lisa', song: 'Money' },
     { text: "I'm a diamond, born under pressure.", member: 'Lisa', song: 'Lalisa' },
     { text: "When I look in the mirror, I see a flower.", member: 'Jisoo', song: 'Flower' },
-    { text: "Solo Ã¢â‚¬â€ I'm the one for me.", member: 'Jennie', song: 'SOLO' },
-    { text: "APT, APT Ã¢â‚¬â€ every time I'm with you.", member: 'RosÃƒÂ© ft. Bruno Mars', song: 'APT.' },
-    { text: "Man, it's my world Ã¢â‚¬â€ Rockstar, in control.", member: 'Lisa', song: 'Rockstar' },
-    { text: "Mantra Ã¢â‚¬â€ repeat after me: I am everything.", member: 'Jennie', song: 'Mantra' },
+    { text: "Solo — I'm the one for me.", member: 'Jennie', song: 'SOLO' },
+    { text: "APT, APT — every time I'm with you.", member: 'Rosé ft. Bruno Mars', song: 'APT.' },
+    { text: "Man, it's my world — Rockstar, in control.", member: 'Lisa', song: 'Rockstar' },
+    { text: "Mantra — repeat after me: I am everything.", member: 'Jennie', song: 'Mantra' },
     { text: "Pink Venom, drop it on the floor.", member: 'BLACKPINK', song: 'Pink Venom' },
-    { text: "Shut down the city Ã¢â‚¬â€ BLACKPINK in your area!", member: 'BLACKPINK', song: 'Shut Down' },
+    { text: "Shut down the city — BLACKPINK in your area!", member: 'BLACKPINK', song: 'Shut Down' },
     { text: "I've waited my whole life to be right here with you.", member: 'BLACKPINK', song: 'Ready For Love' },
     { text: "You never know how it feels to be me.", member: 'BLACKPINK', song: 'You Never Know' },
-    { text: "Forever young Ã¢â‚¬â€ I want to be forever young.", member: 'BLACKPINK', song: 'Forever Young' },
-    { text: "As if it's your last Ã¢â‚¬â€ love me like it's your last.", member: 'BLACKPINK', song: "As If It's Your Last" }
+    { text: "Forever young — I want to be forever young.", member: 'BLACKPINK', song: 'Forever Young' },
+    { text: "As if it's your last — love me like it's your last.", member: 'BLACKPINK', song: "As If It's Your Last" }
   ];
 
   const memberQuotes = {
     all: quotes,
     jisoo: quotes.filter(function (q) { return q.member === 'Jisoo' || q.member === 'BLACKPINK'; }),
     jennie: quotes.filter(function (q) { return q.member === 'Jennie' || q.member === 'BLACKPINK'; }),
-    rose: quotes.filter(function (q) { return q.member.includes('RosÃƒÂ©') || q.member === 'BLACKPINK'; }),
+    rose: quotes.filter(function (q) { return q.member.includes('Rosé') || q.member === 'BLACKPINK'; }),
     lisa: quotes.filter(function (q) { return q.member === 'Lisa' || q.member === 'BLACKPINK'; })
   };
 
@@ -1683,7 +1620,7 @@ window.initQuoteGenerator = function () {
         display.style.opacity = '1';
       }, 300);
     }
-    if (songEl) songEl.textContent = 'Ã¢â‚¬â€ ' + q.song;
+    if (songEl) songEl.textContent = '— ' + q.song;
     if (memberEl) memberEl.textContent = q.member;
   }
 
@@ -1708,9 +1645,9 @@ window.initQuoteGenerator = function () {
   if (copyBtn) {
     copyBtn.addEventListener('click', function () {
       if (!currentQuote) return;
-      const text = '"' + currentQuote.text + '" Ã¢â‚¬â€ ' + currentQuote.member + ' (' + currentQuote.song + ')';
+      const text = '"' + currentQuote.text + '" — ' + currentQuote.member + ' (' + currentQuote.song + ')';
       navigator.clipboard.writeText(text).then(function () {
-        if (typeof showToast === 'function') showToast('Quote copied to clipboard! Ã°Å¸â€™â€”');
+        if (typeof showToast === 'function') showToast('Quote copied to clipboard! 💗');
       });
     });
   }
@@ -1728,7 +1665,7 @@ window.initQuoteGenerator = function () {
 };
 
 // =============================================
-// RECORDS PAGE Ã¢â‚¬â€ Animated counters
+// RECORDS PAGE — Animated counters
 // =============================================
 window.initRecords = function () {
   const statCards = document.querySelectorAll('.stat-card[data-display]');
@@ -1773,39 +1710,39 @@ const qgLyrics = {
     { lyric: "Because I'm the one.", song: 'Flower' },
     { lyric: "All my flowers grew for you.", song: 'Flower' },
     { lyric: "BLACKPINK is the revolution.", song: 'Kill This Love' },
-    { lyric: "Forever young Ã¢â‚¬â€ I want to be forever young.", song: 'Forever Young' }
+    { lyric: "Forever young — I want to be forever young.", song: 'Forever Young' }
   ],
   jennie: [
-    { lyric: "I'm the one Ã¢â‚¬â€ solo. You can't get my love.", song: 'SOLO' },
+    { lyric: "I'm the one — solo. You can't get my love.", song: 'SOLO' },
     { lyric: "I walk alone, no one by my side.", song: 'SOLO' },
     { lyric: "I was the one who had your heart.", song: 'SOLO' },
-    { lyric: "Mantra Ã¢â‚¬â€ repeat after me: I am everything.", song: 'Mantra' },
-    { lyric: "Human, nature Ã¢â‚¬â€ that's just me.", song: 'Human' },
+    { lyric: "Mantra — repeat after me: I am everything.", song: 'Mantra' },
+    { lyric: "Human, nature — that's just me.", song: 'Human' },
     { lyric: "I'm a mess but a damn beautiful one.", song: 'Mantra' }
   ],
   rose: [
-    { lyric: "On the ground, only on the ground Ã¢â‚¬â€ I belong here.", song: 'On The Ground' },
+    { lyric: "On the ground, only on the ground — I belong here.", song: 'On The Ground' },
     { lyric: "I've been gone too long from myself.", song: 'Gone' },
-    { lyric: "APT Ã¢â‚¬â€ every time I call your name.", song: 'APT.' },
-    { lyric: "Hard to love, I know Ã¢â‚¬â€ but I'm worth it.", song: 'Hard To Love' },
+    { lyric: "APT — every time I call your name.", song: 'APT.' },
+    { lyric: "Hard to love, I know — but I'm worth it.", song: 'Hard To Love' },
     { lyric: "I'm your fire, I'm your flood.", song: 'Gone' },
-    { lyric: "The happiest girl Ã¢â‚¬â€ pretending for you.", song: 'The Happiest Girl' }
+    { lyric: "The happiest girl — pretending for you.", song: 'The Happiest Girl' }
   ],
   lisa: [
-    { lyric: "Money Ã¢â‚¬â€ that's what I want, that's what I need.", song: 'Money' },
-    { lyric: "Lalisa, Lalisa, Lalisa Ã¢â‚¬â€ I want to go.", song: 'Lalisa' },
-    { lyric: "I'm a rockstar Ã¢â‚¬â€ in control, in the zone.", song: 'Rockstar' },
+    { lyric: "Money — that's what I want, that's what I need.", song: 'Money' },
+    { lyric: "Lalisa, Lalisa, Lalisa — I want to go.", song: 'Lalisa' },
+    { lyric: "I'm a rockstar — in control, in the zone.", song: 'Rockstar' },
     { lyric: "I'm the baddest of them all.", song: 'Lalisa' },
-    { lyric: "New chapter Ã¢â‚¬â€ watch me shine.", song: 'Rockstar' },
+    { lyric: "New chapter — watch me shine.", song: 'Rockstar' },
     { lyric: "Born to flex, born to rule.", song: 'Money' }
   ]
 };
 
 const qgMemberInfo = {
-  jisoo:  { name: 'JISOO',  emoji: 'Ã°Å¸Å’Â¸', img: 'Jisoo.webp',   color: '#ff8fab' },
-  jennie: { name: 'JENNIE', emoji: 'Ã°Å¸â€˜â€˜', img: 'Jennie.webp',  color: '#ff2a85' },
-  rose:   { name: 'ROSÃƒâ€°',   emoji: 'Ã°Å¸Å’Â¹', img: 'Rose.webp',    color: '#ff6eb0' },
-  lisa:   { name: 'LISA',   emoji: 'Ã°Å¸â€™â€º', img: 'Lisa.webp',    color: '#ffd700' }
+  jisoo:  { name: 'JISOO',  emoji: '🌸', img: 'Jisoo.webp',   color: '#ff8fab' },
+  jennie: { name: 'JENNIE', emoji: '👑', img: 'Jennie.webp',  color: '#ff2a85' },
+  rose:   { name: 'ROSÉ',   emoji: '🌹', img: 'Rose.webp',    color: '#ff6eb0' },
+  lisa:   { name: 'LISA',   emoji: '💛', img: 'Lisa.webp',    color: '#ffd700' }
 };
 
 let qgCurrentMember = null;
@@ -1819,11 +1756,11 @@ window.selectMember = function (member) {
   const info = qgMemberInfo[member];
   const select = document.getElementById('lyric-select');
   if (!select) return;
-  select.innerHTML = '<option value="">Ã¢â‚¬â€ Pick a lyric Ã¢â‚¬â€</option>';
+  select.innerHTML = '<option value="">— Pick a lyric —</option>';
   (qgLyrics[member] || []).forEach(function (l, i) {
     const opt = document.createElement('option');
     opt.value = i;
-    opt.textContent = '"' + l.lyric.substring(0, 50) + (l.lyric.length > 50 ? 'Ã¢â‚¬Â¦' : '') + '" Ã¢â‚¬â€ ' + l.song;
+    opt.textContent = '"' + l.lyric.substring(0, 50) + (l.lyric.length > 50 ? '…' : '') + '" — ' + l.song;
     select.appendChild(opt);
   });
 
@@ -1865,7 +1802,7 @@ window.updateLyric = function () {
   const divEl = document.getElementById('card-divider');
   const placeholder = document.getElementById('card-placeholder');
   if (lyricEl) { lyricEl.textContent = '"' + lyricData.lyric + '"'; lyricEl.style.display = ''; }
-  if (songEl) { songEl.textContent = 'Ã¢â‚¬â€ ' + lyricData.song; songEl.style.display = ''; }
+  if (songEl) { songEl.textContent = '— ' + lyricData.song; songEl.style.display = ''; }
   if (divEl) divEl.style.display = '';
   if (placeholder) placeholder.style.display = 'none';
 };
@@ -1886,13 +1823,13 @@ window.shuffleCard = function () {
 window.copyLyric = function () {
   const lyricEl = document.getElementById('card-lyric');
   if (!lyricEl || lyricEl.style.display === 'none') {
-    if (typeof showToast === 'function') showToast('Pick a lyric first! Ã°Å¸â€™â€”');
+    if (typeof showToast === 'function') showToast('Pick a lyric first! 💗');
     return;
   }
   const songEl = document.getElementById('card-song');
   const text = lyricEl.textContent + ' ' + (songEl ? songEl.textContent : '');
   navigator.clipboard.writeText(text).then(function () {
-    if (typeof showToast === 'function') showToast('Lyric copied! Ã°Å¸â€™â€”');
+    if (typeof showToast === 'function') showToast('Lyric copied! 💗');
   });
 };
 
@@ -1901,7 +1838,7 @@ window.downloadCard = function () {
   if (!card) return;
   const lyricEl = document.getElementById('card-lyric');
   if (!lyricEl || lyricEl.style.display === 'none') {
-    if (typeof showToast === 'function') showToast('Select a member and lyric first! Ã°Å¸â€™â€”');
+    if (typeof showToast === 'function') showToast('Select a member and lyric first! 💗');
     return;
   }
   if (typeof html2canvas !== 'undefined') {
@@ -1910,10 +1847,10 @@ window.downloadCard = function () {
       link.download = 'blackpink-quote-card.png';
       link.href = canvas.toDataURL();
       link.click();
-      if (typeof showToast === 'function') showToast('Card downloaded! Ã°Å¸â€“Â¤Ã°Å¸â€™â€”');
+      if (typeof showToast === 'function') showToast('Card downloaded! 🖤💗');
     });
   } else {
-    if (typeof showToast === 'function') showToast('Download not available, try copying instead! Ã°Å¸â€™â€”');
+    if (typeof showToast === 'function') showToast('Download not available, try copying instead! 💗');
   }
 };
 
@@ -1922,14 +1859,14 @@ window.downloadCard = function () {
 // BIAS PERSONALIZATION ENGINE
 // =============================================
 let currentBias = localStorage.getItem('blink_bias');
-let biasEmoji = 'Ã¢Å“Â¨';
+let biasEmoji = '✨';
 
 const biasProfiles = {
-  'OT4': { color: '#FF7698', emoji: 'Ã¢Å“Â¨', trackIdx: 0 },
-  'JISOO': { color: '#ff2a2a', emoji: 'Ã°Å¸ÂÂ°', trackIdx: 14 }, // Flower
-  'JENNIE': { color: '#4a90e2', emoji: 'Ã°Å¸ÂÂ»', trackIdx: 11 }, // SOLO
-  'ROSE': { color: '#ffb6c1', emoji: 'Ã°Å¸Å’Â¹', trackIdx: 12 }, // On The Ground
-  'LISA': { color: '#f1c40f', emoji: 'Ã°Å¸ÂÂ¥', trackIdx: 13 } // Lalisa
+  'OT4': { color: '#FF7698', emoji: '✨', trackIdx: 0 },
+  'JISOO': { color: '#ff2a2a', emoji: '🐰', trackIdx: 14 }, // Flower
+  'JENNIE': { color: '#4a90e2', emoji: '🐻', trackIdx: 11 }, // SOLO
+  'ROSE': { color: '#ffb6c1', emoji: '🌹', trackIdx: 12 }, // On The Ground
+  'LISA': { color: '#f1c40f', emoji: '🐥', trackIdx: 13 } // Lalisa
 };
 
 function initBiasEngine() {
@@ -1949,11 +1886,11 @@ function showBiasModal() {
         <h2 style="font-size:2rem; margin-bottom:1rem; text-shadow:0 0 10px var(--bp-pink);">Who is your Bias?</h2>
         <p style="margin-bottom:2rem; opacity:0.8;">Personalize your BLINK experience!</p>
         <div style="display:flex; flex-wrap:wrap; gap:1rem; justify-content:center;">
-          <button class="btn btn-glow" onclick="selectBias('JISOO')" style="background:rgba(255,42,42,0.2); border-color:#ff2a2a;">Ã°Å¸ÂÂ° JISOO</button>
-          <button class="btn btn-glow" onclick="selectBias('JENNIE')" style="background:rgba(74,144,226,0.2); border-color:#4a90e2;">Ã°Å¸ÂÂ» JENNIE</button>
-          <button class="btn btn-glow" onclick="selectBias('ROSE')" style="background:rgba(255,182,193,0.2); border-color:#ffb6c1;">Ã°Å¸Å’Â¹ ROSÃƒâ€°</button>
-          <button class="btn btn-glow" onclick="selectBias('LISA')" style="background:rgba(241,196,15,0.2); border-color:#f1c40f;">Ã°Å¸ÂÂ¥ LISA</button>
-          <button class="btn btn-glow" onclick="selectBias('OT4')" style="background:rgba(255,118,152,0.2); border-color:#FF7698; width:100%;">Ã¢Å“Â¨ OT4 (All of them!)</button>
+          <button class="btn btn-glow" onclick="selectBias('JISOO')" style="background:rgba(255,42,42,0.2); border-color:#ff2a2a;">🐰 JISOO</button>
+          <button class="btn btn-glow" onclick="selectBias('JENNIE')" style="background:rgba(74,144,226,0.2); border-color:#4a90e2;">🐻 JENNIE</button>
+          <button class="btn btn-glow" onclick="selectBias('ROSE')" style="background:rgba(255,182,193,0.2); border-color:#ffb6c1;">🌹 ROSÉ</button>
+          <button class="btn btn-glow" onclick="selectBias('LISA')" style="background:rgba(241,196,15,0.2); border-color:#f1c40f;">🐥 LISA</button>
+          <button class="btn btn-glow" onclick="selectBias('OT4')" style="background:rgba(255,118,152,0.2); border-color:#FF7698; width:100%;">✨ OT4 (All of them!)</button>
         </div>
       </div>
     </div>
@@ -1975,7 +1912,7 @@ window.selectBias = function(bias) {
     document.getElementById('bias-modal-content').style.transform = 'scale(0.8)';
     setTimeout(() => modal.remove(), 500);
   }
-  showToast(`Bias set to ${bias}! Ã°Å¸â€“Â¤Ã°Å¸â€™â€”`);
+  showToast(`Bias set to ${bias}! 🖤💗`);
   
   // Jump to bias track
   if (ytPlayerReady && biasProfiles[bias].trackIdx !== 0) {
@@ -2042,9 +1979,9 @@ function initLightstickMode() {
   const btn = document.createElement('button');
   btn.id = 'hammer-bong-btn';
   btn.className = 'hammer-bong-btn';
-  btn.innerHTML = 'Ã°Å¸â€Â¨'; 
+  btn.innerHTML = '🔨'; 
   btn.title = 'Concert Mode (Under Development)';
-  btn.onclick = () => showToast('Concert Mode is currently under development! Ã°Å¸â€ºÂ Ã¯Â¸Â', 3000);
+  btn.onclick = () => showToast('Concert Mode is currently under development! 🛠️', 3000);
   document.body.appendChild(btn);
 
   const overlay = document.createElement('div');
@@ -2059,7 +1996,7 @@ function initLightstickMode() {
       <p style="color:rgba(255,255,255,0.7); font-weight:700; text-transform:uppercase; letter-spacing:0.1em; text-shadow:0 2px 10px rgba(255,42,133,0.5);">Syncing to: <span id="sync-track-name" style="color:var(--bp-pink);">Waiting...</span></p>
       
       <div style="display:flex; gap:1rem;">
-        <button class="btn btn-glow" onclick="triggerFanchant()">Ã°Å¸Å½Â¤ Fanchant</button>
+        <button class="btn btn-glow" onclick="triggerFanchant()">🎤 Fanchant</button>
         <button class="btn btn-glow" onclick="toggleLightstickMode()">Exit Concert Mode</button>
       </div>
     </div>
@@ -2173,7 +2110,7 @@ function triggerCheerEmoji(x, y) {
   const overlay = document.getElementById('lightstick-overlay');
   if (!overlay) return;
   
-  const emojis = ['Ã°Å¸â€™â€“', 'Ã¢Å“Â¨', 'Ã°Å¸â€Â¥', 'Ã°Å¸Å½â€°'];
+  const emojis = ['💖', '✨', '🔥', '🎉'];
   const emoji = document.createElement('div');
   emoji.innerText = emojis[Math.floor(Math.random() * emojis.length)];
   emoji.style.position = 'absolute';
@@ -2266,7 +2203,7 @@ function initDailyStreak() {
     
     // Show toast for streak
     setTimeout(() => {
-      showToast(`Ã°Å¸â€Â¥ ${streak} Day BLINK Streak! ${streak >= 3 ? 'Vault unlocked!' : ''}`);
+      showToast(`🔥 ${streak} Day BLINK Streak! ${streak >= 3 ? 'Vault unlocked!' : ''}`);
     }, 2000);
   }
 }
@@ -2426,7 +2363,7 @@ window.initBlinkWall = function() {
       
       grid.innerHTML = '';
       messages.reverse().forEach(msg => {
-        const biasClass = 'bias-' + msg.bias.toLowerCase().replace('ÃƒÂ©', 'e');
+        const biasClass = 'bias-' + msg.bias.toLowerCase().replace('é', 'e');
         const card = document.createElement('div');
         card.className = `message-card ${biasClass}`;
         card.innerHTML = `
@@ -2467,7 +2404,7 @@ window.initBlinkWall = function() {
         
         if (res.ok) {
           document.getElementById('msg-text').value = '';
-          if (typeof showToast === 'function') showToast('Message posted! Ã°Å¸â€™â€”');
+          if (typeof showToast === 'function') showToast('Message posted! 💗');
           fetchMessages();
         }
       } catch (err) {
@@ -2520,7 +2457,7 @@ window.initLeaderboard = function() {
       glDiv.innerHTML = '';
       scores.forEach((entry, index) => {
         const rank = index + 1;
-        const medal = rank === 1 ? 'Ã°Å¸Â¥â€¡' : rank === 2 ? 'Ã°Å¸Â¥Ë†' : rank === 3 ? 'Ã°Å¸Â¥â€°' : '#' + rank;
+        const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : '#' + rank;
         glDiv.innerHTML += `
           <div class="lb-card" style="padding: 1rem; margin-bottom: 0;">
             <div class="lb-title" style="font-size: 1.2rem;">${medal} ${entry.username}</div>
@@ -2573,13 +2510,13 @@ window.initFeedback = function() {
         document.getElementById('fb-message').value = '';
         const btn = newForm.querySelector('button[type="submit"]');
         if (btn) {
-          btn.textContent = 'Submitted! Ã°Å¸â€™â€”';
+          btn.textContent = 'Submitted! 💗';
           setTimeout(() => btn.textContent = 'Submit to Admin', 3000);
         }
         if (typeof showToast === 'function') {
-          showToast('Feedback submitted! Thank you! Ã°Å¸â€™â€”');
+          showToast('Feedback submitted! Thank you! 💗');
         } else {
-          alert('Feedback submitted! Thank you! Ã°Å¸â€™â€”');
+          alert('Feedback submitted! Thank you! 💗');
         }
       } else {
         if (typeof showToast === 'function') {
@@ -2615,8 +2552,6 @@ async function fetchCurrentUser() {
       currentUser = await res.json();
       applyBiasTheme(currentUser.bias);
       updateNavProfileLink(true);
-      // Initialize notifications now that user is authenticated
-      setTimeout(initNotifications, 100);
       
       // If player is already ready but we just loaded the user, reload playlist
       if (ytPlayerReady && typeof ytLoadTrack === 'function' && currentUser.playlist && currentUser.playlist.length > 0) {
@@ -2640,7 +2575,7 @@ async function fetchCurrentUser() {
 function updateNavProfileLink(isLoggedIn) {
   const btn = document.getElementById('nav-profile-btn');
   if (btn) {
-    btn.textContent = isLoggedIn ? `Ã°Å¸â€˜Â¤ ${currentUser.username}` : 'Ã°Å¸â€˜Â¤ Profile/Login';
+    btn.textContent = isLoggedIn ? `👤 ${currentUser.username}` : '👤 Profile/Login';
   }
 }
 
@@ -2648,7 +2583,7 @@ function applyBiasTheme(bias) {
   document.body.classList.remove('theme-jisoo', 'theme-jennie', 'theme-rose', 'theme-lisa');
   if (bias === 'Jisoo') document.body.classList.add('theme-jisoo');
   if (bias === 'Jennie') document.body.classList.add('theme-jennie');
-  if (bias === 'RosÃƒÂ©') document.body.classList.add('theme-rose');
+  if (bias === 'Rosé') document.body.classList.add('theme-rose');
   if (bias === 'Lisa') document.body.classList.add('theme-lisa');
 }
 
@@ -2690,13 +2625,13 @@ window.initLogin = function() {
         if (res.ok) {
           localStorage.setItem('user_token', data.token);
           await fetchCurrentUser();
-          await navigateTo('profile.html');
-          setTimeout(() => showToast(`Welcome back, ${data.username}! Ã°Å¸â€™â€“`), 400);
+          navigateTo('profile.html');
+          if(typeof showToast === 'function') showToast(`Welcome back, ${data.username}!`);
         } else {
-          showToast(data.error || 'Login failed Ã¢ÂÅ’', 4000);
+          alert(data.error || 'Login failed');
         }
       } catch (err) {
-        showToast('Server error. Please try again.', 4000);
+        alert('Server error');
       }
     };
   }
@@ -2719,69 +2654,38 @@ window.initLogin = function() {
         if (res.ok) {
           localStorage.setItem('user_token', data.token);
           await fetchCurrentUser();
-          await navigateTo('profile.html');
-          setTimeout(() => showToast(`Welcome to the Blink family, ${data.username}! Ã°Å¸â€“Â¤Ã°Å¸â€™â€“`), 400);
+          navigateTo('profile.html');
+          if(typeof showToast === 'function') showToast(`Welcome to the Blink family, ${data.username}!`);
         } else {
-          showToast(data.error || 'Registration failed Ã¢ÂÅ’', 4000);
+          alert(data.error || 'Registration failed');
         }
       } catch (err) {
-        showToast('Server error. Please try again.', 4000);
+        alert('Server error');
       }
     };
   }
 };
 
 window.initProfile = async function() {
-  const loadingEl = document.getElementById('profile-loading');
-  if (loadingEl) loadingEl.style.display = 'block';
-
   await fetchCurrentUser();
   const token = localStorage.getItem('user_token');
-
-  if (loadingEl) loadingEl.style.display = 'none';
-
   if (!token || !currentUser) {
     navigateTo('login.html');
-    setTimeout(() => showToast('Your session expired, please log in again ðŸ”‘', 4000), 400);
     return;
   }
   
   document.getElementById('profile-dashboard').style.display = 'block';
-  const headerDiv = document.getElementById('profile-header');
-  if (headerDiv) headerDiv.style.display = 'block';
-  
   const unauthDiv = document.getElementById('profile-unauth');
   if (unauthDiv) unauthDiv.style.display = 'none';
-  
   document.getElementById('profile-greeting').textContent = `Welcome, ${currentUser.username}!`;
-  
-  const profileNameEl = document.getElementById('profile-name');
-  if (profileNameEl) profileNameEl.textContent = `@${currentUser.username}`;
-  
-  const profileBiasEl = document.getElementById('profile-bias');
-  if (profileBiasEl) profileBiasEl.textContent = `Bias: ${currentUser.bias || 'OT4'}`;
-
-  // Populate gradient avatar with first initial
-  const avatarEl = document.getElementById('profile-avatar');
-  if (avatarEl) avatarEl.textContent = currentUser.username.charAt(0).toUpperCase();
-
-  // Render achievements
-  renderAchievements();
   
   // Stan Level Logic
   const plays = currentUser.playCount || 0;
   const comments = currentUser.commentsCount || 0;
   let stanLevel = 'Trainee';
-  if (plays > 200 || comments > 50) stanLevel = 'Ultimate Blink Ã°Å¸â€˜â€˜';
-  else if (plays > 50 || comments > 10) stanLevel = 'Blink Ã°Å¸â€™â€“';
-  else if (plays > 10 || comments > 2) stanLevel = 'Rookie Ã°Å¸â€“Â¤';
-
-  const owned = currentUser.photocards ? currentUser.photocards.length : 0;
-  const pct = Math.min(100, Math.floor((owned / 170) * 100)); 
-  const pctEl = document.getElementById('profile-collection-pct');
-  const barEl = document.getElementById('profile-collection-bar');
-  if (pctEl) pctEl.textContent = `${pct}% (${owned}/170)`;
-  if (barEl) barEl.style.width = `${pct}%`;
+  if (plays > 200 || comments > 50) stanLevel = 'Ultimate Blink 👑';
+  else if (plays > 50 || comments > 10) stanLevel = 'Blink 💖';
+  else if (plays > 10 || comments > 2) stanLevel = 'Rookie 🖤';
 
   const badgeEl = document.getElementById('stan-level-badge');
   if (badgeEl) badgeEl.textContent = stanLevel;
@@ -2811,10 +2715,7 @@ window.initProfile = async function() {
         currentUser.bias = bias;
         currentUser.dob = dob;
         applyBiasTheme(bias);
-        // Also update the visible profile header card
-        const profileBiasEl = document.getElementById('profile-bias');
-        if (profileBiasEl) profileBiasEl.textContent = `Bias: ${bias}`;
-        if(typeof showToast === 'function') showToast('Profile updated! Ã¢Å“Â¨');
+        if(typeof showToast === 'function') showToast('Profile updated!');
       }
     };
   }
@@ -2859,16 +2760,6 @@ window.initProfile = async function() {
       }
     }
   }
-};
-
-window.shareCollection = function() {
-  if (!currentUser || !currentUser.username) return;
-  const link = window.location.origin + '/collection.html?user=' + encodeURIComponent(currentUser.username);
-  navigator.clipboard.writeText(link).then(() => {
-    showToast('Link copied! Share your collection anywhere!', 3000);
-  }).catch(() => {
-    prompt('Copy this link to share your collection:', link);
-  });
 };
 
 window.showFullCollection = function() {
@@ -2993,7 +2884,7 @@ window.savePlaylist = async function() {
       renderTracklist();
     }
   } else {
-    showToast('Failed to save playlist Ã¢ÂÅ’', 4000);
+    alert('Failed to save playlist');
   }
 };
 
@@ -3020,7 +2911,7 @@ window.initBirthdayCountdown = function() {
   const birthdays = [
     { name: 'Jisoo', month: 0, date: 3 },
     { name: 'Jennie', month: 0, date: 16 },
-    { name: 'RosÃƒÂ©', month: 1, date: 11 },
+    { name: 'Rosé', month: 1, date: 11 },
     { name: 'Lisa', month: 2, date: 27 }
   ];
 
@@ -3052,7 +2943,7 @@ window.initBirthdayCountdown = function() {
     const now = new Date().getTime();
     const distance = nextBday.date.getTime() - now;
     if (distance < 0) {
-      timerEl.textContent = 'IT IS HER BIRTHDAY! Ã°Å¸Å½â€°';
+      timerEl.textContent = 'IT IS HER BIRTHDAY! 🎉';
       return;
     }
     const days = Math.floor(distance / (1000 * 60 * 60 * 24));
@@ -3084,7 +2975,7 @@ window.initFanArt = function() {
         item.className = 'masonry-item';
         const likeCount = a.likes ? a.likes.length : 0;
         const isLiked = currentUser && a.likes && a.likes.includes(currentUser.id);
-        item.innerHTML = `<img src="${a.url}" alt="${a.caption}" onerror="this.src='assets/blackpinkgroup.webp'"><div class="masonry-caption">${a.caption}</div><div class="masonry-author" style="display:flex; justify-content:space-between; align-items:center;"><span>By ${a.author}</span><span onclick="toggleLike('${a.id}')" style="cursor:pointer;">${isLiked ? 'Ã¢ÂÂ¤Ã¯Â¸Â' : 'Ã°Å¸Â¤Â'} ${likeCount}</span></div>`;
+        item.innerHTML = `<img src="${a.url}" alt="${a.caption}" onerror="this.src='assets/blackpinkgroup.webp'"><div class="masonry-caption">${a.caption}</div><div class="masonry-author" style="display:flex; justify-content:space-between; align-items:center;"><span>By ${a.author}</span><span onclick="toggleLike('${a.id}')" style="cursor:pointer;">${isLiked ? '❤️' : '🤍'} ${likeCount}</span></div>`;
         grid.appendChild(item);
       });
     } catch (e) {
@@ -3108,7 +2999,7 @@ window.initFanArt = function() {
         if (res.ok) {
           document.getElementById('art-url').value = '';
           document.getElementById('art-caption').value = '';
-          if (typeof showToast === 'function') showToast('Fan Art Submitted! Ã°Å¸â€“Â¤Ã°Å¸â€™â€“');
+          if (typeof showToast === 'function') showToast('Fan Art Submitted! 🖤💖');
           fetchArt();
         }
       } catch (err) {
@@ -3120,12 +3011,11 @@ window.initFanArt = function() {
 };
 
 window.toggleLike = async function(id) {
-  const token = localStorage.getItem('user_token');
-  if (!currentUser || !token) return showToast('Please login to like fan art! Ã°Å¸â€™â€“', 3000);
+  if (!currentUser) return alert('Please login to like fan art!');
   try {
     const res = await fetch(`${API_BASE}/api/gallery/${id}/like`, {
       method: 'POST',
-      headers: { 'Authorization': `Bearer ${token}` }
+      headers: { 'Authorization': `Bearer ${currentUser.token}` }
     });
     if (res.ok) window.initFanArt();
   } catch(e) {}
@@ -3137,38 +3027,9 @@ window.initPhotocards = function() {
   
   window.updatePhotocardUI = function() {
     if (!currentUser || !document.getElementById('pull-card-btn')) return;
-    
-    // Update Streak and Pulls
-    const streakStr = document.getElementById('streak-counter');
-    const pullsStr = document.getElementById('pulls-available');
-    if (streakStr) streakStr.textContent = `Ã°Å¸â€Â¥ ${currentUser.loginStreak || 0} Day Streak`;
-    if (pullsStr) pullsStr.textContent = `Pulls Available: ${currentUser.pullsAvailable || 0}`;
-    
-    // Update Progress
-    const owned = currentUser.photocards ? currentUser.photocards.length : 0;
-    const pct = Math.min(100, Math.floor((owned / 170) * 100)); // Total estimate 170
-    const pctEl = document.getElementById('collection-pct');
-    const barEl = document.getElementById('collection-bar');
-    if (pctEl) pctEl.textContent = `${pct}% (${owned}/170)`;
-    if (barEl) barEl.style.width = `${pct}%`;
-    
-    // Update Pity
-    const pityEl = document.getElementById('pity-counter');
-    if (pityEl) {
-      const sinceLeg = currentUser.pullsSinceLegendary || 0;
-      const sinceEpic = currentUser.pullsSinceEpic || 0;
-      if (sinceLeg >= 40) {
-        pityEl.textContent = `Ã°Å¸â€™Å½ ${50 - sinceLeg} pulls until guaranteed Legendary!`;
-        pityEl.style.color = '#ffd700'; // Gold
-      } else {
-        pityEl.textContent = `Ã°Å¸â€™Å½ ${10 - sinceEpic} pulls until guaranteed Epic!`;
-        pityEl.style.color = '#ff6b9e';
-      }
-    }
-
-    const b = document.getElementById('pull-card-btn');
-    const cd = document.getElementById('pull-countdown');
-    if ((currentUser.pullsAvailable || 0) <= 0) {
+    if (currentUser.lastPullDate === new Date().toDateString()) {
+      const b = document.getElementById('pull-card-btn');
+      const cd = document.getElementById('pull-countdown');
       if (b) b.style.display = 'none';
       if (cd) {
         cd.style.display = 'block';
@@ -3185,14 +3046,10 @@ window.initPhotocards = function() {
             const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
             const m = Math.floor((diff / 1000 / 60) % 60);
             const s = Math.floor((diff / 1000) % 60);
-            cd.innerHTML = `Out of pulls! Resets in: <span style="color:var(--bp-pink);">${h}h ${m}m ${s}s</span>`;
+            cd.innerHTML = `Next pull available in: <span style="color:var(--bp-pink);">${h}h ${m}m ${s}s</span>`;
           }
         }, 1000);
       }
-    } else {
-      if (b) b.style.display = 'inline-block';
-      if (cd) cd.style.display = 'none';
-      if (window.pullInterval) clearInterval(window.pullInterval);
     }
   };
   
@@ -3210,94 +3067,19 @@ window.initPhotocards = function() {
       });
       const data = await res.json();
       if(res.ok) {
-        btn.style.display = 'none';
+        document.getElementById('card-reveal').style.display = 'block';
+        document.getElementById('pulled-card-img').src = data.card.url;
+        document.getElementById('pulled-card-rarity').textContent = data.card.rarity;
+        document.getElementById('pulled-card-rarity').className = 'card-rarity ' + data.card.rarity.toLowerCase();
         
-        // Add EXP
-        addEXP(5, 'Pulled a Photocard! \uD83C\uDFB4');
-
-        const packAnim = document.getElementById('pack-anim-container');
-        const pack = document.getElementById('card-pack');
-        const reveal = document.getElementById('card-reveal');
+        // Save to currentUser memory
+        if(!currentUser.photocards) currentUser.photocards = [];
+        currentUser.photocards.push(data.card);
+        currentUser.lastPullDate = new Date().toDateString();
+        localStorage.setItem('bp_user', JSON.stringify(currentUser));
         
-        packAnim.style.display = 'block';
-        pack.classList.remove('shake-anim', 'burst-anim');
-        pack.style.cursor = 'pointer';
-        pack.style.boxShadow = '0 0 20px rgba(255,107,158,0.3)';
-        
-        // Add "Click to Open" text
-        let clickText = document.getElementById('click-open-txt');
-        if(!clickText) {
-          clickText = document.createElement('div');
-          clickText.id = 'click-open-txt';
-          clickText.textContent = 'TAP TO TEAR OPEN!';
-          clickText.style.color = '#fff';
-          clickText.style.textAlign = 'center';
-          clickText.style.marginTop = '15px';
-          clickText.style.fontWeight = 'bold';
-          clickText.style.animation = 'pulse 1s infinite';
-          packAnim.appendChild(clickText);
-        }
-        clickText.style.display = 'block';
-
-        // Wait for click to tear
-        pack.onclick = function() {
-          pack.onclick = null;
-          clickText.style.display = 'none';
-          
-          // Glow based on rarity
-          const rarity = data.card.rarity.toLowerCase();
-          if (rarity === 'legendary') pack.style.boxShadow = '0 0 80px #ffd700, inset 0 0 30px #ffd700';
-          else if (rarity === 'epic') pack.style.boxShadow = '0 0 50px #ff6b9e, inset 0 0 20px #ff6b9e';
-          else if (rarity === 'rare') pack.style.boxShadow = '0 0 40px #4287f5, inset 0 0 15px #4287f5';
-          else pack.style.boxShadow = '0 0 30px #aaa, inset 0 0 10px #aaa';
-
-          pack.classList.add('shake-anim');
-          
-          setTimeout(() => {
-            pack.classList.remove('shake-anim');
-            pack.classList.add('burst-anim');
-            
-            setTimeout(() => {
-              packAnim.style.display = 'none';
-              reveal.style.display = 'block';
-            
-              document.getElementById('pulled-card-img').src = data.card.url;
-              document.getElementById('pulled-card-rarity').textContent = data.card.rarity;
-              document.getElementById('pulled-card-rarity').className = 'card-rarity ' + data.card.rarity.toLowerCase();
-              
-              const dupMsg = document.getElementById('duplicate-msg');
-              const pullMsg = document.getElementById('pull-status-msg');
-              if (dupMsg && pullMsg) {
-                if (data.isDuplicate) {
-                  dupMsg.style.display = 'block';
-                  pullMsg.style.display = 'none';
-                } else {
-                  dupMsg.style.display = 'none';
-                  pullMsg.style.display = 'block';
-                }
-              }
-              
-              if (data.card.rarity.toLowerCase() === 'legendary') {
-                reveal.classList.add('reveal-anim', 'legendary');
-              } else {
-                reveal.classList.remove('reveal-anim', 'legendary');
-              }
-              
-              if (data.user) {
-                currentUser = data.user;
-                localStorage.setItem('bp_user', JSON.stringify(currentUser));
-              } else {
-                if(!currentUser.photocards) currentUser.photocards = [];
-                currentUser.photocards.push(data.card);
-                currentUser.lastPullDate = new Date().toDateString();
-                localStorage.setItem('bp_user', JSON.stringify(currentUser));
-              }
-              
-              if(window.triggerConfetti) window.triggerConfetti();
-              window.updatePhotocardUI();
-            }, 500); // end inner setTimeout
-          }, 1500); // end middle setTimeout
-        }; // end onclick function
+        if(window.triggerConfetti) window.triggerConfetti();
+        window.updatePhotocardUI();
       } else {
         const cd = document.getElementById('pull-countdown');
         if (cd) {
@@ -3314,490 +3096,57 @@ window.initPhotocards = function() {
   });
 };
 
-// Notifications are initialized from fetchCurrentUser() after auth succeeds.
-
-// --- Notifications Logic ---
-async function initNotifications() {
-  const token = localStorage.getItem('user_token');
-  if (!token) return;
-  // Prevent duplicate bell icons if called more than once
-  if (document.getElementById('notif-bell-container')) return;
-  
-  // Inject Bell Icon to top right
-  const bellContainer = document.createElement('div');
-  bellContainer.id = 'notif-bell-container';
-  bellContainer.style.position = 'fixed';
-  bellContainer.style.top = '20px';
-  bellContainer.style.right = '20px';
-  bellContainer.style.zIndex = '9999';
-  
-  const bellBtn = document.createElement('button');
-  bellBtn.innerHTML = 'Ã°Å¸â€â€';
-  bellBtn.className = 'btn';
-  bellBtn.style.position = 'relative';
-  bellBtn.style.borderRadius = '50%';
-  bellBtn.style.padding = '0.5rem 0.8rem';
-  
-  const badge = document.createElement('span');
-  badge.style.position = 'absolute';
-  badge.style.top = '-5px';
-  badge.style.right = '-5px';
-  badge.style.background = 'red';
-  badge.style.color = 'white';
-  badge.style.borderRadius = '50%';
-  badge.style.padding = '2px 6px';
-  badge.style.fontSize = '0.7rem';
-  badge.style.display = 'none';
-  
-  const dropdown = document.createElement('div');
-  dropdown.className = 'glass-card';
-  dropdown.style.position = 'absolute';
-  dropdown.style.top = '50px';
-  dropdown.style.right = '0';
-  dropdown.style.width = '300px';
-  dropdown.style.display = 'none';
-  dropdown.style.maxHeight = '400px';
-  dropdown.style.overflowY = 'auto';
-  dropdown.style.zIndex = '10000';
-  
-  bellBtn.appendChild(badge);
-  bellContainer.appendChild(bellBtn);
-  bellContainer.appendChild(dropdown);
-  document.body.appendChild(bellContainer);
-  
-  // Fetch Notifications
-  try {
-    const res = await fetch(`${API_BASE}/api/notifications`, {
-      headers: { 'Authorization': `Bearer ${localStorage.getItem('user_token')}` }
-    });
-    const notifs = await res.json();
-    
-    const unread = notifs.filter(n => !n.read).length;
-    if (unread > 0) {
-      badge.textContent = unread;
-      badge.style.display = 'block';
-    }
-    
-    bellBtn.onclick = async () => {
-      dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
-      
-      if (dropdown.style.display === 'block') {
-        dropdown.innerHTML = '<h4 style="margin-bottom:1rem; color:var(--bp-pink);">Notifications</h4>';
-        if (notifs.length === 0) dropdown.innerHTML += '<p>No notifications.</p>';
-        
-        notifs.slice().reverse().forEach(n => {
-          const div = document.createElement('div');
-          div.style.padding = '0.5rem';
-          div.style.borderBottom = '1px solid rgba(255,255,255,0.1)';
-          div.style.fontSize = '0.9rem';
-          div.style.color = n.read ? '#aaa' : 'white';
-          div.innerHTML = `<div>${n.message}</div><div style="font-size:0.7rem; color:#888;">${new Date(n.date).toLocaleString()}</div>`;
-          dropdown.appendChild(div);
-        });
-        
-        // Mark as read
-        if (unread > 0) {
-          await fetch(`${API_BASE}/api/notifications/read`, {
-            method: 'POST',
-            headers: { 'Authorization': `Bearer ${localStorage.getItem('user_token')}` }
-          });
-          badge.style.display = 'none';
-        }
-      }
-    };
-  } catch(e) { console.error('Failed to load notifications'); }
-}
-// --- Master Card Index & Wishlist Logic ---
-async function openMasterIndex() {
-  const modal = document.getElementById('master-index-modal');
-  if (!modal) return;
-  
-  modal.style.display = 'block';
-  const grid = document.getElementById('master-index-grid');
-  grid.innerHTML = '<p style="color:white;text-align:center;">Loading master index...</p>';
-  
-  try {
-    const res = await fetch(`${API_BASE}/api/cards`);
-    const allCards = await res.json();
-    
-    grid.innerHTML = '';
-    const ownedIds = new Set((currentUser.photocards || []).map(c => c.id));
-    const wishlistIds = new Set(currentUser.wishlist || []);
-    
-    allCards.forEach(card => {
-      const wrapper = document.createElement('div');
-      wrapper.style.position = 'relative';
-      
-      const img = document.createElement('img');
-      img.src = card.url;
-      img.style.width = '100%';
-      img.style.borderRadius = '10px';
-      
-      const isOwned = ownedIds.has(card.id);
-      if (!isOwned) {
-        img.style.filter = 'grayscale(100%) brightness(0.4)';
-        img.style.cursor = 'pointer';
-        
-        // Wishlist logic
-        const heart = document.createElement('div');
-        heart.innerHTML = wishlistIds.has(card.id) ? 'Ã¢ÂÂ¤Ã¯Â¸Â' : 'Ã°Å¸Â¤Â';
-        heart.style.position = 'absolute';
-        heart.style.top = '5px';
-        heart.style.right = '5px';
-        heart.style.fontSize = '1.5rem';
-        heart.style.cursor = 'pointer';
-        heart.style.textShadow = '0 0 5px rgba(0,0,0,0.5)';
-        
-        const toggle = async (e) => {
-          e.stopPropagation();
-          const wToken = localStorage.getItem('user_token');
-          const res = await fetch(`${API_BASE}/api/wishlist`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${wToken}` },
-            body: JSON.stringify({ cardId: card.id })
-          });
-          const data = await res.json();
-          if (data.success) {
-            currentUser = data.user;
-            localStorage.setItem('bp_user', JSON.stringify(currentUser));
-            if (currentUser.wishlist.includes(card.id)) {
-              heart.innerHTML = 'Ã¢ÂÂ¤Ã¯Â¸Â';
-            } else {
-              heart.innerHTML = 'Ã°Å¸Â¤Â';
-            }
-          }
-        };
-        
-        heart.onclick = toggle;
-        img.onclick = toggle;
-        wrapper.appendChild(heart);
-      }
-      const rarityLabel = document.createElement('div');
-      rarityLabel.textContent = card.rarity;
-      rarityLabel.style.textAlign = 'center';
-      rarityLabel.style.fontSize = '0.8rem';
-      rarityLabel.style.marginTop = '0.2rem';
-      
-      let rarityColor = '#ccc';
-      if (card.rarity === 'Legendary') rarityColor = '#ffd700';
-      if (card.rarity === 'Epic') rarityColor = '#ff6b9e';
-      if (card.rarity === 'Rare') rarityColor = '#6be2ff';
-      rarityLabel.style.color = rarityColor;
-
-      wrapper.appendChild(img);
-      wrapper.appendChild(rarityLabel);
-      grid.appendChild(wrapper);
-    });
-    
-  } catch (err) {
-    grid.innerHTML = '<p style="color:red;text-align:center;">Failed to load master index.</p>';
-  }
-}
-
-// =============================================
-// SONG OF THE DAY
-// =============================================
-function initSongOfDay() {
-  const titleEl  = document.getElementById('sotd-title');
-  if (!titleEl) return;
-  const artistEl = document.getElementById('sotd-artist');
-  const thumbEl  = document.getElementById('sotd-thumb');
-
-  const now   = new Date();
-  const start = new Date(now.getFullYear(), 0, 0);
-  const dayOfYear = Math.floor((now - start) / 86400000);
-  const track = defaultYtPlaylist[dayOfYear % defaultYtPlaylist.length];
-
-  titleEl.textContent  = track.title;
-  if (artistEl) artistEl.textContent = track.artist;
-  if (thumbEl)  thumbEl.src = `https://img.youtube.com/vi/${track.videoId}/mqdefault.jpg`;
-
-  window.sotdTrack = track;
-  window.playSongOfDay = function() {
-    const idx = defaultYtPlaylist.findIndex(t => t.videoId === track.videoId);
-    if (ytPlayerReady && typeof ytLoadTrack === 'function') {
-      ytLoadTrack(idx >= 0 ? idx : 0);
-      const player = document.getElementById('music-player');
-      if (player && player.classList.contains('collapsed')) toggleMusicPlayer();
-      showToast(`Now playing: ${track.title} \uD83C\uDFB5`, 3000);
-    } else {
-      showToast('Music player is loading\u2026 try again in a moment!', 3000);
-    }
-  };
-}
-
-// =============================================
-// ACHIEVEMENTS / BADGES
-// =============================================
-function renderAchievements() {
-  const grid   = document.getElementById('achievements-grid');
-  const header = document.getElementById('achievements-header');
-  if (!grid || !currentUser) return;
-
-  const defs = [
-    { icon: '\u2B50',  title: 'Welcome!',         desc: 'Created your account',          check: () => true },
-    { icon: '\uD83C\uDF9A',  title: 'First Pull',      desc: 'Pulled your first photocard',   check: () => (currentUser.photocards||[]).length >= 1 },
-    { icon: '\uD83D\uDC8E',  title: 'Legendary!',      desc: 'Pulled a Legendary card',        check: () => (currentUser.photocards||[]).some(c => c.rarity === 'Legendary') },
-    { icon: '\uD83C\uDCCF',  title: 'Collector',       desc: 'Own 10+ photocards',             check: () => (currentUser.photocards||[]).length >= 10 },
-    { icon: '\uD83C\uDF81',  title: 'Mega Collector',  desc: 'Own 50+ photocards',             check: () => (currentUser.photocards||[]).length >= 50 },
-    { icon: '\uD83C\uDFB5',  title: 'Music Lover',     desc: 'Played 10+ songs',               check: () => (currentUser.playCount||0) >= 10 },
-    { icon: '\uD83C\uDFB6',  title: 'Super Fan',       desc: 'Played 50+ songs',               check: () => (currentUser.playCount||0) >= 50 },
-    { icon: '\uD83D\uDCAC',  title: 'Blink Wall',      desc: 'Posted on the Blink Wall',       check: () => (currentUser.commentsCount||0) >= 1 },
-    { icon: '\uD83D\uDD25',  title: 'On a Roll',       desc: '3-day login streak',             check: () => (currentUser.loginStreak||0) >= 3 },
-    { icon: '\uD83D\uDC4F',  title: 'On Fire!',        desc: '7-day login streak',             check: () => (currentUser.loginStreak||0) >= 7 },
-  ];
-
-  const unlockedCount = defs.filter(a => a.check()).length;
-  if (header) header.textContent = `${unlockedCount}/${defs.length} Unlocked`;
-
-  grid.innerHTML = '';
-  defs.forEach(a => {
-    const unlocked = a.check();
-    const badge = document.createElement('div');
-    badge.className = `achievement-badge ${unlocked ? 'unlocked' : 'locked'}`;
-    badge.title = unlocked ? `\u2705 ${a.desc}` : `\uD83D\uDD12 Locked: ${a.desc}`;
-    badge.innerHTML = `
-      <div class="achievement-icon">${a.icon}</div>
-      <div class="achievement-title">${a.title}</div>
-      ${!unlocked ? '<div class="achievement-lock">\uD83D\uDD12</div>' : ''}
-    `;
-    grid.appendChild(badge);
-  });
-}
-
-// =============================================
-// GLOBAL SEARCH MODAL
-// =============================================
-function initGlobalSearch() {
-  if (document.getElementById('search-modal')) return;
-
-  // Floating trigger button
-  const btn = document.createElement('button');
-  btn.id = 'global-search-btn';
-  btn.innerHTML = '\uD83D\uDD0D Search &nbsp;<kbd>Ctrl+K</kbd>';
-  btn.onclick = openSearch;
-  document.body.appendChild(btn);
-
-  const searchData = [
-    { type: 'page', icon: '\uD83C\uDFE0', name: 'Home',            url: 'index.html' },
-    { type: 'page', icon: '\uD83D\uDC65', name: 'Members',         url: 'aboutmembers.html' },
-    { type: 'page', icon: '\uD83C\uDFB5', name: 'Discography',     url: 'discography.html' },
-    { type: 'page', icon: '\uD83D\uDCC5', name: 'Timeline',        url: 'timeline.html' },
-    { type: 'page', icon: '\uD83C\uDFC6', name: 'Records',         url: 'records.html' },
-    { type: 'page', icon: '\uD83D\uDCF7', name: 'Gallery',         url: 'gallery.html' },
-    { type: 'page', icon: '\uD83C\uDF0D', name: 'World Tour',      url: 'worldtour.html' },
-    { type: 'page', icon: '\uD83C\uDFAC', name: 'Videos',          url: 'videos.html' },
-    { type: 'page', icon: '\uD83C\uDFAE', name: 'Games',           url: 'games.html' },
-    { type: 'page', icon: '\uD83C\uDFB4', name: 'Photocards',      url: 'photocards.html' },
-    { type: 'page', icon: '\uD83D\uDC64', name: 'My Profile',      url: 'profile.html' },
-    { type: 'page', icon: '\uD83D\uDD10', name: 'Login/Register',  url: 'login.html' },
-    { type: 'page', icon: '\uD83D\uDCDD', name: 'Blink Wall',      url: 'blink-wall.html' },
-    { type: 'page', icon: '\uD83D\uDD12', name: 'Vault',           url: 'vault.html' },
-    { type: 'page', icon: '\uD83C\uDFA8', name: 'Fan Art',         url: 'fanart.html' },
-    { type: 'page', icon: '\uD83D\uDCAC', name: 'Feedback',        url: 'feedback.html' },
-    { type: 'member', icon: '\uD83D\uDC78', name: 'Jisoo',  url: 'Jisoo.html',      desc: 'Kim Ji-soo \u2022 Main Vocalist' },
-    { type: 'member', icon: '\uD83D\uDC8D', name: 'Jennie', url: 'Jennie.html',     desc: 'Kim Jennie \u2022 Main Rapper' },
-    { type: 'member', icon: '\uD83C\uDF39', name: 'Ros\u00e9',   url: 'RosSolo.html',   desc: 'Park Chaeyoung \u2022 Main Vocalist' },
-    { type: 'member', icon: '\uD83D\uDC51', name: 'Lisa',   url: 'Lalisa.html',     desc: 'Lalisa Manoban \u2022 Main Dancer' },
-    ...defaultYtPlaylist.map(t => ({ type: 'song', icon: '\uD83C\uDFB6', name: t.title, desc: t.artist, videoId: t.videoId }))
-  ];
-
-  const typeColors = { page: '#4287f5', member: 'var(--bp-pink)', song: '#00e5ff' };
-
-  // Build modal
-  const modal = document.createElement('div');
-  modal.id = 'search-modal';
-  modal.innerHTML = `
-    <div class="search-box">
-      <div class="search-header">
-        <span style="font-size:1.2rem; color:var(--bp-pink);">\uD83D\uDD0D</span>
-        <input id="search-input" type="text" placeholder="Search pages, songs, members\u2026" autocomplete="off" spellcheck="false">
-        <kbd onclick="closeSearch()" style="cursor:pointer; background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.12); border-radius:5px; padding:2px 8px; font-size:0.75rem; color:#777; font-family:inherit;">ESC</kbd>
-      </div>
-      <div class="search-results-list" id="search-results">
-        <div class="search-empty">Start typing to search\u2026 \uD83D\uDD0D</div>
-      </div>
-      <div class="search-hint">
-        <kbd>\u2191\u2193</kbd> navigate &nbsp; <kbd>Enter</kbd> open &nbsp; <kbd>ESC</kbd> close &nbsp;&middot;&nbsp; <kbd>Ctrl+K</kbd> anywhere
-      </div>
-    </div>`;
-  document.body.appendChild(modal);
-
-  // Close on backdrop
-  modal.addEventListener('click', e => { if (e.target === modal) closeSearch(); });
-
-  // Search logic
-  const input = document.getElementById('search-input');
-  input.addEventListener('input', () => {
-    const q = input.value.toLowerCase().trim();
-    const results = document.getElementById('search-results');
-    if (!q) { results.innerHTML = '<div class="search-empty">Start typing to search\u2026 \uD83D\uDD0D</div>'; return; }
-
-    const matches = searchData.filter(item =>
-      item.name.toLowerCase().includes(q) ||
-      (item.desc && item.desc.toLowerCase().includes(q))
-    ).slice(0, 9);
-
-    if (!matches.length) { results.innerHTML = '<div class="search-empty">No results found \uD83D\uDDA4</div>'; return; }
-
-    results.innerHTML = matches.map((item, i) => `
-      <div class="search-result-item" data-index="${i}"
-        onclick="${item.type === 'song'
-          ? `searchPlaySong('${item.videoId}','${item.name.replace(/'/g,"\\'")}')`
-          : `navigateTo('${item.url}'); closeSearch();`}">
-        <span class="search-result-icon">${item.icon}</span>
-        <div style="flex:1; min-width:0;">
-          <div class="search-result-name">${item.name}</div>
-          ${item.desc ? `<div class="search-result-sub">${item.desc}</div>` : ''}
-        </div>
-        <span class="search-type-tag" style="color:${typeColors[item.type]||'#aaa'}; background:${typeColors[item.type]||'#aaa'}22;">${item.type}</span>
-      </div>`).join('');
-  });
-
-  // Global keyboard shortcut
-  document.addEventListener('keydown', e => {
-    if ((e.ctrlKey || e.metaKey) && e.key === 'k') { e.preventDefault(); openSearch(); }
-    if (e.key === 'Escape') closeSearch();
-  });
-}
-
-window.openSearch = function() {
-  let modal = document.getElementById('search-modal');
-  if (!modal) initGlobalSearch();
-  modal = document.getElementById('search-modal');
-  if (modal) {
-    modal.classList.add('open');
-    const inp = document.getElementById('search-input');
-    if (inp) { inp.value = ''; inp.focus(); }
-    const res = document.getElementById('search-results');
-    if (res) res.innerHTML = '<div class="search-empty">Start typing to search\u2026 \uD83D\uDD0D</div>';
-  }
-};
-window.closeSearch = function() {
-  const modal = document.getElementById('search-modal');
-  if (modal) modal.classList.remove('open');
-};
-window.searchPlaySong = function(videoId, name) {
-  const idx = defaultYtPlaylist.findIndex(t => t.videoId === videoId);
-  if (idx >= 0 && ytPlayerReady && typeof ytLoadTrack === 'function') {
-    ytLoadTrack(idx);
-    const player = document.getElementById('music-player');
-    if (player && player.classList.contains('collapsed')) toggleMusicPlayer();
-    showToast(`Now playing: ${name} \uD83C\uDFB5`, 3000);
-  }
-  closeSearch();
-};
-
-// =============================================
-// PWA INSTALL BANNER
-// =============================================
-let deferredInstallPrompt = null;
-window.addEventListener('beforeinstallprompt', e => {
-  e.preventDefault();
-  deferredInstallPrompt = e;
-  if (!localStorage.getItem('pwaInstallDismissed')) {
-    setTimeout(showPWABanner, 3000); // slight delay so page settles
-  }
+document.addEventListener('DOMContentLoaded', () => {
+  if (document.getElementById('birthday-timer')) initBirthdayCountdown();
+  if (document.getElementById('fanart-grid')) initFanArt();
+  if (document.getElementById('pull-card-btn')) initPhotocards();
 });
 
-function showPWABanner() {
-  if (document.getElementById('pwa-banner')) return;
-  const banner = document.createElement('div');
-  banner.id = 'pwa-banner';
-  banner.innerHTML = `
-    <span style="font-size:1.8rem;">&#128241;</span>
-    <div style="flex:1;">
-      <div style="font-weight:700; color:#fff; font-size:0.88rem; margin-bottom:2px;">Install BLACKPINK Hub!</div>
-      <div style="font-size:0.78rem; color:#777;">Add to home screen for the best experience</div>
-    </div>
-    <button onclick="installPWA()" class="btn btn-glow" style="padding:0.35rem 0.85rem; font-size:0.78rem; white-space:nowrap;">Install</button>
-    <button onclick="dismissPWA()" style="background:none; border:none; color:#666; cursor:pointer; font-size:1.4rem; line-height:1; padding:0 0.1rem;">&times;</button>
-  `;
-  document.body.appendChild(banner);
-}
-window.installPWA = async function() {
-  if (!deferredInstallPrompt) return;
-  deferredInstallPrompt.prompt();
-  const { outcome } = await deferredInstallPrompt.userChoice;
-  deferredInstallPrompt = null;
-  const b = document.getElementById('pwa-banner');
-  if (b) b.remove();
-};
-window.dismissPWA = function() {
-  localStorage.setItem('pwaInstallDismissed', 'true');
-  const b = document.getElementById('pwa-banner');
-  if (b) b.remove();
-};
 
 
 // =============================================
-// SECRET EASTER EGGS (ALL-IN FOR BLINKS)
+// KONAMI CODE EASTER EGGS
 // =============================================
 let secretBuffer = '';
 document.addEventListener('keydown', (e) => {
-  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-  
   secretBuffer += e.key.toLowerCase();
-  if (secretBuffer.length > 15) secretBuffer = secretBuffer.slice(-15);
+  if (secretBuffer.length > 20) secretBuffer = secretBuffer.slice(-20);
   
-  if (secretBuffer.endsWith('jisoo')) {
-    triggerEasterEgg('jisoo');
-    secretBuffer = '';
-  } else if (secretBuffer.endsWith('jennie')) {
-    triggerEasterEgg('jennie');
-    secretBuffer = '';
-  } else if (secretBuffer.endsWith('rose') || secretBuffer.endsWith('rosÃ©')) {
-    triggerEasterEgg('rose');
-    secretBuffer = '';
-  } else if (secretBuffer.endsWith('lisa')) {
-    triggerEasterEgg('lisa');
-    secretBuffer = '';
-  }
-});
-
-function triggerEasterEgg(member) {
   let emojis = [];
   let message = '';
-  if (member === 'jisoo') {
-    emojis = ['ðŸ¢', 'ðŸ°', 'â„ï¸'];
-    message = "I'm Jisoo, I'm okay! ðŸ¢ðŸ°";
-  } else if (member === 'jennie') {
-    emojis = ['ðŸ¥Ÿ', 'ðŸ»', 'âœ¨'];
-    message = "Shining solo! ðŸ¥Ÿâœ¨";
-  } else if (member === 'rose') {
-    emojis = ['ðŸŒ¹', 'ðŸ¿ï¸', 'ðŸŽ¸'];
-    message = "Records are meant to be broken! ðŸŒ¹ðŸŽ¸";
-  } else if (member === 'lisa') {
-    emojis = ['ðŸ’¸', 'ðŸ¥', 'ðŸ’°'];
-    message = "Drop some money! ðŸ’¸ðŸ’°";
+  let color = '';
+  let match = false;
+  
+  if (secretBuffer.endsWith('jisoo')) {
+    emojis = ['🌸', '🐢', '🐰'];
+    message = "I'm Jisoo, I'm okay! 🐢🐰";
+    color = 'var(--bp-pink)';
+    match = true;
+  } else if (secretBuffer.endsWith('jennie')) {
+    emojis = ['🥟', '🐻', '🕶️'];
+    message = "Shining solo! 🥟🕶️";
+    color = '#4a90e2';
+    match = true;
+  } else if (secretBuffer.endsWith('rose') || secretBuffer.endsWith('rosé')) {
+    emojis = ['🐿️', '🌹', '🎸'];
+    message = "Records are meant to be broken! 🐿️🎸";
+    color = '#ffb6c1';
+    match = true;
+  } else if (secretBuffer.endsWith('lisa')) {
+    emojis = ['🐥', '🐱', '💸'];
+    message = "Drop some money! 🐥💸";
+    color = '#f1c40f';
+    match = true;
   }
   
-  showToast(message, 5000);
-  spawnEmojiRain(emojis);
-}
-
-function spawnEmojiRain(emojis) {
-  for (let i = 0; i < 40; i++) {
-    const el = document.createElement('div');
-    el.innerText = emojis[Math.floor(Math.random() * emojis.length)];
-    el.style.position = 'fixed';
-    el.style.left = Math.random() * 100 + 'vw';
-    el.style.top = '-50px';
-    el.style.fontSize = (Math.random() * 20 + 20) + 'px';
-    el.style.zIndex = 999999;
-    el.style.pointerEvents = 'none';
-    el.style.transition = 'transform ' + (Math.random() * 2 + 3) + 's linear, opacity ' + (Math.random() * 2 + 3) + 's linear';
-    document.body.appendChild(el);
-    
-    setTimeout(() => {
-      el.style.transform = `translate(${Math.random() * 200 - 100}px, 110vh) rotate(${Math.random() * 360}deg)`;
-      el.style.opacity = '0';
-    }, 50);
-    
-    setTimeout(() => el.remove(), 5000);
+  if (match) {
+    secretBuffer = '';
+    showToast(message, 3000);
+    spawnEmojiRain(emojis);
+    document.body.style.boxShadow = inset 0 0 50px ;
+    setTimeout(() => document.body.style.boxShadow = 'none', 1000);
   }
-}
-
+});
 
 // =============================================
 // VIRTUAL MASCOT (DALGOM / KRUNK)
@@ -3806,10 +3155,10 @@ function initMascot() {
   if (document.getElementById('virtual-mascot')) return;
   const mascot = document.createElement('div');
   mascot.id = 'virtual-mascot';
-  mascot.innerHTML = `
+  mascot.innerHTML = 
     <div style="font-size: 2.5rem; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5)); cursor: pointer; transition: transform 0.2s; user-select: none;" id="mascot-img">🐻</div>
     <div id="mascot-bubble" style="position:absolute; top:-35px; right:-20px; background:white; color:black; padding:4px 8px; border-radius:10px; font-size:0.7rem; font-weight:bold; opacity:0; transition:opacity 0.3s; white-space:nowrap; pointer-events:none; box-shadow:0 2px 10px rgba(0,0,0,0.3);"></div>
-  `;
+  ;
   mascot.style.position = 'fixed';
   mascot.style.bottom = '20px';
   mascot.style.right = '20px';
@@ -3822,14 +3171,14 @@ function initMascot() {
   if (!document.getElementById('mascot-style')) {
     const style = document.createElement('style');
     style.id = 'mascot-style';
-    style.textContent = `
+    style.textContent = 
       @keyframes floatMascot {
         0%, 100% { transform: translateY(0); }
         50% { transform: translateY(-10px); }
       }
       #virtual-mascot:hover #mascot-img { transform: scale(1.15) rotate(-5deg); }
       #virtual-mascot:active #mascot-img { transform: scale(0.9); }
-    `;
+    ;
     document.head.appendChild(style);
   }
 
@@ -3869,7 +3218,6 @@ function initMascot() {
   });
 }
 
-
 // =============================================
 // BLACK & PINK CURSOR TRAIL
 // =============================================
@@ -3881,7 +3229,6 @@ function initCursorTrail() {
 
   const hearts = ['🖤', '💖'];
   let heartIndex = 0;
-  
   let lastSpawn = 0;
   
   document.addEventListener('mousemove', (e) => {
@@ -3911,7 +3258,7 @@ function initCursorTrail() {
       const dx = Math.cos(angle) * dist;
       const dy = Math.sin(angle) * dist - 30; // float up a bit
       
-      heart.style.transform = `translate(${dx}px, ${dy}px) scale(0.5)`;
+      heart.style.transform = 	ranslate(px, px) scale(0.5);
       heart.style.opacity = '0';
     }, 10);
     
@@ -3919,13 +3266,10 @@ function initCursorTrail() {
   });
 }
 
-
-
-
 // =============================================
 // EXP & LEVELING SYSTEM
 // =============================================
-function addEXP(amount, reason) {
+window.addEXP = function(amount, reason) {
   let currentExp = parseInt(localStorage.getItem('blink_exp') || '0');
   let currentLevel = getBlinkLevel(currentExp);
   
@@ -3937,7 +3281,7 @@ function addEXP(amount, reason) {
   if (newLevel.level > currentLevel.level) {
     triggerLevelUp(newLevel);
   } else {
-    showToast(`+${amount} EXP: ${reason}`, 3000);
+    showToast(+ EXP: , 3000);
   }
 }
 
@@ -3961,17 +3305,17 @@ function triggerLevelUp(levelInfo) {
   modal.style.justifyContent = 'center';
   modal.style.animation = 'toastSlide 0.5s ease-out';
   
-  modal.innerHTML = `
+  modal.innerHTML = 
     <h1 style="color:var(--bp-pink); font-size:4rem; margin-bottom:1rem; text-shadow:0 0 20px var(--bp-pink-glow); text-transform:uppercase;">LEVEL UP!</h1>
     <p style="color:#fff; font-size:1.5rem; margin-bottom:0.5rem;">You are now a</p>
-    <h2 style="color:#fff; font-size:3rem; margin-bottom:2rem; letter-spacing:2px;">${levelInfo.name}</h2>
+    <h2 style="color:#fff; font-size:3rem; margin-bottom:2rem; letter-spacing:2px;"></h2>
     <p style="color:#aaa; max-width:500px; text-align:center; line-height:1.6; margin-bottom:3rem;">Your dedication to BLACKPINK is paying off. Keep streaming, collecting, and chatting!</p>
-    <button class="btn btn-glow" style="font-size:1.2rem; padding:1rem 2.5rem;" onclick="this.parentElement.remove()">Continue \uD83D\uDDA4\uD83D\uDC96</button>
-  `;
+    <button class="btn btn-glow" style="font-size:1.2rem; padding:1rem 2.5rem;" onclick="this.parentElement.remove()">Continue 🖤💖</button>
+  ;
   document.body.appendChild(modal);
   
   // Confetti
-  spawnEmojiRain(['\uD83C\uDF89', '\u2728', '\uD83D\uDC96', '\uD83C\uDF1F']);
+  spawnEmojiRain(['🎉', '✨', '💖', '🌟']);
 }
 
 // Hook EXP into music player
@@ -3980,8 +3324,40 @@ window.ytLoadTrack = function(index) {
   if (typeof originalYtLoadTrack === 'function') originalYtLoadTrack(index);
   setTimeout(() => {
     if (Math.random() > 0.5) { // Random chance to prevent spamming
-      addEXP(10, 'Streaming BLACKPINK \uD83C\uDFB5');
+      window.addEXP(10, 'Streaming BLACKPINK 🎵');
     }
   }, 1000); // 1 second after track starts
 };
 
+// =============================================
+// SONG OF THE DAY (SOTD)
+// =============================================
+function initSongOfDay() {
+  const titleEl = document.getElementById('sotd-title');
+  const imgEl = document.getElementById('sotd-img');
+  const playBtn = document.getElementById('sotd-play-btn');
+  if(!titleEl || !imgEl || !playBtn) return;
+  
+  const tracks = [
+    { title: "Whistle", img: "https://upload.wikimedia.org/wikipedia/en/2/29/Square_One_Blackpink.png", index: 0 },
+    { title: "Boombayah", img: "https://upload.wikimedia.org/wikipedia/en/2/29/Square_One_Blackpink.png", index: 1 },
+    { title: "Playing With Fire", img: "https://upload.wikimedia.org/wikipedia/en/e/e6/Blackpink_-_Square_Two.jpg", index: 2 },
+    { title: "As If It's Your Last", img: "https://upload.wikimedia.org/wikipedia/en/7/7b/Blackpink_-_As_If_It%27s_Your_Last.png", index: 4 },
+    { title: "DDU-DU DDU-DU", img: "https://upload.wikimedia.org/wikipedia/en/a/a7/Blackpink_-_Square_Up.jpg", index: 5 },
+    { title: "Kill This Love", img: "https://upload.wikimedia.org/wikipedia/en/d/dc/Blackpink_-_Kill_This_Love.png", index: 6 },
+    { title: "How You Like That", img: "https://upload.wikimedia.org/wikipedia/en/d/dd/Blackpink_-_How_You_Like_That.png", index: 7 },
+    { title: "Lovesick Girls", img: "https://upload.wikimedia.org/wikipedia/en/4/41/Blackpink_-_The_Album.png", index: 8 },
+    { title: "Pink Venom", img: "https://upload.wikimedia.org/wikipedia/en/c/c5/Blackpink_-_Pink_Venom.png", index: 9 },
+    { title: "Shut Down", img: "https://upload.wikimedia.org/wikipedia/en/c/c5/Blackpink_-_Pink_Venom.png", index: 10 }
+  ];
+  
+  // Seed random by day
+  const today = new Date().toDateString();
+  let hash = 0;
+  for(let i=0; i<today.length; i++) hash += today.charCodeAt(i);
+  const track = tracks[hash % tracks.length];
+  
+  titleEl.textContent = track.title;
+  imgEl.src = track.img;
+  playBtn.onclick = () => window.ytLoadTrack(track.index);
+}
