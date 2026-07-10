@@ -26,9 +26,18 @@
       <a href="index.html" class="btn">&larr; Back to Home</a>
     </div>
 
-    <div id="profile-header" class="glass-card text-center" style="margin-bottom: 2rem; display: none;">
-      <h2 id="profile-name" style="color: var(--bp-pink);"></h2>
-      <p id="profile-bias" style="color: #ccc; margin-bottom: 1rem;"></p>
+    <!-- Skeleton loader: shown while auth check runs -->
+    <div id="profile-loading" class="glass-card text-center" style="margin-bottom:3rem; padding:2.5rem;">
+      <div class="skeleton" style="width:88px;height:88px;border-radius:50%;margin:0 auto 1rem;"></div>
+      <div class="skeleton" style="width:180px;height:26px;margin:0 auto 0.75rem;"></div>
+      <div class="skeleton" style="width:120px;height:18px;margin:0 auto;"></div>
+    </div>
+
+    <div id="profile-header" class="glass-card text-center" style="margin-bottom:3rem; display:none;">
+      <!-- Avatar with member initial -->
+      <div id="profile-avatar" class="profile-avatar">B</div>
+      <h2 id="profile-name" style="color:var(--bp-pink); margin-bottom:0.4rem;"></h2>
+      <p id="profile-bias" style="color:#ccc; margin-bottom:0;"></p>
     </div>
 
     <div class="glass-card" style="max-width: 800px; margin: 0 auto; display: none;" id="profile-dashboard">
@@ -142,6 +151,15 @@
             <button onclick="shareCollection()" class="btn" style="background: rgba(255,255,255,0.1);">🔗 Share My Collection</button>
             <a href="photocards.html" class="btn btn-glow">Pull More Cards!</a>
           </div>
+        </div>
+
+        <!-- Achievements Section -->
+        <div style="margin-top:3rem; padding:1rem;">
+          <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--glass-border); padding-bottom:0.75rem; margin-bottom:0;">
+            <h3 style="color:var(--bp-pink); margin-bottom:0;">🏆 Achievements</h3>
+            <span id="achievements-header" style="font-size:0.85rem; color:#aaa; font-weight:600;"></span>
+          </div>
+          <div id="achievements-grid" class="achievements-grid"></div>
         </div>
 
     </div>
