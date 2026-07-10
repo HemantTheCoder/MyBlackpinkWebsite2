@@ -1,4 +1,4 @@
-const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:') ? 'http://localhost:3000' : 'https://myblackpinkwebsite2.onrender.com';
+﻿const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:') ? 'http://localhost:3000' : 'https://myblackpinkwebsite2.onrender.com';
 // Redirect to https
 var loc = window.location.href + '';
 if (loc.indexOf('http://') == 0 && !loc.includes('localhost') && !loc.includes('127.0.0.1') && !loc.includes('file://')) {
@@ -36,9 +36,9 @@ const defaultYtPlaylist = [
   { title: "Ready For Love", artist: "BLACKPINK", videoId: "ruaAvL8hYI0" },
   { title: "SOLO", artist: "Jennie", videoId: "b73BI9eUkjM" },
   { title: "Mantra", artist: "Jennie", videoId: "bB3-CUMERIU" },
-  { title: "On The Ground", artist: "RosÃ©", videoId: "CKZvWhCqx1s" },
-  { title: "APT.", artist: "RosÃ© & Bruno Mars", videoId: "ekr2nIex040" },
-  { title: "Hard To Love", artist: "RosÃ©", videoId: "rAhdioquBnI" },
+  { title: "On The Ground", artist: "RosÃƒÂ©", videoId: "CKZvWhCqx1s" },
+  { title: "APT.", artist: "RosÃƒÂ© & Bruno Mars", videoId: "ekr2nIex040" },
+  { title: "Hard To Love", artist: "RosÃƒÂ©", videoId: "rAhdioquBnI" },
   { title: "LALISA", artist: "Lisa", videoId: "awkkyBH2zEo" },
   { title: "ROCKSTAR", artist: "Lisa", videoId: "hbcGx4MGUMg" },
   { title: "MONEY", artist: "Lisa", videoId: "dNCWe_6HAM8" },
@@ -562,7 +562,7 @@ function setupClickEffect() {
     if (e.target.closest('a') || e.target.closest('button') || e.target.closest('iframe')) return;
     const spark = document.createElement('div');
     spark.className = 'sparkle-effect';
-    spark.textContent = typeof biasEmoji !== 'undefined' ? biasEmoji : 'âœ¨';
+    spark.textContent = typeof biasEmoji !== 'undefined' ? biasEmoji : 'Ã¢Å“Â¨';
     spark.style.left = (e.clientX - 10) + 'px';
     spark.style.top = (e.clientY - 10) + 'px';
     spark.style.fontSize = '20px';
@@ -1402,7 +1402,7 @@ window.initGallery = function () {
       <div class="lb-container">
         <div class="lb-top-bar">
           <div class="lb-counter"><strong id="lb-cur">1</strong> / <strong id="lb-total">11</strong></div>
-          <button class="lb-close" id="lb-close">âœ•</button>
+          <button class="lb-close" id="lb-close">Ã¢Å“â€¢</button>
         </div>
         <div class="lb-img-wrap">
           <img id="lb-img" src="" alt="">
@@ -1525,7 +1525,7 @@ window.initDiscography = function () {
 window.initWorldTour = function () {
   if (!document.getElementById('tour-map')) return;
   if (typeof L === 'undefined') {
-    // Leaflet not loaded yet â€” retry after delay
+    // Leaflet not loaded yet Ã¢â‚¬â€ retry after delay
     setTimeout(window.initWorldTour, 500);
     return;
   }
@@ -1582,13 +1582,13 @@ window.initWorldTour = function () {
 
   bpStops.forEach(function (s) {
     L.marker(s.coords, { icon: makeIcon('#ff2a85') })
-      .bindPopup('<div style="background:#1a0025;border:1px solid #ff2a85;border-radius:10px;padding:0.8rem;color:#fff;min-width:160px;"><strong style="color:#ff2a85">ðŸŒ¸ ' + s.city + '</strong><br><span style="color:#ddd;font-size:0.85rem;">' + s.venue + '</span><br><span style="color:#aaa;font-size:0.8rem;">ðŸ“… ' + s.date + '</span></div>', { maxWidth: 220 })
+      .bindPopup('<div style="background:#1a0025;border:1px solid #ff2a85;border-radius:10px;padding:0.8rem;color:#fff;min-width:160px;"><strong style="color:#ff2a85">Ã°Å¸Å’Â¸ ' + s.city + '</strong><br><span style="color:#ddd;font-size:0.85rem;">' + s.venue + '</span><br><span style="color:#aaa;font-size:0.8rem;">Ã°Å¸â€œâ€¦ ' + s.date + '</span></div>', { maxWidth: 220 })
       .addTo(bpLayer);
   });
 
   dlStops.forEach(function (s) {
     L.marker(s.coords, { icon: makeIcon('#a855f7') })
-      .bindPopup('<div style="background:#0a001a;border:1px solid #a855f7;border-radius:10px;padding:0.8rem;color:#fff;min-width:160px;"><strong style="color:#a855f7">âš¡ ' + s.city + '</strong><br><span style="color:#ddd;font-size:0.85rem;">' + s.venue + '</span><br><span style="color:#aaa;font-size:0.8rem;">ðŸ“… ' + s.date + '</span></div>', { maxWidth: 220 })
+      .bindPopup('<div style="background:#0a001a;border:1px solid #a855f7;border-radius:10px;padding:0.8rem;color:#fff;min-width:160px;"><strong style="color:#a855f7">Ã¢Å¡Â¡ ' + s.city + '</strong><br><span style="color:#ddd;font-size:0.85rem;">' + s.venue + '</span><br><span style="color:#aaa;font-size:0.8rem;">Ã°Å¸â€œâ€¦ ' + s.date + '</span></div>', { maxWidth: 220 })
       .addTo(dlLayer);
   });
 
@@ -1625,37 +1625,37 @@ window.initQuoteGenerator = function () {
   if (!document.getElementById('quote-display')) return;
 
   const quotes = [
-    { text: "Don't know what to do, it's true â€” I'm stuck on you.", member: 'BLACKPINK', song: "Don't Know What To Do" },
+    { text: "Don't know what to do, it's true Ã¢â‚¬â€ I'm stuck on you.", member: 'BLACKPINK', song: "Don't Know What To Do" },
     { text: "We were born to be alone, but why do I come back to you?", member: 'BLACKPINK', song: 'Lovesick Girls' },
     { text: "I'm the one they call a savage.", member: 'BLACKPINK', song: 'Pretty Savage' },
-    { text: "How you like that? Look at you now â€” you're so beautiful.", member: 'BLACKPINK', song: 'How You Like That' },
+    { text: "How you like that? Look at you now Ã¢â‚¬â€ you're so beautiful.", member: 'BLACKPINK', song: 'How You Like That' },
     { text: "Boombayah! Call me monster, I'm a savage beast.", member: 'BLACKPINK', song: 'Boombayah' },
     { text: "I set fire to the rain, yeah I like it like that.", member: 'BLACKPINK', song: 'Playing With Fire' },
-    { text: "Kill this love â€” before it kills us first.", member: 'BLACKPINK', song: 'Kill This Love' },
+    { text: "Kill this love Ã¢â‚¬â€ before it kills us first.", member: 'BLACKPINK', song: 'Kill This Love' },
     { text: "Baby I'm a savage. Slightly crazy, totally amazing.", member: 'BLACKPINK', song: 'Pretty Savage' },
-    { text: "Ice cream, chillin' chillin', drip on top.", member: 'RosÃ© & Selena Gomez', song: 'Ice Cream' },
+    { text: "Ice cream, chillin' chillin', drip on top.", member: 'RosÃƒÂ© & Selena Gomez', song: 'Ice Cream' },
     { text: "Whistle baby, whistle baby, let me know.", member: 'BLACKPINK', song: 'Whistle' },
-    { text: "On the ground, on the ground â€” only on the ground.", member: 'RosÃ©', song: 'On The Ground' },
+    { text: "On the ground, on the ground Ã¢â‚¬â€ only on the ground.", member: 'RosÃƒÂ©', song: 'On The Ground' },
     { text: "Money, that's what I want. Money, that's what I need.", member: 'Lisa', song: 'Money' },
     { text: "I'm a diamond, born under pressure.", member: 'Lisa', song: 'Lalisa' },
     { text: "When I look in the mirror, I see a flower.", member: 'Jisoo', song: 'Flower' },
-    { text: "Solo â€” I'm the one for me.", member: 'Jennie', song: 'SOLO' },
-    { text: "APT, APT â€” every time I'm with you.", member: 'RosÃ© ft. Bruno Mars', song: 'APT.' },
-    { text: "Man, it's my world â€” Rockstar, in control.", member: 'Lisa', song: 'Rockstar' },
-    { text: "Mantra â€” repeat after me: I am everything.", member: 'Jennie', song: 'Mantra' },
+    { text: "Solo Ã¢â‚¬â€ I'm the one for me.", member: 'Jennie', song: 'SOLO' },
+    { text: "APT, APT Ã¢â‚¬â€ every time I'm with you.", member: 'RosÃƒÂ© ft. Bruno Mars', song: 'APT.' },
+    { text: "Man, it's my world Ã¢â‚¬â€ Rockstar, in control.", member: 'Lisa', song: 'Rockstar' },
+    { text: "Mantra Ã¢â‚¬â€ repeat after me: I am everything.", member: 'Jennie', song: 'Mantra' },
     { text: "Pink Venom, drop it on the floor.", member: 'BLACKPINK', song: 'Pink Venom' },
-    { text: "Shut down the city â€” BLACKPINK in your area!", member: 'BLACKPINK', song: 'Shut Down' },
+    { text: "Shut down the city Ã¢â‚¬â€ BLACKPINK in your area!", member: 'BLACKPINK', song: 'Shut Down' },
     { text: "I've waited my whole life to be right here with you.", member: 'BLACKPINK', song: 'Ready For Love' },
     { text: "You never know how it feels to be me.", member: 'BLACKPINK', song: 'You Never Know' },
-    { text: "Forever young â€” I want to be forever young.", member: 'BLACKPINK', song: 'Forever Young' },
-    { text: "As if it's your last â€” love me like it's your last.", member: 'BLACKPINK', song: "As If It's Your Last" }
+    { text: "Forever young Ã¢â‚¬â€ I want to be forever young.", member: 'BLACKPINK', song: 'Forever Young' },
+    { text: "As if it's your last Ã¢â‚¬â€ love me like it's your last.", member: 'BLACKPINK', song: "As If It's Your Last" }
   ];
 
   const memberQuotes = {
     all: quotes,
     jisoo: quotes.filter(function (q) { return q.member === 'Jisoo' || q.member === 'BLACKPINK'; }),
     jennie: quotes.filter(function (q) { return q.member === 'Jennie' || q.member === 'BLACKPINK'; }),
-    rose: quotes.filter(function (q) { return q.member.includes('RosÃ©') || q.member === 'BLACKPINK'; }),
+    rose: quotes.filter(function (q) { return q.member.includes('RosÃƒÂ©') || q.member === 'BLACKPINK'; }),
     lisa: quotes.filter(function (q) { return q.member === 'Lisa' || q.member === 'BLACKPINK'; })
   };
 
@@ -1679,7 +1679,7 @@ window.initQuoteGenerator = function () {
         display.style.opacity = '1';
       }, 300);
     }
-    if (songEl) songEl.textContent = 'â€” ' + q.song;
+    if (songEl) songEl.textContent = 'Ã¢â‚¬â€ ' + q.song;
     if (memberEl) memberEl.textContent = q.member;
   }
 
@@ -1704,9 +1704,9 @@ window.initQuoteGenerator = function () {
   if (copyBtn) {
     copyBtn.addEventListener('click', function () {
       if (!currentQuote) return;
-      const text = '"' + currentQuote.text + '" â€” ' + currentQuote.member + ' (' + currentQuote.song + ')';
+      const text = '"' + currentQuote.text + '" Ã¢â‚¬â€ ' + currentQuote.member + ' (' + currentQuote.song + ')';
       navigator.clipboard.writeText(text).then(function () {
-        if (typeof showToast === 'function') showToast('Quote copied to clipboard! ðŸ’—');
+        if (typeof showToast === 'function') showToast('Quote copied to clipboard! Ã°Å¸â€™â€”');
       });
     });
   }
@@ -1724,7 +1724,7 @@ window.initQuoteGenerator = function () {
 };
 
 // =============================================
-// RECORDS PAGE â€” Animated counters
+// RECORDS PAGE Ã¢â‚¬â€ Animated counters
 // =============================================
 window.initRecords = function () {
   const statCards = document.querySelectorAll('.stat-card[data-display]');
@@ -1769,39 +1769,39 @@ const qgLyrics = {
     { lyric: "Because I'm the one.", song: 'Flower' },
     { lyric: "All my flowers grew for you.", song: 'Flower' },
     { lyric: "BLACKPINK is the revolution.", song: 'Kill This Love' },
-    { lyric: "Forever young â€” I want to be forever young.", song: 'Forever Young' }
+    { lyric: "Forever young Ã¢â‚¬â€ I want to be forever young.", song: 'Forever Young' }
   ],
   jennie: [
-    { lyric: "I'm the one â€” solo. You can't get my love.", song: 'SOLO' },
+    { lyric: "I'm the one Ã¢â‚¬â€ solo. You can't get my love.", song: 'SOLO' },
     { lyric: "I walk alone, no one by my side.", song: 'SOLO' },
     { lyric: "I was the one who had your heart.", song: 'SOLO' },
-    { lyric: "Mantra â€” repeat after me: I am everything.", song: 'Mantra' },
-    { lyric: "Human, nature â€” that's just me.", song: 'Human' },
+    { lyric: "Mantra Ã¢â‚¬â€ repeat after me: I am everything.", song: 'Mantra' },
+    { lyric: "Human, nature Ã¢â‚¬â€ that's just me.", song: 'Human' },
     { lyric: "I'm a mess but a damn beautiful one.", song: 'Mantra' }
   ],
   rose: [
-    { lyric: "On the ground, only on the ground â€” I belong here.", song: 'On The Ground' },
+    { lyric: "On the ground, only on the ground Ã¢â‚¬â€ I belong here.", song: 'On The Ground' },
     { lyric: "I've been gone too long from myself.", song: 'Gone' },
-    { lyric: "APT â€” every time I call your name.", song: 'APT.' },
-    { lyric: "Hard to love, I know â€” but I'm worth it.", song: 'Hard To Love' },
+    { lyric: "APT Ã¢â‚¬â€ every time I call your name.", song: 'APT.' },
+    { lyric: "Hard to love, I know Ã¢â‚¬â€ but I'm worth it.", song: 'Hard To Love' },
     { lyric: "I'm your fire, I'm your flood.", song: 'Gone' },
-    { lyric: "The happiest girl â€” pretending for you.", song: 'The Happiest Girl' }
+    { lyric: "The happiest girl Ã¢â‚¬â€ pretending for you.", song: 'The Happiest Girl' }
   ],
   lisa: [
-    { lyric: "Money â€” that's what I want, that's what I need.", song: 'Money' },
-    { lyric: "Lalisa, Lalisa, Lalisa â€” I want to go.", song: 'Lalisa' },
-    { lyric: "I'm a rockstar â€” in control, in the zone.", song: 'Rockstar' },
+    { lyric: "Money Ã¢â‚¬â€ that's what I want, that's what I need.", song: 'Money' },
+    { lyric: "Lalisa, Lalisa, Lalisa Ã¢â‚¬â€ I want to go.", song: 'Lalisa' },
+    { lyric: "I'm a rockstar Ã¢â‚¬â€ in control, in the zone.", song: 'Rockstar' },
     { lyric: "I'm the baddest of them all.", song: 'Lalisa' },
-    { lyric: "New chapter â€” watch me shine.", song: 'Rockstar' },
+    { lyric: "New chapter Ã¢â‚¬â€ watch me shine.", song: 'Rockstar' },
     { lyric: "Born to flex, born to rule.", song: 'Money' }
   ]
 };
 
 const qgMemberInfo = {
-  jisoo:  { name: 'JISOO',  emoji: 'ðŸŒ¸', img: 'Jisoo.webp',   color: '#ff8fab' },
-  jennie: { name: 'JENNIE', emoji: 'ðŸ‘‘', img: 'Jennie.webp',  color: '#ff2a85' },
-  rose:   { name: 'ROSÃ‰',   emoji: 'ðŸŒ¹', img: 'Rose.webp',    color: '#ff6eb0' },
-  lisa:   { name: 'LISA',   emoji: 'ðŸ’›', img: 'Lisa.webp',    color: '#ffd700' }
+  jisoo:  { name: 'JISOO',  emoji: 'Ã°Å¸Å’Â¸', img: 'Jisoo.webp',   color: '#ff8fab' },
+  jennie: { name: 'JENNIE', emoji: 'Ã°Å¸â€˜â€˜', img: 'Jennie.webp',  color: '#ff2a85' },
+  rose:   { name: 'ROSÃƒâ€°',   emoji: 'Ã°Å¸Å’Â¹', img: 'Rose.webp',    color: '#ff6eb0' },
+  lisa:   { name: 'LISA',   emoji: 'Ã°Å¸â€™â€º', img: 'Lisa.webp',    color: '#ffd700' }
 };
 
 let qgCurrentMember = null;
@@ -1815,11 +1815,11 @@ window.selectMember = function (member) {
   const info = qgMemberInfo[member];
   const select = document.getElementById('lyric-select');
   if (!select) return;
-  select.innerHTML = '<option value="">â€” Pick a lyric â€”</option>';
+  select.innerHTML = '<option value="">Ã¢â‚¬â€ Pick a lyric Ã¢â‚¬â€</option>';
   (qgLyrics[member] || []).forEach(function (l, i) {
     const opt = document.createElement('option');
     opt.value = i;
-    opt.textContent = '"' + l.lyric.substring(0, 50) + (l.lyric.length > 50 ? 'â€¦' : '') + '" â€” ' + l.song;
+    opt.textContent = '"' + l.lyric.substring(0, 50) + (l.lyric.length > 50 ? 'Ã¢â‚¬Â¦' : '') + '" Ã¢â‚¬â€ ' + l.song;
     select.appendChild(opt);
   });
 
@@ -1861,7 +1861,7 @@ window.updateLyric = function () {
   const divEl = document.getElementById('card-divider');
   const placeholder = document.getElementById('card-placeholder');
   if (lyricEl) { lyricEl.textContent = '"' + lyricData.lyric + '"'; lyricEl.style.display = ''; }
-  if (songEl) { songEl.textContent = 'â€” ' + lyricData.song; songEl.style.display = ''; }
+  if (songEl) { songEl.textContent = 'Ã¢â‚¬â€ ' + lyricData.song; songEl.style.display = ''; }
   if (divEl) divEl.style.display = '';
   if (placeholder) placeholder.style.display = 'none';
 };
@@ -1882,13 +1882,13 @@ window.shuffleCard = function () {
 window.copyLyric = function () {
   const lyricEl = document.getElementById('card-lyric');
   if (!lyricEl || lyricEl.style.display === 'none') {
-    if (typeof showToast === 'function') showToast('Pick a lyric first! ðŸ’—');
+    if (typeof showToast === 'function') showToast('Pick a lyric first! Ã°Å¸â€™â€”');
     return;
   }
   const songEl = document.getElementById('card-song');
   const text = lyricEl.textContent + ' ' + (songEl ? songEl.textContent : '');
   navigator.clipboard.writeText(text).then(function () {
-    if (typeof showToast === 'function') showToast('Lyric copied! ðŸ’—');
+    if (typeof showToast === 'function') showToast('Lyric copied! Ã°Å¸â€™â€”');
   });
 };
 
@@ -1897,7 +1897,7 @@ window.downloadCard = function () {
   if (!card) return;
   const lyricEl = document.getElementById('card-lyric');
   if (!lyricEl || lyricEl.style.display === 'none') {
-    if (typeof showToast === 'function') showToast('Select a member and lyric first! ðŸ’—');
+    if (typeof showToast === 'function') showToast('Select a member and lyric first! Ã°Å¸â€™â€”');
     return;
   }
   if (typeof html2canvas !== 'undefined') {
@@ -1906,10 +1906,10 @@ window.downloadCard = function () {
       link.download = 'blackpink-quote-card.png';
       link.href = canvas.toDataURL();
       link.click();
-      if (typeof showToast === 'function') showToast('Card downloaded! ðŸ–¤ðŸ’—');
+      if (typeof showToast === 'function') showToast('Card downloaded! Ã°Å¸â€“Â¤Ã°Å¸â€™â€”');
     });
   } else {
-    if (typeof showToast === 'function') showToast('Download not available, try copying instead! ðŸ’—');
+    if (typeof showToast === 'function') showToast('Download not available, try copying instead! Ã°Å¸â€™â€”');
   }
 };
 
@@ -1918,14 +1918,14 @@ window.downloadCard = function () {
 // BIAS PERSONALIZATION ENGINE
 // =============================================
 let currentBias = localStorage.getItem('blink_bias');
-let biasEmoji = 'âœ¨';
+let biasEmoji = 'Ã¢Å“Â¨';
 
 const biasProfiles = {
-  'OT4': { color: '#FF7698', emoji: 'âœ¨', trackIdx: 0 },
-  'JISOO': { color: '#ff2a2a', emoji: 'ðŸ°', trackIdx: 14 }, // Flower
-  'JENNIE': { color: '#4a90e2', emoji: 'ðŸ»', trackIdx: 11 }, // SOLO
-  'ROSE': { color: '#ffb6c1', emoji: 'ðŸŒ¹', trackIdx: 12 }, // On The Ground
-  'LISA': { color: '#f1c40f', emoji: 'ðŸ¥', trackIdx: 13 } // Lalisa
+  'OT4': { color: '#FF7698', emoji: 'Ã¢Å“Â¨', trackIdx: 0 },
+  'JISOO': { color: '#ff2a2a', emoji: 'Ã°Å¸ÂÂ°', trackIdx: 14 }, // Flower
+  'JENNIE': { color: '#4a90e2', emoji: 'Ã°Å¸ÂÂ»', trackIdx: 11 }, // SOLO
+  'ROSE': { color: '#ffb6c1', emoji: 'Ã°Å¸Å’Â¹', trackIdx: 12 }, // On The Ground
+  'LISA': { color: '#f1c40f', emoji: 'Ã°Å¸ÂÂ¥', trackIdx: 13 } // Lalisa
 };
 
 function initBiasEngine() {
@@ -1945,11 +1945,11 @@ function showBiasModal() {
         <h2 style="font-size:2rem; margin-bottom:1rem; text-shadow:0 0 10px var(--bp-pink);">Who is your Bias?</h2>
         <p style="margin-bottom:2rem; opacity:0.8;">Personalize your BLINK experience!</p>
         <div style="display:flex; flex-wrap:wrap; gap:1rem; justify-content:center;">
-          <button class="btn btn-glow" onclick="selectBias('JISOO')" style="background:rgba(255,42,42,0.2); border-color:#ff2a2a;">ðŸ° JISOO</button>
-          <button class="btn btn-glow" onclick="selectBias('JENNIE')" style="background:rgba(74,144,226,0.2); border-color:#4a90e2;">ðŸ» JENNIE</button>
-          <button class="btn btn-glow" onclick="selectBias('ROSE')" style="background:rgba(255,182,193,0.2); border-color:#ffb6c1;">ðŸŒ¹ ROSÃ‰</button>
-          <button class="btn btn-glow" onclick="selectBias('LISA')" style="background:rgba(241,196,15,0.2); border-color:#f1c40f;">ðŸ¥ LISA</button>
-          <button class="btn btn-glow" onclick="selectBias('OT4')" style="background:rgba(255,118,152,0.2); border-color:#FF7698; width:100%;">âœ¨ OT4 (All of them!)</button>
+          <button class="btn btn-glow" onclick="selectBias('JISOO')" style="background:rgba(255,42,42,0.2); border-color:#ff2a2a;">Ã°Å¸ÂÂ° JISOO</button>
+          <button class="btn btn-glow" onclick="selectBias('JENNIE')" style="background:rgba(74,144,226,0.2); border-color:#4a90e2;">Ã°Å¸ÂÂ» JENNIE</button>
+          <button class="btn btn-glow" onclick="selectBias('ROSE')" style="background:rgba(255,182,193,0.2); border-color:#ffb6c1;">Ã°Å¸Å’Â¹ ROSÃƒâ€°</button>
+          <button class="btn btn-glow" onclick="selectBias('LISA')" style="background:rgba(241,196,15,0.2); border-color:#f1c40f;">Ã°Å¸ÂÂ¥ LISA</button>
+          <button class="btn btn-glow" onclick="selectBias('OT4')" style="background:rgba(255,118,152,0.2); border-color:#FF7698; width:100%;">Ã¢Å“Â¨ OT4 (All of them!)</button>
         </div>
       </div>
     </div>
@@ -1971,7 +1971,7 @@ window.selectBias = function(bias) {
     document.getElementById('bias-modal-content').style.transform = 'scale(0.8)';
     setTimeout(() => modal.remove(), 500);
   }
-  showToast(`Bias set to ${bias}! ðŸ–¤ðŸ’—`);
+  showToast(`Bias set to ${bias}! Ã°Å¸â€“Â¤Ã°Å¸â€™â€”`);
   
   // Jump to bias track
   if (ytPlayerReady && biasProfiles[bias].trackIdx !== 0) {
@@ -2038,9 +2038,9 @@ function initLightstickMode() {
   const btn = document.createElement('button');
   btn.id = 'hammer-bong-btn';
   btn.className = 'hammer-bong-btn';
-  btn.innerHTML = 'ðŸ”¨'; 
+  btn.innerHTML = 'Ã°Å¸â€Â¨'; 
   btn.title = 'Concert Mode (Under Development)';
-  btn.onclick = () => showToast('Concert Mode is currently under development! ðŸ› ï¸', 3000);
+  btn.onclick = () => showToast('Concert Mode is currently under development! Ã°Å¸â€ºÂ Ã¯Â¸Â', 3000);
   document.body.appendChild(btn);
 
   const overlay = document.createElement('div');
@@ -2055,7 +2055,7 @@ function initLightstickMode() {
       <p style="color:rgba(255,255,255,0.7); font-weight:700; text-transform:uppercase; letter-spacing:0.1em; text-shadow:0 2px 10px rgba(255,42,133,0.5);">Syncing to: <span id="sync-track-name" style="color:var(--bp-pink);">Waiting...</span></p>
       
       <div style="display:flex; gap:1rem;">
-        <button class="btn btn-glow" onclick="triggerFanchant()">ðŸŽ¤ Fanchant</button>
+        <button class="btn btn-glow" onclick="triggerFanchant()">Ã°Å¸Å½Â¤ Fanchant</button>
         <button class="btn btn-glow" onclick="toggleLightstickMode()">Exit Concert Mode</button>
       </div>
     </div>
@@ -2169,7 +2169,7 @@ function triggerCheerEmoji(x, y) {
   const overlay = document.getElementById('lightstick-overlay');
   if (!overlay) return;
   
-  const emojis = ['ðŸ’–', 'âœ¨', 'ðŸ”¥', 'ðŸŽ‰'];
+  const emojis = ['Ã°Å¸â€™â€“', 'Ã¢Å“Â¨', 'Ã°Å¸â€Â¥', 'Ã°Å¸Å½â€°'];
   const emoji = document.createElement('div');
   emoji.innerText = emojis[Math.floor(Math.random() * emojis.length)];
   emoji.style.position = 'absolute';
@@ -2262,7 +2262,7 @@ function initDailyStreak() {
     
     // Show toast for streak
     setTimeout(() => {
-      showToast(`ðŸ”¥ ${streak} Day BLINK Streak! ${streak >= 3 ? 'Vault unlocked!' : ''}`);
+      showToast(`Ã°Å¸â€Â¥ ${streak} Day BLINK Streak! ${streak >= 3 ? 'Vault unlocked!' : ''}`);
     }, 2000);
   }
 }
@@ -2422,7 +2422,7 @@ window.initBlinkWall = function() {
       
       grid.innerHTML = '';
       messages.reverse().forEach(msg => {
-        const biasClass = 'bias-' + msg.bias.toLowerCase().replace('Ã©', 'e');
+        const biasClass = 'bias-' + msg.bias.toLowerCase().replace('ÃƒÂ©', 'e');
         const card = document.createElement('div');
         card.className = `message-card ${biasClass}`;
         card.innerHTML = `
@@ -2463,7 +2463,7 @@ window.initBlinkWall = function() {
         
         if (res.ok) {
           document.getElementById('msg-text').value = '';
-          if (typeof showToast === 'function') showToast('Message posted! ðŸ’—');
+          if (typeof showToast === 'function') showToast('Message posted! Ã°Å¸â€™â€”');
           fetchMessages();
         }
       } catch (err) {
@@ -2516,7 +2516,7 @@ window.initLeaderboard = function() {
       glDiv.innerHTML = '';
       scores.forEach((entry, index) => {
         const rank = index + 1;
-        const medal = rank === 1 ? 'ðŸ¥‡' : rank === 2 ? 'ðŸ¥ˆ' : rank === 3 ? 'ðŸ¥‰' : '#' + rank;
+        const medal = rank === 1 ? 'Ã°Å¸Â¥â€¡' : rank === 2 ? 'Ã°Å¸Â¥Ë†' : rank === 3 ? 'Ã°Å¸Â¥â€°' : '#' + rank;
         glDiv.innerHTML += `
           <div class="lb-card" style="padding: 1rem; margin-bottom: 0;">
             <div class="lb-title" style="font-size: 1.2rem;">${medal} ${entry.username}</div>
@@ -2569,13 +2569,13 @@ window.initFeedback = function() {
         document.getElementById('fb-message').value = '';
         const btn = newForm.querySelector('button[type="submit"]');
         if (btn) {
-          btn.textContent = 'Submitted! ðŸ’—';
+          btn.textContent = 'Submitted! Ã°Å¸â€™â€”';
           setTimeout(() => btn.textContent = 'Submit to Admin', 3000);
         }
         if (typeof showToast === 'function') {
-          showToast('Feedback submitted! Thank you! ðŸ’—');
+          showToast('Feedback submitted! Thank you! Ã°Å¸â€™â€”');
         } else {
-          alert('Feedback submitted! Thank you! ðŸ’—');
+          alert('Feedback submitted! Thank you! Ã°Å¸â€™â€”');
         }
       } else {
         if (typeof showToast === 'function') {
@@ -2636,7 +2636,7 @@ async function fetchCurrentUser() {
 function updateNavProfileLink(isLoggedIn) {
   const btn = document.getElementById('nav-profile-btn');
   if (btn) {
-    btn.textContent = isLoggedIn ? `ðŸ‘¤ ${currentUser.username}` : 'ðŸ‘¤ Profile/Login';
+    btn.textContent = isLoggedIn ? `Ã°Å¸â€˜Â¤ ${currentUser.username}` : 'Ã°Å¸â€˜Â¤ Profile/Login';
   }
 }
 
@@ -2644,7 +2644,7 @@ function applyBiasTheme(bias) {
   document.body.classList.remove('theme-jisoo', 'theme-jennie', 'theme-rose', 'theme-lisa');
   if (bias === 'Jisoo') document.body.classList.add('theme-jisoo');
   if (bias === 'Jennie') document.body.classList.add('theme-jennie');
-  if (bias === 'RosÃ©') document.body.classList.add('theme-rose');
+  if (bias === 'RosÃƒÂ©') document.body.classList.add('theme-rose');
   if (bias === 'Lisa') document.body.classList.add('theme-lisa');
 }
 
@@ -2687,9 +2687,9 @@ window.initLogin = function() {
           localStorage.setItem('user_token', data.token);
           await fetchCurrentUser();
           await navigateTo('profile.html');
-          setTimeout(() => showToast(`Welcome back, ${data.username}! ðŸ’–`), 400);
+          setTimeout(() => showToast(`Welcome back, ${data.username}! Ã°Å¸â€™â€“`), 400);
         } else {
-          showToast(data.error || 'Login failed âŒ', 4000);
+          showToast(data.error || 'Login failed Ã¢ÂÅ’', 4000);
         }
       } catch (err) {
         showToast('Server error. Please try again.', 4000);
@@ -2716,9 +2716,9 @@ window.initLogin = function() {
           localStorage.setItem('user_token', data.token);
           await fetchCurrentUser();
           await navigateTo('profile.html');
-          setTimeout(() => showToast(`Welcome to the Blink family, ${data.username}! ðŸ–¤ðŸ’–`), 400);
+          setTimeout(() => showToast(`Welcome to the Blink family, ${data.username}! Ã°Å¸â€“Â¤Ã°Å¸â€™â€“`), 400);
         } else {
-          showToast(data.error || 'Registration failed âŒ', 4000);
+          showToast(data.error || 'Registration failed Ã¢ÂÅ’', 4000);
         }
       } catch (err) {
         showToast('Server error. Please try again.', 4000);
@@ -2738,7 +2738,7 @@ window.initProfile = async function() {
 
   if (!token || !currentUser) {
     navigateTo('login.html');
-    setTimeout(() => showToast('Your session expired, please log in again 🔑', 4000), 400);
+    setTimeout(() => showToast('Your session expired, please log in again ðŸ”‘', 4000), 400);
     return;
   }
   
@@ -2768,9 +2768,9 @@ window.initProfile = async function() {
   const plays = currentUser.playCount || 0;
   const comments = currentUser.commentsCount || 0;
   let stanLevel = 'Trainee';
-  if (plays > 200 || comments > 50) stanLevel = 'Ultimate Blink ðŸ‘‘';
-  else if (plays > 50 || comments > 10) stanLevel = 'Blink ðŸ’–';
-  else if (plays > 10 || comments > 2) stanLevel = 'Rookie ðŸ–¤';
+  if (plays > 200 || comments > 50) stanLevel = 'Ultimate Blink Ã°Å¸â€˜â€˜';
+  else if (plays > 50 || comments > 10) stanLevel = 'Blink Ã°Å¸â€™â€“';
+  else if (plays > 10 || comments > 2) stanLevel = 'Rookie Ã°Å¸â€“Â¤';
 
   const owned = currentUser.photocards ? currentUser.photocards.length : 0;
   const pct = Math.min(100, Math.floor((owned / 170) * 100)); 
@@ -2810,7 +2810,7 @@ window.initProfile = async function() {
         // Also update the visible profile header card
         const profileBiasEl = document.getElementById('profile-bias');
         if (profileBiasEl) profileBiasEl.textContent = `Bias: ${bias}`;
-        if(typeof showToast === 'function') showToast('Profile updated! âœ¨');
+        if(typeof showToast === 'function') showToast('Profile updated! Ã¢Å“Â¨');
       }
     };
   }
@@ -2989,7 +2989,7 @@ window.savePlaylist = async function() {
       renderTracklist();
     }
   } else {
-    showToast('Failed to save playlist âŒ', 4000);
+    showToast('Failed to save playlist Ã¢ÂÅ’', 4000);
   }
 };
 
@@ -3016,7 +3016,7 @@ window.initBirthdayCountdown = function() {
   const birthdays = [
     { name: 'Jisoo', month: 0, date: 3 },
     { name: 'Jennie', month: 0, date: 16 },
-    { name: 'RosÃ©', month: 1, date: 11 },
+    { name: 'RosÃƒÂ©', month: 1, date: 11 },
     { name: 'Lisa', month: 2, date: 27 }
   ];
 
@@ -3048,7 +3048,7 @@ window.initBirthdayCountdown = function() {
     const now = new Date().getTime();
     const distance = nextBday.date.getTime() - now;
     if (distance < 0) {
-      timerEl.textContent = 'IT IS HER BIRTHDAY! ðŸŽ‰';
+      timerEl.textContent = 'IT IS HER BIRTHDAY! Ã°Å¸Å½â€°';
       return;
     }
     const days = Math.floor(distance / (1000 * 60 * 60 * 24));
@@ -3080,7 +3080,7 @@ window.initFanArt = function() {
         item.className = 'masonry-item';
         const likeCount = a.likes ? a.likes.length : 0;
         const isLiked = currentUser && a.likes && a.likes.includes(currentUser.id);
-        item.innerHTML = `<img src="${a.url}" alt="${a.caption}" onerror="this.src='assets/blackpinkgroup.webp'"><div class="masonry-caption">${a.caption}</div><div class="masonry-author" style="display:flex; justify-content:space-between; align-items:center;"><span>By ${a.author}</span><span onclick="toggleLike('${a.id}')" style="cursor:pointer;">${isLiked ? 'â¤ï¸' : 'ðŸ¤'} ${likeCount}</span></div>`;
+        item.innerHTML = `<img src="${a.url}" alt="${a.caption}" onerror="this.src='assets/blackpinkgroup.webp'"><div class="masonry-caption">${a.caption}</div><div class="masonry-author" style="display:flex; justify-content:space-between; align-items:center;"><span>By ${a.author}</span><span onclick="toggleLike('${a.id}')" style="cursor:pointer;">${isLiked ? 'Ã¢ÂÂ¤Ã¯Â¸Â' : 'Ã°Å¸Â¤Â'} ${likeCount}</span></div>`;
         grid.appendChild(item);
       });
     } catch (e) {
@@ -3104,7 +3104,7 @@ window.initFanArt = function() {
         if (res.ok) {
           document.getElementById('art-url').value = '';
           document.getElementById('art-caption').value = '';
-          if (typeof showToast === 'function') showToast('Fan Art Submitted! ðŸ–¤ðŸ’–');
+          if (typeof showToast === 'function') showToast('Fan Art Submitted! Ã°Å¸â€“Â¤Ã°Å¸â€™â€“');
           fetchArt();
         }
       } catch (err) {
@@ -3117,7 +3117,7 @@ window.initFanArt = function() {
 
 window.toggleLike = async function(id) {
   const token = localStorage.getItem('user_token');
-  if (!currentUser || !token) return showToast('Please login to like fan art! ðŸ’–', 3000);
+  if (!currentUser || !token) return showToast('Please login to like fan art! Ã°Å¸â€™â€“', 3000);
   try {
     const res = await fetch(`${API_BASE}/api/gallery/${id}/like`, {
       method: 'POST',
@@ -3137,7 +3137,7 @@ window.initPhotocards = function() {
     // Update Streak and Pulls
     const streakStr = document.getElementById('streak-counter');
     const pullsStr = document.getElementById('pulls-available');
-    if (streakStr) streakStr.textContent = `ðŸ”¥ ${currentUser.loginStreak || 0} Day Streak`;
+    if (streakStr) streakStr.textContent = `Ã°Å¸â€Â¥ ${currentUser.loginStreak || 0} Day Streak`;
     if (pullsStr) pullsStr.textContent = `Pulls Available: ${currentUser.pullsAvailable || 0}`;
     
     // Update Progress
@@ -3154,10 +3154,10 @@ window.initPhotocards = function() {
       const sinceLeg = currentUser.pullsSinceLegendary || 0;
       const sinceEpic = currentUser.pullsSinceEpic || 0;
       if (sinceLeg >= 40) {
-        pityEl.textContent = `ðŸ’Ž ${50 - sinceLeg} pulls until guaranteed Legendary!`;
+        pityEl.textContent = `Ã°Å¸â€™Å½ ${50 - sinceLeg} pulls until guaranteed Legendary!`;
         pityEl.style.color = '#ffd700'; // Gold
       } else {
-        pityEl.textContent = `ðŸ’Ž ${10 - sinceEpic} pulls until guaranteed Epic!`;
+        pityEl.textContent = `Ã°Å¸â€™Å½ ${10 - sinceEpic} pulls until guaranteed Epic!`;
         pityEl.style.color = '#ff6b9e';
       }
     }
@@ -3292,7 +3292,7 @@ async function initNotifications() {
   bellContainer.style.zIndex = '9999';
   
   const bellBtn = document.createElement('button');
-  bellBtn.innerHTML = 'ðŸ””';
+  bellBtn.innerHTML = 'Ã°Å¸â€â€';
   bellBtn.className = 'btn';
   bellBtn.style.position = 'relative';
   bellBtn.style.borderRadius = '50%';
@@ -3400,7 +3400,7 @@ async function openMasterIndex() {
         
         // Wishlist logic
         const heart = document.createElement('div');
-        heart.innerHTML = wishlistIds.has(card.id) ? 'â¤ï¸' : 'ðŸ¤';
+        heart.innerHTML = wishlistIds.has(card.id) ? 'Ã¢ÂÂ¤Ã¯Â¸Â' : 'Ã°Å¸Â¤Â';
         heart.style.position = 'absolute';
         heart.style.top = '5px';
         heart.style.right = '5px';
@@ -3421,9 +3421,9 @@ async function openMasterIndex() {
             currentUser = data.user;
             localStorage.setItem('bp_user', JSON.stringify(currentUser));
             if (currentUser.wishlist.includes(card.id)) {
-              heart.innerHTML = 'â¤ï¸';
+              heart.innerHTML = 'Ã¢ÂÂ¤Ã¯Â¸Â';
             } else {
-              heart.innerHTML = 'ðŸ¤';
+              heart.innerHTML = 'Ã°Å¸Â¤Â';
             }
           }
         };
@@ -3688,4 +3688,73 @@ window.dismissPWA = function() {
   const b = document.getElementById('pwa-banner');
   if (b) b.remove();
 };
+
+
+// =============================================
+// SECRET EASTER EGGS (ALL-IN FOR BLINKS)
+// =============================================
+let secretBuffer = '';
+document.addEventListener('keydown', (e) => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+  
+  secretBuffer += e.key.toLowerCase();
+  if (secretBuffer.length > 15) secretBuffer = secretBuffer.slice(-15);
+  
+  if (secretBuffer.endsWith('jisoo')) {
+    triggerEasterEgg('jisoo');
+    secretBuffer = '';
+  } else if (secretBuffer.endsWith('jennie')) {
+    triggerEasterEgg('jennie');
+    secretBuffer = '';
+  } else if (secretBuffer.endsWith('rose') || secretBuffer.endsWith('rosÃ©')) {
+    triggerEasterEgg('rose');
+    secretBuffer = '';
+  } else if (secretBuffer.endsWith('lisa')) {
+    triggerEasterEgg('lisa');
+    secretBuffer = '';
+  }
+});
+
+function triggerEasterEgg(member) {
+  let emojis = [];
+  let message = '';
+  if (member === 'jisoo') {
+    emojis = ['ðŸ¢', 'ðŸ°', 'â„ï¸'];
+    message = "I'm Jisoo, I'm okay! ðŸ¢ðŸ°";
+  } else if (member === 'jennie') {
+    emojis = ['ðŸ¥Ÿ', 'ðŸ»', 'âœ¨'];
+    message = "Shining solo! ðŸ¥Ÿâœ¨";
+  } else if (member === 'rose') {
+    emojis = ['ðŸŒ¹', 'ðŸ¿ï¸', 'ðŸŽ¸'];
+    message = "Records are meant to be broken! ðŸŒ¹ðŸŽ¸";
+  } else if (member === 'lisa') {
+    emojis = ['ðŸ’¸', 'ðŸ¥', 'ðŸ’°'];
+    message = "Drop some money! ðŸ’¸ðŸ’°";
+  }
+  
+  showToast(message, 5000);
+  spawnEmojiRain(emojis);
+}
+
+function spawnEmojiRain(emojis) {
+  for (let i = 0; i < 40; i++) {
+    const el = document.createElement('div');
+    el.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+    el.style.position = 'fixed';
+    el.style.left = Math.random() * 100 + 'vw';
+    el.style.top = '-50px';
+    el.style.fontSize = (Math.random() * 20 + 20) + 'px';
+    el.style.zIndex = 999999;
+    el.style.pointerEvents = 'none';
+    el.style.transition = 'transform ' + (Math.random() * 2 + 3) + 's linear, opacity ' + (Math.random() * 2 + 3) + 's linear';
+    document.body.appendChild(el);
+    
+    setTimeout(() => {
+      el.style.transform = `translate(${Math.random() * 200 - 100}px, 110vh) rotate(${Math.random() * 360}deg)`;
+      el.style.opacity = '0';
+    }, 50);
+    
+    setTimeout(() => el.remove(), 5000);
+  }
+}
 

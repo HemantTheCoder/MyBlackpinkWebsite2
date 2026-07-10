@@ -313,7 +313,10 @@
   <div id="music-player">
     <div class="player-toggle" onclick="toggleMusicPlayer()">
       <span class="player-toggle-label">&#127925; BLACKPINK Music</span>
-      <span id="player-toggle-icon">&#9660;</span>
+      <div style="display:flex; align-items:center; gap:10px;">
+        <button class="btn btn-glow" style="padding: 2px 8px; font-size: 0.7rem; letter-spacing: 0; background: #000; border: 1px solid var(--bp-pink);" onclick="event.stopPropagation(); showToast('Concert Mode is currently in development! 🚧', 4000);" title="Concert Mode (Coming Soon)">🎫</button>
+        <span id="player-toggle-icon">&#9660;</span>
+      </div>
     </div>
     <div id="player-body">
       <div class="player-track-info">
@@ -328,6 +331,7 @@
         <button class="ctrl-btn" onclick="ytPrev()" title="Previous">&#9198;</button>
         <button class="ctrl-btn play-pause" id="yt-play-btn" onclick="ytPlayPause()" title="Play/Pause">&#9654;</button>
         <button class="ctrl-btn" onclick="ytNext()" title="Next">&#9197;</button>
+        <button class="ctrl-btn" onclick="showToast('Karaoke/Fanchant Mode is currently in development! 🚧', 4000)" title="Karaoke Mode (Coming Soon)">🎤</button>
       </div>
       <div class="player-tracklist" id="player-tracklist"></div>
     </div>
