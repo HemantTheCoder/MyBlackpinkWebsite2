@@ -214,9 +214,8 @@
     <div class="glass-card" style="width: 100%; text-align: center;">
       <h2>Lofi Playlist</h2>
       <p style="color: var(--text-muted); margin-bottom: 1rem;">Relax and focus with some BLACKPINK lofi vibes.</p>
-      <div class="video-container">
-        <!-- YouTube iframe (BLACKPINK lofi mix) -->
-        <iframe width="100%" height="400" src="https://www.youtube.com/embed/3Kz3q8F_qM4" title="BLACKPINK Lofi Mix" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+      <div class="video-container" style="padding: 2rem; border: none; background: rgba(0,0,0,0.3); border-radius: 15px; margin-top: 1.5rem;">
+        <button class="btn btn-glow pulse" onclick="playLofiMix()" style="font-size: 1.2rem; padding: 1rem 2rem;">🎵 Play Lofi Playlist in Global Player</button>
       </div>
     </div>
   </div>
@@ -228,6 +227,20 @@
   <script>
     // INJECTED
     // --- Pomodoro Logic ---
+    function playLofiMix() {
+      if (window.ytLoadTrack) {
+        // The Lofi track is the last one in the playlist (index 27 if there are 28 tracks)
+        // Actually, we can just find it by searching the playlist
+        const lofiIndex = 20; // Exact index of the Lofi mix in script.js
+        if(lofiIndex !== -1) window.ytLoadTrack(lofiIndex);
+        
+        const player = document.getElementById("music-player");
+        if (player) {
+          player.classList.remove("collapsed");
+        }
+      }
+    }
+
     let timerInterval;
     let timeLeft = 25 * 60; // 25 minutes in seconds
     let isRunning = false;
