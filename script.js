@@ -2700,9 +2700,19 @@ window.initProfile = async function() {
   }
   
   document.getElementById('profile-dashboard').style.display = 'block';
+  const headerDiv = document.getElementById('profile-header');
+  if (headerDiv) headerDiv.style.display = 'block';
+  
   const unauthDiv = document.getElementById('profile-unauth');
   if (unauthDiv) unauthDiv.style.display = 'none';
+  
   document.getElementById('profile-greeting').textContent = `Welcome, ${currentUser.username}!`;
+  
+  const profileNameEl = document.getElementById('profile-name');
+  if (profileNameEl) profileNameEl.textContent = `@${currentUser.username}`;
+  
+  const profileBiasEl = document.getElementById('profile-bias');
+  if (profileBiasEl) profileBiasEl.textContent = `Bias: ${currentUser.bias || 'OT4'}`;
   
   // Stan Level Logic
   const plays = currentUser.playCount || 0;
