@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Study with BLACKPINK - Lofi Pomodoro</title>
+  
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <style>
+    /* Custom embedded styles for study.html */
+    body::before {
+      background: linear-gradient(135deg, #0f0c11 0%, #030204 100%) !important;
+      animation: none !important; /* Stop the background animation for less distraction */
+      opacity: 0.95;
+    }
+    
+    .study-container {
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+
+    @media(min-width: 768px) {
+      .study-container {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+    
+    .timer-card {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .time-display {
+      font-size: 5rem;
+      font-weight: 800;
+      color: var(--bp-pink);
+      text-shadow: 0 0 20px var(--bp-pink-glow);
+      margin: 1rem 0;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .timer-controls {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .todo-list {
+      list-style: none;
+      padding: 0;
+      margin: 1rem 0;
+      max-height: 250px;
+      overflow-y: auto;
+    }
+    
+    .todo-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(255,255,255,0.05);
+      padding: 0.8rem 1rem;
+      border-radius: 10px;
+      margin-bottom: 0.5rem;
+      transition: all 0.3s ease;
+      border: 1px solid transparent;
+    }
+
+    .todo-item:hover {
+      border-color: rgba(255, 42, 133, 0.3);
+    }
+    
+    .todo-item.completed span {
+      text-decoration: line-through;
+      color: var(--text-muted);
+    }
+
+    .todo-input-container {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .todo-input {
+      flex: 1;
+      padding: 0.8rem;
+      border-radius: 8px;
+      border: 1px solid var(--glass-border);
+      background: rgba(0,0,0,0.5);
+      color: var(--text-main);
+      font-family: 'Outfit', sans-serif;
+    }
+    
+    .todo-input:focus {
+      outline: none;
+      border-color: var(--bp-pink);
+    }
+
+    .delete-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 1.2rem;
+      transition: color 0.3s;
+    }
+
+    .delete-btn:hover {
+      color: var(--bp-pink);
+    }
+    
+    .checkbox {
+      margin-right: 10px;
+      cursor: pointer;
+      width: 18px;
+      height: 18px;
+      accent-color: var(--bp-pink);
+    }
+
+    .video-container {
+      margin-top: 2rem;
+      border-radius: 15px;
+      overflow: hidden;
+      border: 1px solid var(--glass-border);
+    }
+
+    /* Scrollbar for todo list */
+    .todo-list::-webkit-scrollbar {
+      width: 5px;
+    }
+    .todo-list::-webkit-scrollbar-track {
+      background: rgba(0,0,0,0.2);
+    }
+    .todo-list::-webkit-scrollbar-thumb {
+      background: var(--bp-pink);
+      border-radius: 10px;
+    }
+
+    .mode-tabs {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    
+    .mode-tab {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1rem;
+      cursor: pointer;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      transition: all 0.3s;
+    }
+    
+    .mode-tab.active {
+      color: #fff;
+      background: var(--glass-bg);
+      border: 1px solid var(--bp-pink);
+      box-shadow: 0 0 10px var(--bp-pink-glow);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Nav -->
+  <nav class="glass-card" style="margin: 1rem auto; max-width: 900px; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center;">
+    <h2 style="margin: 0; font-size: 1.5rem; text-transform: uppercase; letter-spacing: 2px;">
+      <span style="color: var(--bp-pink);">B</span>P Study Space
+    </h2>
+    <a href="index.html" class="btn">Back to Home</a>
+  </nav>
+
+  <div class="study-container">
+    <!-- Timer Section -->
+    <div class="glass-card timer-card">
+      <h2>Pomodoro Timer</h2>
+      
+      <div class="mode-tabs">
+        <button class="mode-tab active" id="mode-work" onclick="setMode('work')">Work (25:00)</button>
+        <button class="mode-tab" id="mode-break" onclick="setMode('break')">Break (5:00)</button>
+      </div>
+
+      <div class="time-display" id="time-display">25:00</div>
+      
+      <div class="timer-controls">
+        <button class="btn btn-glow" id="start-btn" onclick="toggleTimer()">Start</button>
+        <button class="btn" onclick="resetTimer()">Reset</button>
+      </div>
+    </div>
+
+    <!-- Todo List Section -->
+    <div class="glass-card">
+      <h2>Study Goals</h2>
+      <div class="todo-input-container">
+        <input type="text" id="todo-input" class="todo-input" placeholder="Add a new task..." onkeypress="handleTodoKeyPress(event)">
+        <button class="btn" onclick="addTodo()">Add</button>
+      </div>
+      <ul class="todo-list" id="todo-list">
+        <!-- Tasks will be injected here via JS -->
+      </ul>
+    </div>
+  </div>
+
+  <div class="study-container" style="margin-top: 0;">
+    <div class="glass-card" style="width: 100%; text-align: center;">
+      <h2>Lofi Playlist</h2>
+      <p style="color: var(--text-muted); margin-bottom: 1rem;">Relax and focus with some BLACKPINK lofi vibes.</p>
+      <div class="video-container">
+        <!-- YouTube iframe (BLACKPINK lofi mix) -->
+        <iframe width="100%" height="400" src="https://www.youtube.com/embed/3Kz3q8F_qM4" title="BLACKPINK Lofi Mix" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+      </div>
+    </div>
+  </div>
+
+  <!-- We load script.js for the base functionality, but ensure our custom script works smoothly -->
+  <script src="script.js" defer></script>
+  
+  <script>
+    // --- Pomodoro Logic ---
+    let timerInterval;
+    let timeLeft = 25 * 60; // 25 minutes in seconds
+    let isRunning = false;
+    let currentMode = 'work'; // 'work' or 'break'
+
+    const timeDisplay = document.getElementById('time-display');
+    const startBtn = document.getElementById('start-btn');
+
+    function formatTime(seconds) {
+      const m = Math.floor(seconds / 60);
+      const s = seconds % 60;
+      return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+    }
+
+    function updateDisplay() {
+      timeDisplay.textContent = formatTime(timeLeft);
+      document.title = `${formatTime(timeLeft)} - BP Study Space`;
+    }
+
+    function setMode(mode) {
+      clearInterval(timerInterval);
+      isRunning = false;
+      startBtn.textContent = 'Start';
+      currentMode = mode;
+      
+      document.getElementById('mode-work').classList.remove('active');
+      document.getElementById('mode-break').classList.remove('active');
+      document.getElementById(`mode-${mode}`).classList.add('active');
+
+      if (mode === 'work') {
+        timeLeft = 25 * 60;
+      } else {
+        timeLeft = 5 * 60;
+      }
+      updateDisplay();
+    }
+
+    function toggleTimer() {
+      if (isRunning) {
+        clearInterval(timerInterval);
+        startBtn.textContent = 'Start';
+      } else {
+        timerInterval = setInterval(() => {
+          if (timeLeft > 0) {
+            timeLeft--;
+            updateDisplay();
+          } else {
+            clearInterval(timerInterval);
+            isRunning = false;
+            startBtn.textContent = 'Start';
+            if(window.confetti) confetti();
+            alert(currentMode === 'work' ? 'Time for a break, Blink!' : 'Break is over, back to work!');
+            setMode(currentMode === 'work' ? 'break' : 'work');
+          }
+        }, 1000);
+        startBtn.textContent = 'Pause';
+      }
+      isRunning = !isRunning;
+    }
+
+    function resetTimer() {
+      setMode(currentMode);
+    }
+
+    // --- Todo Logic ---
+    let todos = JSON.parse(localStorage.getItem('bp-study-todos')) || [];
+
+    const todoList = document.getElementById('todo-list');
+    const todoInput = document.getElementById('todo-input');
+
+    function saveTodos() {
+      localStorage.setItem('bp-study-todos', JSON.stringify(todos));
+    }
+
+    function renderTodos() {
+      todoList.innerHTML = '';
+      todos.forEach((todo, index) => {
+        const li = document.createElement('li');
+        li.className = `todo-item ${todo.completed ? 'completed' : ''}`;
+        
+        li.innerHTML = `
+          <div style="display: flex; align-items: center;">
+            <input type="checkbox" class="checkbox" ${todo.completed ? 'checked' : ''} onchange="toggleTodo(${index})">
+            <span>${escapeHtml(todo.text)}</span>
+          </div>
+          <button class="delete-btn" onclick="deleteTodo(${index})">&times;</button>
+        `;
+        todoList.appendChild(li);
+      });
+    }
+
+    function addTodo() {
+      const text = todoInput.value.trim();
+      if (text) {
+        todos.push({ text, completed: false });
+        todoInput.value = '';
+        saveTodos();
+        renderTodos();
+      }
+    }
+
+    function handleTodoKeyPress(e) {
+      if (e.key === 'Enter') {
+        addTodo();
+      }
+    }
+
+    function toggleTodo(index) {
+      todos[index].completed = !todos[index].completed;
+      saveTodos();
+      renderTodos();
+    }
+
+    function deleteTodo(index) {
+      todos.splice(index, 1);
+      saveTodos();
+      renderTodos();
+    }
+
+    // Helper to prevent XSS
+    function escapeHtml(unsafe) {
+      return unsafe
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    // Init
+    updateDisplay();
+    renderTodos();
+  </script>
+</body>
+</html>

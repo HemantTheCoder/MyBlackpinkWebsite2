@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blink Photo Booth ?" Blackpink Wiki</title>
+  <link rel="stylesheet" href="styles.css?v=20260625">
+  <script src="script.js?v=20260625" defer></script>
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Outfit:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    .upload-btn-wrapper {
+      position: relative;
+      overflow: hidden;
+      display: inline-block;
+      margin-bottom: 1rem;
+      width: 100%;
+    }
+    .upload-btn-wrapper input[type=file] {
+      font-size: 100px;
+      position: absolute;
+      left: 0;
+      top: 0;
+      opacity: 0;
+      cursor: pointer;
+      height: 100%;
+      width: 100%;
+    }
+  </style>
+
+  <!-- Vercel Web Analytics (from blink-id) -->
+  <script>
+    window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+  </script>
+  <script defer src="/_vercel/insights/script.js"></script>
+</head>
+<body>
+
+  <div id="page-transition"></div>
+
+  <header class="hero">
+    <div class="hero-content">
+      <h1>📸 Photo Booth</h1>
+      <p class="hero-sub">Generate your vintage Polaroid with your bias.</p>
+    </div>
+  </header>
+
+  <main class="container">
+    <nav class="btn-group">
+      <a href="index.html?v=20260625" class="btn">🏠 Home</a>
+      <a href="blink-id.html?v=20260625" class="btn">💳 Blink ID</a>
+      <a href="vault.html?v=20260625" class="btn">💎 Vault</a>
+      <a href="photobooth.html?v=20260625" class="btn active">📸 Photo Booth</a>
+    </nav>
+
+    <section class="glass-card" style="max-width: 800px; margin: 0 auto; text-align: center;">
+      <h2 style="margin-bottom: 2rem;">Blink Polaroid Maker</h2>
+      
+      <div style="display: flex; flex-direction: column; gap: 1rem; max-width: 400px; margin: 0 auto 2rem;">
+        
+        <div class="upload-btn-wrapper">
+          <button class="btn" id="upload-btn-text" style="width: 100%; padding: 1rem;">1. Upload Image</button>
+          <input type="file" id="image-upload" accept="image/*" />
+        </div>
+
+        <select id="bias-select" style="padding: 1rem; border-radius: 10px; border: none; background: rgba(255,255,255,0.1); color: white; font-size: 1.2rem; text-align: center;">
+          <option value="" disabled selected style="color:black;">2. Select Your Bias</option>
+          <option value="Jisoo" style="color:black;">Jisoo</option>
+          <option value="Jennie" style="color:black;">Jennie</option>
+          <option value="Rose" style="color:black;">Rosé</option>
+          <option value="Lisa" style="color:black;">Lisa</option>
+        </select>
+
+        <button class="btn btn-glow" id="generate-btn" style="margin-top: 1rem;">3. Generate Polaroid</button>
+      </div>
+
+      <div id="canvas-container" style="display: none; flex-direction: column; align-items: center; gap: 1.5rem; margin-top: 2rem;">
+        <canvas id="polaroid-canvas" width="400" height="480" style="max-width: 100%; border-radius: 4px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); margin: 0 auto; background: white;"></canvas>
+        <button id="download-btn" class="btn btn-glow" style="margin-bottom: 1rem;">Download Polaroid</button>
+      </div>
+
+    </section>
+  </main>
+
+  <script>
+    const imageUpload = document.getElementById('image-upload');
+    const uploadBtnText = document.getElementById('upload-btn-text');
+    const biasSelect = document.getElementById('bias-select');
+    const generateBtn = document.getElementById('generate-btn');
+    const canvasContainer = document.getElementById('canvas-container');
+    const canvas = document.getElementById('polaroid-canvas');
+    const ctx = canvas.getContext('2d');
+    const downloadBtn = document.getElementById('download-btn');
+
+    let uploadedImage = null;
+
+    imageUpload.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        uploadBtnText.innerText = file.name;
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          const img = new Image();
+          img.onload = () => {
+            uploadedImage = img;
+          };
+          img.src = event.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    // Make sure fonts are loaded before drawing if possible, or trigger a font load
+    document.fonts.ready.then(() => {
+      console.log('Fonts loaded');
+    });
+
+    generateBtn.addEventListener('click', () => {
+      if (!uploadedImage) {
+        alert('Please upload an image first.');
+        return;
+      }
+      const bias = biasSelect.value;
+      if (!bias) {
+        alert('Please select your bias.');
+        return;
+      }
+
+      // Ensure canvas size is fixed
+      canvas.width = 400;
+      canvas.height = 480;
+
+      // Draw Polaroid Background
+      ctx.fillStyle = '#f8f8f8'; // Off-white for vintage feel
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Add a subtle border to the whole polaroid
+      ctx.strokeStyle = '#e0e0e0';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(0, 0, canvas.width, canvas.height);
+
+      // Draw image area dimensions
+      const marginX = 20;
+      const marginTop = 20;
+      const imgWidth = canvas.width - (marginX * 2);
+      const imgHeight = 340; // Leaves 120px at the bottom
+
+      ctx.save();
+      
+      // Calculate aspect ratio crop
+      const scale = Math.max(imgWidth / uploadedImage.width, imgHeight / uploadedImage.height);
+      const x = (imgWidth / 2) - (uploadedImage.width / 2) * scale;
+      const y = (imgHeight / 2) - (uploadedImage.height / 2) * scale;
+      
+      // Draw inner shadow/border for image box
+      ctx.fillStyle = '#222';
+      ctx.fillRect(marginX, marginTop, imgWidth, imgHeight);
+
+      // Create clipping region for the image
+      ctx.beginPath();
+      ctx.rect(marginX, marginTop, imgWidth, imgHeight);
+      ctx.clip();
+      
+      // Apply vintage/pastel filter to the image
+      // Sepia for vintage feel, a bit of contrast and brightness
+      ctx.filter = 'sepia(0.3) contrast(1.1) brightness(1.05) saturate(0.9)';
+      
+      // Draw image centered and cropped
+      ctx.drawImage(
+        uploadedImage, 
+        marginX + x, 
+        marginTop + y, 
+        uploadedImage.width * scale, 
+        uploadedImage.height * scale
+      );
+      
+      ctx.restore();
+
+      // Add border around the image itself
+      ctx.strokeStyle = 'rgba(0,0,0,0.1)';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(marginX, marginTop, imgWidth, imgHeight);
+
+      // Configure Signature Based on Bias
+      let sigColor = '#000';
+      let sigText = '';
+      
+      if (bias === 'Jisoo') { 
+        sigColor = '#ff2a2a'; // Red
+        sigText = 'Jisoo~ ♡'; 
+      }
+      else if (bias === 'Jennie') { 
+        sigColor = '#2a2aff'; // Blue
+        sigText = 'Jennie xoxo'; 
+      }
+      else if (bias === 'Rose') { 
+        sigColor = '#ff2a85'; // Pink
+        sigText = 'Rosé ♥'; 
+      }
+      else if (bias === 'Lisa') { 
+        sigColor = '#d4a000'; // Yellow/Gold
+        sigText = 'Lisa ✨'; 
+      }
+
+      // Draw "Blink" text on left
+      ctx.font = '18px "Outfit", sans-serif';
+      ctx.fillStyle = '#999999';
+      ctx.textAlign = 'left';
+      ctx.fillText('BLINK PHOTO BOOTH', marginX, canvas.height - 35);
+      
+      ctx.font = '12px "Outfit", sans-serif';
+      ctx.fillStyle = '#cccccc';
+      ctx.fillText(new Date().toLocaleDateString(), marginX, canvas.height - 18);
+
+      // Draw Signature on Right
+      ctx.font = '42px "Dancing Script", cursive';
+      ctx.fillStyle = sigColor;
+      ctx.textAlign = 'right';
+      
+      // Slight rotation to signature for realistic look
+      ctx.save();
+      ctx.translate(canvas.width - marginX, canvas.height - 40);
+      ctx.rotate(-4 * Math.PI / 180);
+      ctx.fillText(sigText, 0, 0);
+      ctx.restore();
+
+      // Show the canvas and download button
+      canvasContainer.style.display = 'flex';
+      
+      // Scroll to canvas
+      canvasContainer.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    });
+
+    downloadBtn.addEventListener('click', () => {
+      const link = document.createElement('a');
+      link.download = `Blink_Polaroid_${biasSelect.value || 'Custom'}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    });
+  </script>
+</body>
+</html>

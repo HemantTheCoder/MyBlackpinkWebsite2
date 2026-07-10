@@ -413,6 +413,8 @@ function initAll() {
   initScrollReveal();
   highlightActiveNav();
   initSongOfDay();
+  initMascot();
+  initCursorTrail();
   initGlobalSearch();
   eraIdx = parseInt(localStorage.getItem(ERA_KEY) || '0');
   applyEra();
@@ -523,6 +525,8 @@ async function navigateTo(url, push) {
     initScrollReveal();
     highlightActiveNav();
     initSongOfDay();
+  initMascot();
+  initCursorTrail();
     eraIdx = parseInt(localStorage.getItem(ERA_KEY) || '0');
     applyEra();
 
@@ -3207,20 +3211,55 @@ window.initPhotocards = function() {
       const data = await res.json();
       if(res.ok) {
         btn.style.display = 'none';
+        
+        // Add EXP
+        addEXP(5, 'Pulled a Photocard! \uD83C\uDFB4');
+
         const packAnim = document.getElementById('pack-anim-container');
         const pack = document.getElementById('card-pack');
         const reveal = document.getElementById('card-reveal');
         
         packAnim.style.display = 'block';
-        pack.classList.add('shake-anim');
+        pack.classList.remove('shake-anim', 'burst-anim');
+        pack.style.cursor = 'pointer';
+        pack.style.boxShadow = '0 0 20px rgba(255,107,158,0.3)';
         
-        setTimeout(() => {
-          pack.classList.remove('shake-anim');
-          pack.classList.add('burst-anim');
+        // Add "Click to Open" text
+        let clickText = document.getElementById('click-open-txt');
+        if(!clickText) {
+          clickText = document.createElement('div');
+          clickText.id = 'click-open-txt';
+          clickText.textContent = 'TAP TO TEAR OPEN!';
+          clickText.style.color = '#fff';
+          clickText.style.textAlign = 'center';
+          clickText.style.marginTop = '15px';
+          clickText.style.fontWeight = 'bold';
+          clickText.style.animation = 'pulse 1s infinite';
+          packAnim.appendChild(clickText);
+        }
+        clickText.style.display = 'block';
+
+        // Wait for click to tear
+        pack.onclick = function() {
+          pack.onclick = null;
+          clickText.style.display = 'none';
+          
+          // Glow based on rarity
+          const rarity = data.card.rarity.toLowerCase();
+          if (rarity === 'legendary') pack.style.boxShadow = '0 0 80px #ffd700, inset 0 0 30px #ffd700';
+          else if (rarity === 'epic') pack.style.boxShadow = '0 0 50px #ff6b9e, inset 0 0 20px #ff6b9e';
+          else if (rarity === 'rare') pack.style.boxShadow = '0 0 40px #4287f5, inset 0 0 15px #4287f5';
+          else pack.style.boxShadow = '0 0 30px #aaa, inset 0 0 10px #aaa';
+
+          pack.classList.add('shake-anim');
           
           setTimeout(() => {
-            packAnim.style.display = 'none';
-            reveal.style.display = 'block';
+            pack.classList.remove('shake-anim');
+            pack.classList.add('burst-anim');
+            
+            setTimeout(() => {
+              packAnim.style.display = 'none';
+              reveal.style.display = 'block';
             
             document.getElementById('pulled-card-img').src = data.card.url;
             document.getElementById('pulled-card-rarity').textContent = data.card.rarity;
@@ -3757,4 +3796,191 @@ function spawnEmojiRain(emojis) {
     setTimeout(() => el.remove(), 5000);
   }
 }
+
+
+// =============================================
+// VIRTUAL MASCOT (DALGOM / KRUNK)
+// =============================================
+function initMascot() {
+  if (document.getElementById('virtual-mascot')) return;
+  const mascot = document.createElement('div');
+  mascot.id = 'virtual-mascot';
+  mascot.innerHTML = 
+    <div style="font-size: 2.5rem; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5)); cursor: pointer; transition: transform 0.2s; user-select: none;" id="mascot-img">🐻</div>
+    <div id="mascot-bubble" style="position:absolute; top:-35px; right:-20px; background:white; color:black; padding:4px 8px; border-radius:10px; font-size:0.7rem; font-weight:bold; opacity:0; transition:opacity 0.3s; white-space:nowrap; pointer-events:none; box-shadow:0 2px 10px rgba(0,0,0,0.3);"></div>
+  ;
+  mascot.style.position = 'fixed';
+  mascot.style.bottom = '20px';
+  mascot.style.right = '20px';
+  mascot.style.zIndex = '9999';
+  mascot.style.animation = 'floatMascot 4s ease-in-out infinite';
+  
+  document.body.appendChild(mascot);
+
+  // Add keyframes if missing
+  if (!document.getElementById('mascot-style')) {
+    const style = document.createElement('style');
+    style.id = 'mascot-style';
+    style.textContent = 
+      @keyframes floatMascot {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+      }
+      #virtual-mascot:hover #mascot-img { transform: scale(1.15) rotate(-5deg); }
+      #virtual-mascot:active #mascot-img { transform: scale(0.9); }
+    ;
+    document.head.appendChild(style);
+  }
+
+  const messages = ["Blink forever! 💖", "Did you stream today? 🎵", "I love Jisoo! 🐢", "Mandu time! 🥟", "Pet me! ✨"];
+  let clickCount = 0;
+  
+  mascot.addEventListener('click', () => {
+    clickCount++;
+    const bubble = document.getElementById('mascot-bubble');
+    if (clickCount > 5) {
+      bubble.textContent = "I'm full! 💤";
+      document.getElementById('mascot-img').textContent = "💤";
+      setTimeout(() => { document.getElementById('mascot-img').textContent = "🐻"; clickCount = 0; }, 5000);
+    } else {
+      bubble.textContent = messages[Math.floor(Math.random() * messages.length)];
+    }
+    bubble.style.opacity = '1';
+    
+    // Spawn tiny heart
+    const heart = document.createElement('div');
+    heart.textContent = '💖';
+    heart.style.position = 'absolute';
+    heart.style.left = '10px';
+    heart.style.top = '10px';
+    heart.style.pointerEvents = 'none';
+    heart.style.transition = 'all 1s ease-out';
+    mascot.appendChild(heart);
+    
+    setTimeout(() => {
+      heart.style.transform = 'translateY(-50px) scale(1.5)';
+      heart.style.opacity = '0';
+    }, 10);
+    
+    setTimeout(() => heart.remove(), 1000);
+    
+    setTimeout(() => { if(bubble) bubble.style.opacity = '0'; }, 2500);
+  });
+}
+
+
+// =============================================
+// BLACK & PINK CURSOR TRAIL
+// =============================================
+function initCursorTrail() {
+  if (localStorage.getItem('disableCursorTrail') === 'true') return;
+  
+  // Only on desktop
+  if (window.innerWidth < 768) return;
+
+  const hearts = ['🖤', '💖'];
+  let heartIndex = 0;
+  
+  let lastSpawn = 0;
+  
+  document.addEventListener('mousemove', (e) => {
+    const now = Date.now();
+    if (now - lastSpawn < 100) return; // throttle spawning
+    lastSpawn = now;
+    
+    const heart = document.createElement('div');
+    heart.textContent = hearts[heartIndex];
+    heartIndex = (heartIndex + 1) % 2;
+    
+    heart.style.position = 'fixed';
+    heart.style.left = (e.clientX - 10) + 'px';
+    heart.style.top = (e.clientY - 10) + 'px';
+    heart.style.fontSize = '14px';
+    heart.style.pointerEvents = 'none';
+    heart.style.zIndex = '9998';
+    heart.style.transition = 'all 1s cubic-bezier(0.25, 1, 0.5, 1)';
+    heart.style.opacity = '0.8';
+    
+    document.body.appendChild(heart);
+    
+    // Animate
+    setTimeout(() => {
+      const angle = Math.random() * Math.PI * 2;
+      const dist = Math.random() * 20 + 20;
+      const dx = Math.cos(angle) * dist;
+      const dy = Math.sin(angle) * dist - 30; // float up a bit
+      
+      heart.style.transform = `translate(${dx}px, ${dy}px) scale(0.5)`;
+      heart.style.opacity = '0';
+    }, 10);
+    
+    setTimeout(() => heart.remove(), 1000);
+  });
+}
+
+
+
+
+// =============================================
+// EXP & LEVELING SYSTEM
+// =============================================
+function addEXP(amount, reason) {
+  let currentExp = parseInt(localStorage.getItem('blink_exp') || '0');
+  let currentLevel = getBlinkLevel(currentExp);
+  
+  currentExp += amount;
+  localStorage.setItem('blink_exp', currentExp);
+  
+  const newLevel = getBlinkLevel(currentExp);
+  
+  if (newLevel.level > currentLevel.level) {
+    triggerLevelUp(newLevel);
+  } else {
+    showToast(+ EXP: , 3000);
+  }
+}
+
+function getBlinkLevel(exp) {
+  if (exp >= 1000) return { level: 4, name: 'Ultimate Blink 👑', next: null };
+  if (exp >= 500)  return { level: 3, name: 'Blink 💖', next: 1000 };
+  if (exp >= 100)  return { level: 2, name: 'Rookie 🖤', next: 500 };
+  return { level: 1, name: 'Trainee 🎤', next: 100 };
+}
+
+function triggerLevelUp(levelInfo) {
+  // Full screen celebration
+  const modal = document.createElement('div');
+  modal.style.position = 'fixed';
+  modal.style.inset = '0';
+  modal.style.background = 'rgba(0,0,0,0.9)';
+  modal.style.zIndex = '999999';
+  modal.style.display = 'flex';
+  modal.style.flexDirection = 'column';
+  modal.style.alignItems = 'center';
+  modal.style.justifyContent = 'center';
+  modal.style.animation = 'toastSlide 0.5s ease-out';
+  
+  modal.innerHTML = 
+    <h1 style="color:var(--bp-pink); font-size:4rem; margin-bottom:1rem; text-shadow:0 0 20px var(--bp-pink-glow); text-transform:uppercase;">LEVEL UP!</h1>
+    <p style="color:#fff; font-size:1.5rem; margin-bottom:0.5rem;">You are now a</p>
+    <h2 style="color:#fff; font-size:3rem; margin-bottom:2rem; letter-spacing:2px;"></h2>
+    <p style="color:#aaa; max-width:500px; text-align:center; line-height:1.6; margin-bottom:3rem;">Your dedication to BLACKPINK is paying off. Keep streaming, collecting, and chatting!</p>
+    <button class="btn btn-glow" style="font-size:1.2rem; padding:1rem 2.5rem;" onclick="this.parentElement.remove()">Continue \uD83D\uDDA4\uD83D\uDC96</button>
+  ;
+  document.body.appendChild(modal);
+  
+  // Confetti
+  spawnEmojiRain(['\uD83C\uDF89', '\u2728', '\uD83D\uDC96', '\uD83C\uDF1F']);
+}
+
+// Hook EXP into music player
+const originalYtLoadTrack = window.ytLoadTrack;
+window.ytLoadTrack = function(index) {
+  if (typeof originalYtLoadTrack === 'function') originalYtLoadTrack(index);
+  setTimeout(() => {
+    if (Math.random() > 0.5) { // Random chance to prevent spamming
+      addEXP(10, 'Streaming BLACKPINK \uD83C\uDFB5');
+    }
+  }, 1000); // 1 second after track starts
+};
 

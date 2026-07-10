@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="Description" content="Create your Dream Concert Setlist for a custom BLACKPINK world tour!">
+  <title>Dream Concert Setlist - BLACKPINK Hub</title>
+  
+  <link rel="stylesheet" href="styles.css?v=2">
+  <link rel="stylesheet" href="pages.css">
+  <script src="script.js?v=2" defer></script>
+  
+  <style>
+    /* Injected CSS for Setlist Builder */
+    .setlist-container {
+      max-width: 1200px;
+      margin: 3rem auto;
+      padding: 0 1rem;
+      position: relative;
+      z-index: 2;
+    }
+    
+    .builder-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+    
+    @media (max-width: 768px) {
+      .builder-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    .song-list {
+      background: rgba(15, 15, 15, 0.4);
+      border: 1px solid rgba(255, 42, 133, 0.2);
+      border-radius: 12px;
+      padding: 1.5rem;
+      min-height: 400px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+    
+    .song-list-header {
+      font-size: 1.5rem;
+      color: var(--bp-pink, #FF2A85);
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      text-align: center;
+      text-shadow: 0 0 10px rgba(255, 42, 133, 0.5);
+    }
+
+    .counter {
+      text-align: center;
+      color: #aaa;
+      margin-bottom: 1.5rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+    }
+
+    .song-list-body {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      max-height: 500px;
+      overflow-y: auto;
+      padding-right: 0.5rem;
+    }
+    
+    /* Scrollbar for song lists */
+    .song-list-body::-webkit-scrollbar { width: 6px; }
+    .song-list-body::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); border-radius: 10px; }
+    .song-list-body::-webkit-scrollbar-thumb { background: var(--bp-pink, #ff2a85); border-radius: 10px; }
+
+    .song-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.8rem 1rem;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .song-item:hover {
+      background: rgba(255, 42, 133, 0.1);
+      border-color: var(--bp-pink, #FF2A85);
+      transform: translateY(-2px);
+    }
+    
+    .song-name {
+      font-size: 1rem;
+      font-weight: 500;
+      color: #fff;
+    }
+    
+    .song-action-btn {
+      background: transparent;
+      color: var(--bp-pink, #FF2A85);
+      border: 1px solid var(--bp-pink, #FF2A85);
+      padding: 0.4rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.2s ease;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .song-action-btn:hover {
+      background: var(--bp-pink, #FF2A85);
+      color: #fff;
+      box-shadow: 0 0 10px var(--bp-pink, #FF2A85);
+    }
+    
+    .btn-remove {
+      color: #ff4d4d;
+      border-color: #ff4d4d;
+    }
+    
+    .btn-remove:hover {
+      background: #ff4d4d;
+      color: #fff;
+      box-shadow: 0 0 10px #ff4d4d;
+    }
+
+    .poster-section {
+      text-align: center;
+      margin-top: 3rem;
+      padding-bottom: 5rem;
+      position: relative;
+      z-index: 2;
+    }
+    
+    .generate-btn {
+      font-size: 1.2rem;
+      padding: 1rem 2.5rem;
+      margin-bottom: 2rem;
+      border-radius: 50px;
+    }
+
+    /* Modal for canvas */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.9);
+      backdrop-filter: blur(10px);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      flex-direction: column;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    
+    .modal-overlay.active {
+      display: flex;
+      opacity: 1;
+    }
+    
+    .canvas-container {
+      position: relative;
+      max-width: 90vw;
+      max-height: 75vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    #poster-canvas {
+      max-width: 100%;
+      max-height: 75vh;
+      object-fit: contain;
+      box-shadow: 0 0 40px rgba(255, 42, 133, 0.5);
+      border-radius: 4px;
+    }
+    
+    .modal-actions {
+      margin-top: 1.5rem;
+      display: flex;
+      gap: 1.5rem;
+    }
+    
+    .close-modal {
+      background: transparent;
+      color: #fff;
+      border: 1px solid #fff;
+      padding: 0.8rem 2rem;
+      border-radius: 50px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.2s;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .close-modal:hover {
+      background: rgba(255,255,255,0.1);
+    }
+    
+    .download-btn {
+      border-radius: 50px;
+      padding: 0.8rem 2rem;
+    }
+    
+    .empty-state {
+      text-align: center;
+      color: #666;
+      font-style: italic;
+      padding: 2rem 0;
+      font-size: 1.1rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Loading Screen -->
+  <div id="loading-screen">
+    <div class="loading-logo">BLACKPINK</div>
+    <div class="loading-bar"><div class="loading-fill"></div></div>
+  </div>
+  
+  <div id="page-transition"></div>
+
+  <!-- Lightstick Canvas Background -->
+  <canvas id="lightstick-canvas"></canvas>
+
+  <header class="hero" style="height:35vh;background-attachment:fixed;background-position:center;background-size:cover;background-image:linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8)), url('blackpinkgroup.webp');">
+    <div class="hero-content">
+      <h1 style="text-shadow: 0 0 20px var(--bp-pink);">Dream Concert Setlist</h1>
+      <p style="color:rgba(255,255,255,0.8);font-size:1.1rem;font-weight:300;letter-spacing:3px;margin-top:0.5rem;margin-bottom:1.5rem;">Build your perfect BLACKPINK world tour</p>
+      
+      <nav class="btn-group">
+        <a href="index.html" class="btn">&#127968; Home</a>
+        <a href="games.html" class="btn">&#127918; Games</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="setlist-container">
+    <div class="builder-layout">
+      <!-- Left Column: Available Songs -->
+      <div class="song-list glass-card" id="available-songs-container">
+        <h2 class="song-list-header">Available Songs</h2>
+        <div class="counter" id="available-counter">20 Songs Available</div>
+        <div id="available-list" class="song-list-body">
+          <!-- Songs will be injected here via JS -->
+        </div>
+      </div>
+
+      <!-- Right Column: Your Setlist -->
+      <div class="song-list glass-card" id="my-setlist-container">
+        <h2 class="song-list-header">Your Setlist</h2>
+        <div class="counter" id="setlist-counter">0 / 10 Songs Added</div>
+        <div id="my-setlist" class="song-list-body">
+          <!-- Chosen songs go here -->
+        </div>
+      </div>
+    </div>
+
+    <div class="poster-section">
+      <button class="btn btn-glow generate-btn" id="generate-poster-btn" onclick="generatePoster()" style="opacity:0.5; pointer-events:none;">&#127912; Generate Tour Poster</button>
+    </div>
+  </main>
+
+  <!-- Modal for the generated poster -->
+  <div class="modal-overlay" id="poster-modal">
+    <div class="canvas-container">
+      <canvas id="poster-canvas" width="800" height="1200"></canvas>
+    </div>
+    <div class="modal-actions">
+      <button class="close-modal" onclick="closeModal()">Close</button>
+      <button class="btn btn-glow download-btn" onclick="downloadPoster()">&#128229; Download Poster</button>
+    </div>
+  </div>
+
+  <script>
+    const allSongs = [
+      "DDU-DU DDU-DU", "Kill This Love", "How You Like That", "Pink Venom",
+      "Shut Down", "BOOMBAYAH", "As If It's Your Last", "Playing With Fire",
+      "Whistle", "Lovesick Girls", "Ice Cream", "Pretty Savage", "Typa Girl",
+      "Don't Know What To Do", "Forever Young", "Stay", "Tally", "Hard to Love",
+      "Yeah Yeah Yeah", "See U Later"
+    ];
+    
+    let availableSongs = [...allSongs];
+    let mySetlist = [];
+    const MAX_SONGS = 10;
+
+    function renderLists() {
+      const availableEl = document.getElementById('available-list');
+      const setlistEl = document.getElementById('my-setlist');
+      const availCounter = document.getElementById('available-counter');
+      const setCounter = document.getElementById('setlist-counter');
+      
+      availableEl.innerHTML = '';
+      setlistEl.innerHTML = '';
+      
+      if (availableSongs.length === 0) {
+        availableEl.innerHTML = '<div class="empty-state">No more songs available.</div>';
+      } else {
+        availableSongs.forEach((song) => {
+          const div = document.createElement('div');
+          div.className = 'song-item';
+          div.innerHTML = `
+            <span class="song-name">${song}</span>
+            <button class="song-action-btn" onclick="addSong('${song.replace(/'/g, "\\'")}')">+ Add</button>
+          `;
+          availableEl.appendChild(div);
+        });
+      }
+      
+      if (mySetlist.length === 0) {
+        setlistEl.innerHTML = '<div class="empty-state">Your setlist is empty.<br>Add some songs to generate a poster!</div>';
+      } else {
+        mySetlist.forEach((song) => {
+          const div = document.createElement('div');
+          div.className = 'song-item';
+          div.innerHTML = `
+            <span class="song-name">${song}</span>
+            <button class="song-action-btn btn-remove" onclick="removeSong('${song.replace(/'/g, "\\'")}')">- Remove</button>
+          `;
+          setlistEl.appendChild(div);
+        });
+      }
+      
+      availCounter.innerText = `${availableSongs.length} Songs Available`;
+      setCounter.innerText = `${mySetlist.length} / ${MAX_SONGS} Songs Added`;
+      
+      // Update generate button state
+      const genBtn = document.getElementById('generate-poster-btn');
+      if (mySetlist.length === 0) {
+        genBtn.style.opacity = '0.5';
+        genBtn.style.pointerEvents = 'none';
+      } else {
+        genBtn.style.opacity = '1';
+        genBtn.style.pointerEvents = 'auto';
+      }
+    }
+    
+    function addSong(song) {
+      if (mySetlist.length >= MAX_SONGS) {
+        alert("You can only add up to 10 songs to your setlist!");
+        return;
+      }
+      mySetlist.push(song);
+      availableSongs = availableSongs.filter(s => s !== song);
+      renderLists();
+    }
+    
+    function removeSong(song) {
+      availableSongs.push(song);
+      mySetlist = mySetlist.filter(s => s !== song);
+      
+      // Keep original order
+      availableSongs.sort((a, b) => allSongs.indexOf(a) - allSongs.indexOf(b));
+      renderLists();
+    }
+    
+    // Poster Generation
+    function generatePoster() {
+      if (mySetlist.length === 0) return;
+      
+      const canvas = document.getElementById('poster-canvas');
+      const ctx = canvas.getContext('2d');
+      const width = canvas.width;
+      const height = canvas.height;
+      
+      // Clear canvas
+      ctx.clearRect(0, 0, width, height);
+      
+      // Draw background (dark gradient)
+      const gradient = ctx.createLinearGradient(0, 0, 0, height);
+      gradient.addColorStop(0, "#080808");
+      gradient.addColorStop(0.5, "#1c0a13");
+      gradient.addColorStop(1, "#080808");
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, width, height);
+      
+      // Draw ambient pink glowing circles
+      ctx.beginPath();
+      ctx.arc(width/2, height/3, 500, 0, Math.PI * 2);
+      const glow1 = ctx.createRadialGradient(width/2, height/3, 0, width/2, height/3, 500);
+      glow1.addColorStop(0, "rgba(255, 42, 133, 0.2)");
+      glow1.addColorStop(1, "rgba(0, 0, 0, 0)");
+      ctx.fillStyle = glow1;
+      ctx.fill();
+      
+      // Noise overlay texture (simplified pattern)
+      ctx.fillStyle = "rgba(255,255,255,0.01)";
+      for (let i = 0; i < width; i += 4) {
+        for (let j = 0; j < height; j += 4) {
+          if (Math.random() > 0.5) ctx.fillRect(i, j, 2, 2);
+        }
+      }
+      
+      // Draw Border
+      ctx.strokeStyle = "rgba(255, 42, 133, 0.4)";
+      ctx.lineWidth = 2;
+      ctx.strokeRect(30, 30, width - 60, height - 60);
+      
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.1)";
+      ctx.lineWidth = 1;
+      ctx.strokeRect(40, 40, width - 80, height - 80);
+      
+      // Draw Title
+      ctx.textAlign = "center";
+      
+      // Top subtitle
+      ctx.font = "italic 20px 'Courier New', Courier, monospace";
+      ctx.fillStyle = "rgba(255,255,255,0.6)";
+      ctx.shadowBlur = 0;
+      ctx.fillText("PRESENTING", width/2, 120);
+      
+      // Main title part 1
+      ctx.font = "bold 55px Arial, sans-serif";
+      ctx.fillStyle = "#FF2A85";
+      ctx.shadowColor = "#FF2A85";
+      ctx.shadowBlur = 20;
+      ctx.fillText("MY BLACKPINK", width/2, 180);
+      
+      // Main title part 2
+      ctx.font = "900 70px 'Arial Black', sans-serif";
+      ctx.fillStyle = "#FFFFFF";
+      ctx.shadowColor = "rgba(255, 255, 255, 0.5)";
+      ctx.shadowBlur = 10;
+      ctx.fillText("WORLD TOUR", width/2, 260);
+      
+      // Draw Divider
+      ctx.shadowBlur = 0;
+      ctx.beginPath();
+      ctx.moveTo(width/2 - 200, 310);
+      ctx.lineTo(width/2 + 200, 310);
+      ctx.strokeStyle = "rgba(255, 42, 133, 0.8)";
+      ctx.lineWidth = 3;
+      ctx.stroke();
+      
+      // Center icon/accent
+      ctx.beginPath();
+      ctx.arc(width/2, 310, 8, 0, Math.PI * 2);
+      ctx.fillStyle = "#FFFFFF";
+      ctx.fill();
+      
+      ctx.font = "24px Arial, sans-serif";
+      ctx.fillStyle = "rgba(255,255,255,0.7)";
+      ctx.letterSpacing = "5px";
+      ctx.fillText("OFFICIAL SETLIST", width/2, 360);
+      ctx.letterSpacing = "0px"; // reset
+      
+      // Draw Songs
+      // Calculate dynamic spacing to center songs well
+      const startY = 440;
+      const availableHeight = height - startY - 120;
+      const lineHeight = Math.min(60, availableHeight / mySetlist.length);
+      
+      mySetlist.forEach((song, index) => {
+        const yPos = startY + (index * lineHeight);
+        
+        // Number
+        ctx.font = "bold 22px 'Courier New', Courier, monospace";
+        ctx.fillStyle = "rgba(255, 42, 133, 0.7)";
+        ctx.textAlign = "right";
+        ctx.fillText(String(index + 1).padStart(2, '0') + " —", width/2 - 220, yPos);
+        
+        // Song Title
+        ctx.font = "bold 34px Arial, sans-serif";
+        ctx.fillStyle = "#ffffff";
+        ctx.shadowColor = "rgba(255,255,255,0.2)";
+        ctx.shadowBlur = 5;
+        ctx.textAlign = "left";
+        ctx.fillText(song.toUpperCase(), width/2 - 190, yPos);
+      });
+      
+      // Draw Footer
+      ctx.shadowBlur = 0;
+      ctx.textAlign = "center";
+      
+      ctx.font = "italic 16px Arial";
+      ctx.fillStyle = "rgba(255, 42, 133, 0.6)";
+      ctx.fillText("WWW.BLACKPINKHUB.COM", width/2, height - 75);
+      
+      ctx.font = "14px Arial";
+      ctx.fillStyle = "rgba(255, 255, 255, 0.3)";
+      ctx.fillText("A FAN-CREATED EXPERIENCE", width/2, height - 50);
+      
+      // Show modal
+      document.getElementById('poster-modal').classList.add('active');
+    }
+    
+    function closeModal() {
+      document.getElementById('poster-modal').classList.remove('active');
+    }
+    
+    function downloadPoster() {
+      const canvas = document.getElementById('poster-canvas');
+      const dataUrl = canvas.toDataURL("image/png");
+      const a = document.createElement('a');
+      a.href = dataUrl;
+      a.download = "Blackpink_World_Tour_Setlist.png";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+    
+    // Close modal if clicked outside canvas
+    document.getElementById('poster-modal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeModal();
+      }
+    });
+    
+    // Initial Render
+    window.addEventListener('DOMContentLoaded', renderLists);
+  </script>
+</body>
+</html>

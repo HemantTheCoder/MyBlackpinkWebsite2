@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Which BLACKPINK Song Are You? - Quiz</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="script.js" defer></script>
+  <style>
+    .quiz-container {
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .quiz-progress {
+      font-size: 1.2rem;
+      color: var(--bp-pink);
+      margin-bottom: 1.5rem;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+    .question-text {
+      font-size: 2rem;
+      margin-bottom: 2rem;
+      color: #fff;
+    }
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .option-btn {
+      background: rgba(20, 20, 25, 0.6);
+      border: 2px solid var(--glass-border);
+      color: #fff;
+      padding: 1.5rem;
+      border-radius: 15px;
+      font-size: 1.2rem;
+      font-family: 'Outfit', sans-serif;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .option-btn:hover {
+      background: rgba(255, 42, 133, 0.2);
+      border-color: var(--bp-pink);
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(255, 42, 133, 0.3);
+    }
+    .option-btn::before {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 100%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+      transition: all 0.5s ease;
+    }
+    .option-btn:hover::before {
+      left: 100%;
+    }
+    
+    .result-card {
+      display: none;
+      text-align: center;
+      animation: fadeIn 0.8s ease forwards;
+    }
+    .result-title {
+      font-size: 3rem;
+      color: var(--bp-pink);
+      text-shadow: 0 0 15px var(--bp-pink-glow);
+      margin-bottom: 1rem;
+    }
+    .result-vibe {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 1.5rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .result-desc {
+      font-size: 1.2rem;
+      color: var(--text-muted);
+      line-height: 1.8;
+      margin-bottom: 2.5rem;
+      padding: 0 1rem;
+    }
+    .result-image {
+      max-width: 100%;
+      height: 300px;
+      object-fit: cover;
+      border-radius: 15px;
+      margin-bottom: 2rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      border: 2px solid var(--glass-border);
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .fade-out {
+      animation: fadeOut 0.4s ease forwards;
+    }
+    @keyframes fadeOut {
+      from { opacity: 1; transform: translateY(0); }
+      to { opacity: 0; transform: translateY(-20px); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Loading Screen -->
+  <div id="loading-screen">
+    <div class="loading-logo">BLACKPINK</div>
+    <div class="loading-bar"><div class="loading-fill"></div></div>
+  </div>
+
+  <!-- Lightstick Canvas Background -->
+  <canvas id="lightstick-canvas"></canvas>
+
+  <header class="hero">
+    <div class="hero-content">
+      <h1>PERSONALITY QUIZ</h1>
+      <p style="font-size: 1.2rem; font-weight: 300; margin-top: 0.5rem;">Which BLACKPINK Song Are You?</p>
+    </div>
+  </header>
+
+  <main class="container">
+    
+    <!-- Navigation Buttons -->
+    <nav class="btn-group">
+      <a href="index.html" class="btn">&#127968; Home</a>
+      <a href="games.html" class="btn">&#127918; Games</a>
+      <a href="quiz.html" class="btn active">✨ Quiz</a>
+    </nav>
+
+    <div class="quiz-container">
+      <!-- Quiz Card -->
+      <section class="glass-card" id="quiz-card">
+        <div class="quiz-progress" id="quiz-progress">Question 1 of 5</div>
+        <div class="question-container">
+          <h2 class="question-text" id="question-text">Loading...</h2>
+          <div class="options-grid" id="options-grid">
+            <!-- Options will be injected here via JS -->
+          </div>
+        </div>
+      </section>
+
+      <!-- Result Card -->
+      <section class="glass-card result-card" id="result-card">
+        <h3 class="result-vibe" id="result-vibe">Your Vibe Is...</h3>
+        <h2 class="result-title" id="result-title">Song Name</h2>
+        <p class="result-desc" id="result-desc">Description goes here.</p>
+        
+        <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
+          <button class="btn btn-glow" onclick="resetQuiz()">&#8634; Play Again</button>
+          <button class="btn" onclick="shareResult()">&#10150; Share Result</button>
+        </div>
+      </section>
+    </div>
+
+  </main>
+
+  <script>
+    const questions = [
+      {
+        question: "Pick an aesthetic",
+        options: [
+          { text: "Edgy / Dark", type: "A" },
+          { text: "Pastel / Cute", type: "B" },
+          { text: "Vintage", type: "C" },
+          { text: "Glamorous", type: "D" }
+        ]
+      },
+      {
+        question: "What's your ideal weekend?",
+        options: [
+          { text: "Partying", type: "A" },
+          { text: "Staying in", type: "B" },
+          { text: "Traveling", type: "C" },
+          { text: "Shopping", type: "D" }
+        ]
+      },
+      {
+        question: "Choose a color",
+        options: [
+          { text: "Black", type: "A" },
+          { text: "Pink", type: "B" },
+          { text: "White", type: "C" },
+          { text: "Red", type: "D" }
+        ]
+      },
+      {
+        question: "Your favorite accessory",
+        options: [
+          { text: "Boots", type: "A" },
+          { text: "Pearls", type: "B" },
+          { text: "Sunglasses", type: "C" },
+          { text: "Rings", type: "D" }
+        ]
+      },
+      {
+        question: "Pick a mood",
+        options: [
+          { text: "Fierce", type: "A" },
+          { text: "Chill", type: "B" },
+          { text: "Emotional", type: "C" },
+          { text: "Confident", type: "D" }
+        ]
+      }
+    ];
+
+    const results = {
+      A: {
+        title: "DDU-DU DDU-DU",
+        vibe: "Fierce & Edgy",
+        desc: "You're bold, fierce, and unapologetically yourself! Just like the iconic 'DDU-DU DDU-DU', you own every room you walk into with your powerful aura. Hit you with that ddu-du ddu-du!"
+      },
+      B: {
+        title: "Ice Cream",
+        vibe: "Pastel & Cute",
+        desc: "Sweet, bright, and universally loved! You have a chill, pastel vibe that makes everyone smile. Catchin' feelings like you're catchin' flies!"
+      },
+      C: {
+        title: "Lovesick Girls",
+        vibe: "Emotional & Vintage",
+        desc: "Deep, emotional, and a free spirit! You embrace the vintage aesthetic and love a good journey, even if it comes with a bit of heartbreak. We are the lovesick girls!"
+      },
+      D: {
+        title: "How You Like That",
+        vibe: "Confident & Glamorous",
+        desc: "Glamorous, confident, and a born winner! You know how to bounce back from anything and look fabulous doing it. Look at you, now look at me!"
+      }
+    };
+
+    let currentQuestionIndex = 0;
+    let scores = { A: 0, B: 0, C: 0, D: 0 };
+
+    const quizCard = document.getElementById('quiz-card');
+    const resultCard = document.getElementById('result-card');
+    const progressText = document.getElementById('quiz-progress');
+    const questionText = document.getElementById('question-text');
+    const optionsGrid = document.getElementById('options-grid');
+
+    function loadQuestion() {
+      const q = questions[currentQuestionIndex];
+      progressText.textContent = `Question ${currentQuestionIndex + 1} of ${questions.length}`;
+      questionText.textContent = q.question;
+      
+      optionsGrid.innerHTML = '';
+      q.options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.textContent = opt.text;
+        btn.onclick = () => selectOption(opt.type);
+        optionsGrid.appendChild(btn);
+      });
+      
+      quizCard.classList.remove('fade-out');
+    }
+
+    function selectOption(type) {
+      scores[type]++;
+      
+      quizCard.classList.add('fade-out');
+      
+      setTimeout(() => {
+        currentQuestionIndex++;
+        if (currentQuestionIndex >= questions.length) {
+          showResult();
+        } else {
+          loadQuestion();
+        }
+      }, 400); // Wait for fade out animation
+    }
+
+    function showResult() {
+      quizCard.style.display = 'none';
+      
+      // Determine highest score
+      let highestType = 'A';
+      let maxScore = scores['A'];
+      for (const type of ['B', 'C', 'D']) {
+        if (scores[type] > maxScore) {
+          maxScore = scores[type];
+          highestType = type;
+        }
+      }
+      
+      const res = results[highestType];
+      
+      document.getElementById('result-vibe').textContent = res.vibe;
+      document.getElementById('result-title').textContent = `"${res.title}"`;
+      document.getElementById('result-desc').textContent = res.desc;
+      
+      resultCard.style.display = 'block';
+      
+      // Trigger confetti if available from script.js / external library
+      if (typeof confetti === 'function') {
+        confetti({
+          particleCount: 100,
+          spread: 70,
+          origin: { y: 0.6 },
+          colors: ['#ff2a85', '#000000', '#ffffff']
+        });
+      }
+    }
+
+    function resetQuiz() {
+      currentQuestionIndex = 0;
+      scores = { A: 0, B: 0, C: 0, D: 0 };
+      
+      resultCard.style.display = 'none';
+      quizCard.style.display = 'block';
+      
+      loadQuestion();
+    }
+
+    function shareResult() {
+      const title = document.getElementById('result-title').textContent;
+      const text = `I got ${title} on the "Which BLACKPINK Song Are You?" Quiz! Play now at MyBlackpinkWebsite 🖤💖`;
+      
+      if (navigator.share) {
+        navigator.share({
+          title: 'BLACKPINK Quiz Result',
+          text: text,
+          url: window.location.href
+        }).catch(err => console.error('Share failed:', err));
+      } else {
+        // Fallback
+        navigator.clipboard.writeText(text + " " + window.location.href)
+          .then(() => alert("Result copied to clipboard!"))
+          .catch(() => alert("Failed to copy."));
+      }
+    }
+
+    // Initialize quiz when DOM is loaded
+    document.addEventListener('DOMContentLoaded', () => {
+      loadQuestion();
+    });
+  </script>
+</body>
+</html>
