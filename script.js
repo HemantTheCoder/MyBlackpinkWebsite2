@@ -1,4 +1,4 @@
-﻿const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:') ? 'http://localhost:3000' : 'https://myblackpinkwebsite2.onrender.com';
+const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:') ? 'http://localhost:3000' : 'https://myblackpinkwebsite2.onrender.com';
 // Redirect to https
 var loc = window.location.href + '';
 if (loc.indexOf('http://') == 0 && !loc.includes('localhost') && !loc.includes('127.0.0.1') && !loc.includes('file://')) {
@@ -3261,42 +3261,43 @@ window.initPhotocards = function() {
               packAnim.style.display = 'none';
               reveal.style.display = 'block';
             
-            document.getElementById('pulled-card-img').src = data.card.url;
-            document.getElementById('pulled-card-rarity').textContent = data.card.rarity;
-            document.getElementById('pulled-card-rarity').className = 'card-rarity ' + data.card.rarity.toLowerCase();
-            
-            const dupMsg = document.getElementById('duplicate-msg');
-            const pullMsg = document.getElementById('pull-status-msg');
-            if (dupMsg && pullMsg) {
-              if (data.isDuplicate) {
-                dupMsg.style.display = 'block';
-                pullMsg.style.display = 'none';
-              } else {
-                dupMsg.style.display = 'none';
-                pullMsg.style.display = 'block';
+              document.getElementById('pulled-card-img').src = data.card.url;
+              document.getElementById('pulled-card-rarity').textContent = data.card.rarity;
+              document.getElementById('pulled-card-rarity').className = 'card-rarity ' + data.card.rarity.toLowerCase();
+              
+              const dupMsg = document.getElementById('duplicate-msg');
+              const pullMsg = document.getElementById('pull-status-msg');
+              if (dupMsg && pullMsg) {
+                if (data.isDuplicate) {
+                  dupMsg.style.display = 'block';
+                  pullMsg.style.display = 'none';
+                } else {
+                  dupMsg.style.display = 'none';
+                  pullMsg.style.display = 'block';
+                }
               }
-            }
-            
-            if (data.card.rarity.toLowerCase() === 'legendary') {
-              reveal.classList.add('reveal-anim', 'legendary');
-            } else {
-              reveal.classList.remove('reveal-anim', 'legendary');
-            }
-            
-            if (data.user) {
-              currentUser = data.user;
-              localStorage.setItem('bp_user', JSON.stringify(currentUser));
-            } else {
-              if(!currentUser.photocards) currentUser.photocards = [];
-              currentUser.photocards.push(data.card);
-              currentUser.lastPullDate = new Date().toDateString();
-              localStorage.setItem('bp_user', JSON.stringify(currentUser));
-            }
-            
-            if(window.triggerConfetti) window.triggerConfetti();
-            window.updatePhotocardUI();
-          }, 500);
-        }, 1500);
+              
+              if (data.card.rarity.toLowerCase() === 'legendary') {
+                reveal.classList.add('reveal-anim', 'legendary');
+              } else {
+                reveal.classList.remove('reveal-anim', 'legendary');
+              }
+              
+              if (data.user) {
+                currentUser = data.user;
+                localStorage.setItem('bp_user', JSON.stringify(currentUser));
+              } else {
+                if(!currentUser.photocards) currentUser.photocards = [];
+                currentUser.photocards.push(data.card);
+                currentUser.lastPullDate = new Date().toDateString();
+                localStorage.setItem('bp_user', JSON.stringify(currentUser));
+              }
+              
+              if(window.triggerConfetti) window.triggerConfetti();
+              window.updatePhotocardUI();
+            }, 500); // end inner setTimeout
+          }, 1500); // end middle setTimeout
+        }; // end onclick function
       } else {
         const cd = document.getElementById('pull-countdown');
         if (cd) {
@@ -3805,10 +3806,10 @@ function initMascot() {
   if (document.getElementById('virtual-mascot')) return;
   const mascot = document.createElement('div');
   mascot.id = 'virtual-mascot';
-  mascot.innerHTML = 
+  mascot.innerHTML = `
     <div style="font-size: 2.5rem; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5)); cursor: pointer; transition: transform 0.2s; user-select: none;" id="mascot-img">🐻</div>
     <div id="mascot-bubble" style="position:absolute; top:-35px; right:-20px; background:white; color:black; padding:4px 8px; border-radius:10px; font-size:0.7rem; font-weight:bold; opacity:0; transition:opacity 0.3s; white-space:nowrap; pointer-events:none; box-shadow:0 2px 10px rgba(0,0,0,0.3);"></div>
-  ;
+  `;
   mascot.style.position = 'fixed';
   mascot.style.bottom = '20px';
   mascot.style.right = '20px';
@@ -3821,14 +3822,14 @@ function initMascot() {
   if (!document.getElementById('mascot-style')) {
     const style = document.createElement('style');
     style.id = 'mascot-style';
-    style.textContent = 
+    style.textContent = `
       @keyframes floatMascot {
         0%, 100% { transform: translateY(0); }
         50% { transform: translateY(-10px); }
       }
       #virtual-mascot:hover #mascot-img { transform: scale(1.15) rotate(-5deg); }
       #virtual-mascot:active #mascot-img { transform: scale(0.9); }
-    ;
+    `;
     document.head.appendChild(style);
   }
 
@@ -3936,7 +3937,7 @@ function addEXP(amount, reason) {
   if (newLevel.level > currentLevel.level) {
     triggerLevelUp(newLevel);
   } else {
-    showToast(+ EXP: , 3000);
+    showToast(`+${amount} EXP: ${reason}`, 3000);
   }
 }
 
@@ -3960,13 +3961,13 @@ function triggerLevelUp(levelInfo) {
   modal.style.justifyContent = 'center';
   modal.style.animation = 'toastSlide 0.5s ease-out';
   
-  modal.innerHTML = 
+  modal.innerHTML = `
     <h1 style="color:var(--bp-pink); font-size:4rem; margin-bottom:1rem; text-shadow:0 0 20px var(--bp-pink-glow); text-transform:uppercase;">LEVEL UP!</h1>
     <p style="color:#fff; font-size:1.5rem; margin-bottom:0.5rem;">You are now a</p>
-    <h2 style="color:#fff; font-size:3rem; margin-bottom:2rem; letter-spacing:2px;"></h2>
+    <h2 style="color:#fff; font-size:3rem; margin-bottom:2rem; letter-spacing:2px;">${levelInfo.name}</h2>
     <p style="color:#aaa; max-width:500px; text-align:center; line-height:1.6; margin-bottom:3rem;">Your dedication to BLACKPINK is paying off. Keep streaming, collecting, and chatting!</p>
     <button class="btn btn-glow" style="font-size:1.2rem; padding:1rem 2.5rem;" onclick="this.parentElement.remove()">Continue \uD83D\uDDA4\uD83D\uDC96</button>
-  ;
+  `;
   document.body.appendChild(modal);
   
   // Confetti
