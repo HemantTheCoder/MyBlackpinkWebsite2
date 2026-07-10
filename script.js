@@ -411,6 +411,11 @@ function initAll() {
   if (document.getElementById('poll-opt-Square-Up')) {
     initFanPoll();
   }
+
+  // Add new global features
+  if (typeof initSongOfDay === 'function') initSongOfDay();
+  if (typeof initMascot === 'function') initMascot();
+  if (typeof initCursorTrail === 'function') initCursorTrail();
 }
 
 function setupSPA() {
