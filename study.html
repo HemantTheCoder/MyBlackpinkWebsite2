@@ -169,6 +169,7 @@
   </style>
 </head>
 <body>
+  <main class="container">
 
   <!-- Nav -->
   <nav class="glass-card" style="margin: 1rem auto; max-width: 900px; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center;">
@@ -220,10 +221,12 @@
     </div>
   </div>
 
-  <!-- We load script.js for the base functionality, but ensure our custom script works smoothly -->
+  </main>
+  <!-- We load script.js ... -->
   <script src="script.js" defer></script>
   
   <script>
+    // INJECTED
     // --- Pomodoro Logic ---
     let timerInterval;
     let timeLeft = 25 * 60; // 25 minutes in seconds

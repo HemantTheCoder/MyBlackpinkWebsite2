@@ -114,11 +114,7 @@
 </head>
 <body>
 
-  <!-- Loading Screen -->
-  <div id="loading-screen">
-    <div class="loading-logo">BLACKPINK</div>
-    <div class="loading-bar"><div class="loading-fill"></div></div>
-  </div>
+
 
   <!-- Lightstick Canvas Background -->
   <canvas id="lightstick-canvas"></canvas>
@@ -167,6 +163,7 @@
   </main>
 
   <script>
+    // INJECTED
     const questions = [
       {
         question: "Pick an aesthetic",
@@ -340,9 +337,8 @@
     }
 
     // Initialize quiz when DOM is loaded
-    document.addEventListener('DOMContentLoaded', () => {
-      loadQuestion();
-    });
+    // Call immediately since SPA injection misses DOMContentLoaded
+    loadQuestion();
   </script>
 </body>
 </html>

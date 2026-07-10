@@ -219,11 +219,7 @@
 </head>
 <body>
 
-  <!-- Loading Screen -->
-  <div id="loading-screen">
-    <div class="loading-logo">BLACKPINK</div>
-    <div class="loading-bar"><div class="loading-fill"></div></div>
-  </div>
+
   
   <div id="page-transition"></div>
 
@@ -280,6 +276,7 @@
   </div>
 
   <script>
+    // INJECTED
     const allSongs = [
       "DDU-DU DDU-DU", "Kill This Love", "How You Like That", "Pink Venom",
       "Shut Down", "BOOMBAYAH", "As If It's Your Last", "Playing With Fire",
@@ -515,7 +512,8 @@
     });
     
     // Initial Render
-    window.addEventListener('DOMContentLoaded', renderLists);
+    // Call immediately since SPA injection misses DOMContentLoaded
+    renderLists();
   </script>
 </body>
 </html>
