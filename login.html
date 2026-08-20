@@ -73,7 +73,20 @@
           <input type="password" id="login-password" placeholder="Password" required style="width: 100%; padding: 1rem; border-radius: 10px; border: 1px solid var(--bp-pink); background: rgba(0,0,0,0.5); color: white; font-family: inherit;">
           <button type="submit" class="btn btn-glow" style="margin-top: 1rem;">Login</button>
         </form>
-        <p class="text-center" style="margin-top: 1.5rem;">Don't have an account? <span onclick="toggleAuthMode()" style="color: var(--bp-pink); cursor: pointer; text-decoration: underline;">Register here</span></p>
+        <p class="text-center" style="margin-top: 1rem;"><span onclick="toggleForgotPassword()" style="color: var(--bp-pink); cursor: pointer; text-decoration: underline; font-size: 0.9rem;">Forgot password?</span></p>
+        <p class="text-center" style="margin-top: 0.5rem;">Don't have an account? <span onclick="toggleAuthMode()" style="color: var(--bp-pink); cursor: pointer; text-decoration: underline;">Register here</span></p>
+      </div>
+
+      <!-- Forgot Password Form -->
+      <div id="forgot-password-section" style="display: none;">
+        <h2 style="text-align: center; margin-bottom: 1.5rem;">Reset Password</h2>
+        <p class="text-center" style="margin-bottom: 1rem; color: #ccc; font-size: 0.9rem;">Enter the email on your account and we'll send you a link to reset your password.</p>
+        <form id="forgot-password-form" style="display: flex; flex-direction: column; gap: 1rem;">
+          <input type="email" id="forgot-email" placeholder="Email" required style="width: 100%; padding: 1rem; border-radius: 10px; border: 1px solid var(--bp-pink); background: rgba(0,0,0,0.5); color: white; font-family: inherit;">
+          <button type="submit" class="btn btn-glow" style="margin-top: 1rem;">Send Reset Link</button>
+        </form>
+        <p id="forgot-password-status" class="text-center" style="margin-top: 1rem;"></p>
+        <p class="text-center" style="margin-top: 1.5rem;"><span onclick="toggleForgotPassword()" style="color: var(--bp-pink); cursor: pointer; text-decoration: underline;">Back to login</span></p>
       </div>
 
       <!-- Register Form -->

@@ -137,12 +137,8 @@ window.ytLoadTrack = function (idx) {
     ytIsPlaying = true;
     
     // Track play for Stan Level
-    const token = localStorage.getItem('user_token');
-    if (token) {
-      fetch(`${API_BASE}/api/me/play`, {
-        method: 'POST',
-        headers: { 'Authorization': `Bearer ${token}` }
-      }).catch(err => console.log('Error tracking play:', err));
+    if (localStorage.getItem('user_token')) {
+      authFetch(`${API_BASE}/api/me/play`, { method: 'POST' }).catch(err => console.log('Error tracking play:', err));
     }
   }
   updateTrackInfo();
@@ -2620,18 +2616,53 @@ window.initFeedback = function() {
 // =============================================
 let currentUser = null;
 
+// Supabase access tokens expire after about an hour; this exchanges the stored refresh
+// token for a fresh pair so a long-lived tab doesn't get silently logged out mid-session.
+async function refreshAuthToken() {
+  const refreshToken = localStorage.getItem('user_refresh_token');
+  if (!refreshToken) return null;
+  try {
+    const res = await fetch(`${API_BASE}/api/refresh`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ refresh_token: refreshToken })
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    localStorage.setItem('user_token', data.token);
+    localStorage.setItem('user_refresh_token', data.refresh_token);
+    return data.token;
+  } catch (e) {
+    return null;
+  }
+}
+
+// Wraps fetch for Bearer-authenticated endpoints: retries once with a refreshed token
+// if the current one has expired.
+async function authFetch(url, options = {}) {
+  const token = localStorage.getItem('user_token');
+  let headers = { ...(options.headers || {}), 'Authorization': `Bearer ${token}` };
+  let res = await fetch(url, { ...options, headers });
+  if (res.status === 401 || res.status === 403) {
+    const newToken = await refreshAuthToken();
+    if (newToken) {
+      headers = { ...headers, 'Authorization': `Bearer ${newToken}` };
+      res = await fetch(url, { ...options, headers });
+    }
+  }
+  return res;
+}
+
 async function fetchCurrentUser() {
   const token = localStorage.getItem('user_token');
   if (!token) return;
   try {
-    const res = await fetch(`${API_BASE}/api/me`, {
-      headers: { 'Authorization': `Bearer ${token}` }
-    });
+    const res = await authFetch(`${API_BASE}/api/me`);
     if (res.ok) {
       currentUser = await res.json();
       applyBiasTheme(currentUser.bias);
       updateNavProfileLink(true);
-      
+
       // If player is already ready but we just loaded the user, reload playlist
       if (ytPlayerReady && typeof ytLoadTrack === 'function' && currentUser.playlist && currentUser.playlist.length > 0) {
         ytPlaylist = currentUser.playlist.map(t => ({
@@ -2644,6 +2675,7 @@ async function fetchCurrentUser() {
       }
     } else {
       localStorage.removeItem('user_token');
+      localStorage.removeItem('user_refresh_token');
       updateNavProfileLink(false);
     }
   } catch (e) {
@@ -2680,15 +2712,53 @@ window.toggleAuthMode = function() {
   }
 };
 
+window.toggleForgotPassword = function() {
+  const login = document.getElementById('login-section');
+  const forgot = document.getElementById('forgot-password-section');
+  if (login && forgot) {
+    const showingForgot = forgot.style.display !== 'none';
+    login.style.display = showingForgot ? 'block' : 'none';
+    forgot.style.display = showingForgot ? 'none' : 'block';
+  }
+};
+
 window.initLogin = function() {
   if (localStorage.getItem('user_token')) {
     navigateTo('profile.html');
     return;
   }
-  
+
   const loginForm = document.getElementById('user-login-form');
   const regForm = document.getElementById('user-register-form');
-  
+  const forgotForm = document.getElementById('forgot-password-form');
+
+  if (forgotForm) {
+    forgotForm.onsubmit = async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('forgot-email').value;
+      const statusEl = document.getElementById('forgot-password-status');
+      statusEl.textContent = 'Sending...';
+      statusEl.style.color = '';
+      try {
+        const res = await fetch(`${API_BASE}/api/forgot-password`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email })
+        });
+        if (res.ok) {
+          statusEl.textContent = 'If that email is registered, a reset link is on its way!';
+          statusEl.style.color = '#4caf50';
+        } else {
+          statusEl.textContent = 'Something went wrong. Please try again.';
+          statusEl.style.color = '#ff5555';
+        }
+      } catch (err) {
+        statusEl.textContent = 'Server error. Please try again.';
+        statusEl.style.color = '#ff5555';
+      }
+    };
+  }
+
   if (loginForm) {
     loginForm.onsubmit = async (e) => {
       e.preventDefault();
@@ -2703,6 +2773,7 @@ window.initLogin = function() {
         const data = await res.json();
         if (res.ok) {
           localStorage.setItem('user_token', data.token);
+          if (data.refresh_token) localStorage.setItem('user_refresh_token', data.refresh_token);
           await fetchCurrentUser();
           navigateTo('profile.html');
           if(typeof showToast === 'function') showToast(`Welcome back, ${data.username}!`);
@@ -2732,6 +2803,7 @@ window.initLogin = function() {
         const data = await res.json();
         if (res.ok) {
           localStorage.setItem('user_token', data.token);
+          if (data.refresh_token) localStorage.setItem('user_refresh_token', data.refresh_token);
           await fetchCurrentUser();
           navigateTo('profile.html');
           if(typeof showToast === 'function') showToast(`Welcome to the Blink family, ${data.username}!`);
@@ -2815,12 +2887,9 @@ window.initProfile = async function() {
       e.preventDefault();
       const bias = document.getElementById('update-bias').value;
       const dob = document.getElementById('update-dob').value;
-      const res = await fetch(`${API_BASE}/api/me`, {
+      const res = await authFetch(`${API_BASE}/api/me`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ bias, dob })
       });
       if (res.ok) {
@@ -3027,9 +3096,9 @@ window.toggleWishlistCard = async function(cardId) {
     return;
   }
   try {
-    const res = await fetch(`${API_BASE}/api/wishlist`, {
+    const res = await authFetch(`${API_BASE}/api/wishlist`, {
       method: 'POST',
-      headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ cardId })
     });
     if (res.ok) {
@@ -3056,6 +3125,7 @@ function getRarityColor(r) {
 
 window.logoutUser = function() {
   localStorage.removeItem('user_token');
+  localStorage.removeItem('user_refresh_token');
   currentUser = null;
   applyBiasTheme('OT4');
   updateNavProfileLink(false);
@@ -3105,13 +3175,9 @@ window.removeTrack = function(idx) {
 };
 
 window.savePlaylist = async function() {
-  const token = localStorage.getItem('user_token');
-  const res = await fetch(`${API_BASE}/api/me/playlist`, {
+  const res = await authFetch(`${API_BASE}/api/me/playlist`, {
     method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
-    },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ playlist: currentUser.playlist })
   });
   if (res.ok) {
@@ -3261,10 +3327,7 @@ window.initFanArt = function() {
 window.toggleLike = async function(id) {
   if (!currentUser) return alert('Please login to like fan art!');
   try {
-    const res = await fetch(`${API_BASE}/api/gallery/${id}/like`, {
-      method: 'POST',
-      headers: { 'Authorization': `Bearer ${currentUser.token}` }
-    });
+    const res = await authFetch(`${API_BASE}/api/gallery/${id}/like`, { method: 'POST' });
     if (res.ok) window.initFanArt();
   } catch(e) {}
 };
@@ -3351,10 +3414,7 @@ window.initPhotocards = function() {
 
     try {
       const [res] = await Promise.all([
-        fetch(`${API_BASE}/api/me/pull`, {
-          method: 'POST',
-          headers: { 'Authorization': `Bearer ${localStorage.getItem('user_token')}` }
-        }),
+        authFetch(`${API_BASE}/api/me/pull`, { method: 'POST' }),
         new Promise(r => setTimeout(r, 1100)) // let the shake build suspense
       ]);
       const data = await res.json();

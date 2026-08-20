@@ -292,9 +292,9 @@
       const reqRarity = document.getElementById('trade-req-rarity').value;
       
       try {
-        const res = await fetch(`${API_BASE}/api/trades`, {
+        const res = await authFetch(`${API_BASE}/api/trades`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('user_token')}` },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ offeredCardUrl: selectedCardUrl, requestedRarity: reqRarity })
         });
         const data = await res.json();
@@ -349,9 +349,9 @@
     async function confirmAcceptTrade() {
       if (!selectedCardUrl) return alert('Select a card to offer!');
       try {
-        const res = await fetch(`${API_BASE}/api/trades/${currentTradeTarget}/accept`, {
+        const res = await authFetch(`${API_BASE}/api/trades/${currentTradeTarget}/accept`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('user_token')}` },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ acceptedCardUrl: selectedCardUrl })
         });
         const data = await res.json();
@@ -372,10 +372,7 @@
     async function cancelTrade(tradeId) {
       if (!confirm('Cancel this trade and return the card to your inventory?')) return;
       try {
-        const res = await fetch(`${API_BASE}/api/trades/${tradeId}/cancel`, {
-          method: 'POST',
-          headers: { 'Authorization': `Bearer ${localStorage.getItem('user_token')}` }
-        });
+        const res = await authFetch(`${API_BASE}/api/trades/${tradeId}/cancel`, { method: 'POST' });
         const data = await res.json();
         if (res.ok) {
           localStorage.setItem('bp_user', JSON.stringify(data.user));
