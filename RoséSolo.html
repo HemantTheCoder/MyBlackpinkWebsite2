@@ -40,6 +40,7 @@
   <!-- Loading Screen -->
   <div id="loading-screen">
     <div class="loading-logo">BLACKPINK</div>
+    <div class="loading-sub">Initializing Blink OS</div>
     <div class="loading-bar"><div class="loading-fill"></div></div>
   </div>
 
@@ -49,17 +50,42 @@
   <!-- Lightstick Canvas Background -->
   <canvas id="lightstick-canvas"></canvas>
 
-  <!-- Era Toggle Button -->
-  <button id="era-toggle-btn" onclick="cycleEra()">&#x1F5A4; Original</button>
-
   <header class="hero hero-rose">
     <div class="hero-content">
+      <div class="hud-eyebrow"><span class="dot"></span> Member Profile</div>
       <h1>Roseanne Park</h1>
       <p style="font-size: 1.2rem; font-weight: 300;">Main Vocalist, Lead Dancer</p>
     </div>
   </header>
 
   <main class="container">
+    <!-- Navigation Buttons -->
+    <nav class="btn-group">
+      <button id="era-toggle-btn" onclick="cycleEra()">&#x1F319; Square Up</button>
+      <a href="index.html" class="btn">Home</a>
+      <a href="aboutmembers.html" class="btn active">Members</a>
+      <a href="discography.html" class="btn">Discography</a>
+      <a href="timeline.html" class="btn">Timeline</a>
+      <a href="records.html" class="btn">Records</a>
+      <a href="gallery.html" class="btn">Gallery</a>
+      <a href="worldtour.html" class="btn">World Tour</a>
+      <a href="videos.html" class="btn">Videos</a>
+      <a href="games.html" class="btn">Games</a>
+      <a href="quote-generator.html" class="btn">Quote Generator</a>
+      <a href="aboutme.html?v=1782403788303" class="btn">About Me</a>
+      <a href="blink-id.html?v=20260625" class="btn">Blink ID</a>
+      <a href="blink-wall.html" class="btn">Blink Wall</a>
+      <a href="vault.html?v=20260625" class="btn">Vault</a>
+      <a href="fanart.html" class="btn">Fan Art</a>
+      <a href="feedback.html" class="btn">Feedback</a>
+      <a href="study.html" class="btn">Study Mode</a>
+      <a href="photobooth.html" class="btn">Photo Booth</a>
+      <a href="setlist.html" class="btn">Setlist Builder</a>
+      <a href="quiz.html" class="btn">Quiz</a>
+      <a href="photocards.html" class="btn">Photocards</a>
+      <a href="profile.html" class="btn" id="nav-profile-btn">Profile / Login</a>
+    </nav>
+
     <div class="text-center" style="margin-bottom: 2rem;">
       <a href="aboutmembers.html?v=1782403788303" class="btn primary">Back to Members Hub</a>
     </div>
@@ -90,7 +116,7 @@
         <li>✨ Rosé debuted as a soloist on March 12, 2021, with her first single album '-R-'.</li>
         <li>✨ She has an adopted dog named Hank (@hank_says_hank).</li>
         <li>✨ Rosé was announced the first global ambassador of Yves Saint Laurent in 59 years.</li>
-        <li>✨ <strong>Recent (2024-2026):</strong> Rosé signed with <strong>THEBLACKLABEL</strong> for her solo management. She achieved historic global success with her incredibly viral, chart-topping collaboration <strong>"APT."</strong> alongside Bruno Mars! She also co-wrote the group's 2026 smash hit "GO".</li>
+        <li>✨ <strong>Recent (2024-2026):</strong> Rosé signed with <strong>THEBLACKLABEL</strong> for her solo management. She achieved historic global success with her incredibly viral, chart-topping collaboration <strong>"APT."</strong> alongside Bruno Mars, then released her debut studio album <strong>"rosie"</strong> (Dec 2024) featuring "number one girl" and "toxic till the end"! She also co-wrote the group's 2026 smash hit "GO".</li>
       </ul>
       
       <div class="text-center" style="margin-top: 2rem;">
@@ -98,9 +124,9 @@
       </div>
     </section>
 
-    <div class="btn-group">
+    <div class="member-pagination">
       <a href="Jennie.html?v=1782403788303" class="btn">Previous Member: Jennie</a>
-      <a href="Lalisa.html?v=1782403788303" class="btn primary">Next Member: Lisa</a>
+      <a href="Lalisa.html?v=1782403788303" class="btn btn-glow">Next Member: Lisa</a>
     </div>
 
   </main>

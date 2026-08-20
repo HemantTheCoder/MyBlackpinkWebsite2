@@ -19,24 +19,24 @@
   margin: 1rem 0 2.5rem;
 }
 .era-tab {
-  font-family: 'Outfit', sans-serif;
+  font-family: var(--font-body);
   font-size: 0.82rem;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   padding: 0.5rem 1.2rem;
-  border: 1.5px solid rgba(255,42,133,0.35);
+  border: 1.5px solid rgba(255,47,146,0.35);
   border-radius: 999px;
-  background: rgba(255,42,133,0.07);
+  background: rgba(255,47,146,0.07);
   color: rgba(255,255,255,0.7);
   cursor: pointer;
   transition: all 0.25s ease;
 }
 .era-tab:hover, .era-tab.active {
-  border-color: #ff2a85;
+  border-color: #ff2f92;
   color: #fff;
-  background: rgba(255,42,133,0.2);
-  box-shadow: 0 0 16px rgba(255,42,133,0.4);
+  background: rgba(255,47,146,0.2);
+  box-shadow: 0 0 16px rgba(255,47,146,0.4);
 }
 .disco-grid {
   display: grid;
@@ -47,7 +47,7 @@
 .era-card {
   background: rgba(15,8,25,0.65);
   backdrop-filter: blur(12px);
-  border: 1.5px solid rgba(255,42,133,0.2);
+  border: 1.5px solid rgba(255,47,146,0.2);
   border-radius: 18px;
   overflow: hidden;
   transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
@@ -55,8 +55,8 @@
 }
 .era-card:hover {
   transform: translateY(-6px);
-  box-shadow: 0 0 30px rgba(255,42,133,0.35);
-  border-color: rgba(255,42,133,0.6);
+  box-shadow: 0 0 30px rgba(255,47,146,0.35);
+  border-color: rgba(255,47,146,0.6);
 }
 
 .card-body { padding: 1.5rem; }
@@ -65,7 +65,7 @@
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #ff2a85;
+  color: #ff2f92;
   margin-right: 0.5rem;
 }
 .type-badge {
@@ -109,7 +109,7 @@
 }
 .track-num {
   min-width: 1.6rem;
-  color: #ff2a85;
+  color: #ff2f92;
   font-weight: 700;
   font-size: 0.78rem;
 }
@@ -160,6 +160,7 @@
   <!-- Loading Screen -->
   <div id="loading-screen">
     <div class="loading-logo">BLACKPINK</div>
+    <div class="loading-sub">Initializing Blink OS</div>
     <div class="loading-bar"><div class="loading-fill"></div></div>
   </div>
 
@@ -169,12 +170,10 @@
   <!-- Lightstick Canvas Background -->
   <canvas id="lightstick-canvas"></canvas>
 
-  <!-- Era Toggle Button -->
-  <button id="era-toggle-btn" onclick="cycleEra()">&#x1F5A4; Original</button>
-
 <header class="hero" style="background-attachment:fixed;background-position:center;background-size:cover;">
     <div class="hero-content">
-      <h1>🎵 Discography</h1>
+      <div class="hud-eyebrow"><span class="dot"></span> Catalog</div>
+      <h1>Discography</h1>
       <p class="hero-sub">Every era. Every hit. Every moment.</p>
     </div>
   </header>
@@ -183,17 +182,29 @@
 
     <!-- Navigation Buttons -->
     <nav class="btn-group">
-      <a href="index.html?v=1782403788303" class="btn">&#127968; Home</a>
-      <a href="aboutmembers.html?v=1782403788303" class="btn">&#127915; Members</a>
-      <a href="discography.html?v=1782403788303" class="btn">&#127925; Discography</a>
-      <a href="timeline.html?v=1782403788303" class="btn">&#9203; Timeline</a>
-      <a href="records.html?v=1782403788303" class="btn">&#127942; Records</a>
-      <a href="gallery.html?v=1782403788303" class="btn">&#128247; Gallery</a>
-      <a href="worldtour.html?v=1782403788303" class="btn">&#127758; World Tour</a>
-      <a href="videos.html?v=1782403788303" class="btn">&#127909; Videos</a>
-      <a href="games.html?v=1782403788303" class="btn">&#127918; Games</a>
-      <a href="quote-generator.html?v=1782403788303" class="btn">&#128172; Quote Generator</a>
-      <a href="aboutme.html?v=1782403788303" class="btn">&#129492; About Me!</a>
+      <button id="era-toggle-btn" onclick="cycleEra()">&#x1F319; Square Up</button>
+      <a href="index.html" class="btn">Home</a>
+      <a href="aboutmembers.html" class="btn">Members</a>
+      <a href="discography.html" class="btn active">Discography</a>
+      <a href="timeline.html" class="btn">Timeline</a>
+      <a href="records.html" class="btn">Records</a>
+      <a href="gallery.html" class="btn">Gallery</a>
+      <a href="worldtour.html" class="btn">World Tour</a>
+      <a href="videos.html" class="btn">Videos</a>
+      <a href="games.html" class="btn">Games</a>
+      <a href="quote-generator.html" class="btn">Quote Generator</a>
+      <a href="aboutme.html?v=1782403788303" class="btn">About Me</a>
+      <a href="blink-id.html?v=20260625" class="btn">Blink ID</a>
+      <a href="blink-wall.html" class="btn">Blink Wall</a>
+      <a href="vault.html?v=20260625" class="btn">Vault</a>
+      <a href="fanart.html" class="btn">Fan Art</a>
+      <a href="feedback.html" class="btn">Feedback</a>
+      <a href="study.html" class="btn">Study Mode</a>
+      <a href="photobooth.html" class="btn">Photo Booth</a>
+      <a href="setlist.html" class="btn">Setlist Builder</a>
+      <a href="quiz.html" class="btn">Quiz</a>
+      <a href="photocards.html" class="btn">Photocards</a>
+      <a href="profile.html" class="btn" id="nav-profile-btn">Profile / Login</a>
     </nav>
 
     
@@ -213,7 +224,7 @@
     <div class="disco-grid" id="disco-grid">
 
       <div class="era-card" data-era="SQUARE ONE">
-        <div class="card-banner" style="background-image: url('assets/albums/square-one.jpg'); background-size: cover; background-position: center; min-height: 250px;"></div>
+        <div class="card-banner" style="background-image: url('assets/album_square_one.jpg'); background-size: cover; background-position: center; min-height: 250px;"></div>
         <div class="card-body">
           <div><span class="era-badge">◆ Square One</span><span class="type-badge">Single Album</span></div>
           <div class="card-title">SQUARE ONE</div>
@@ -227,7 +238,7 @@
       </div>
 
       <div class="era-card" data-era="SQUARE TWO">
-        <div class="card-banner" style="background-image: url('assets/albums/square-two.jpg'); background-size: cover; background-position: center; min-height: 250px;"></div>
+        <div class="card-banner" style="background-image: url('assets/album_square_two.jpg'); background-size: cover; background-position: center; min-height: 250px;"></div>
         <div class="card-body">
           <div><span class="era-badge">◆ Square Two</span><span class="type-badge">Single Album</span></div>
           <div class="card-title">SQUARE TWO</div>
@@ -275,7 +286,7 @@
       </div>
 
       <div class="era-card" data-era="THE ALBUM">
-        <div class="card-banner" style="background-image: url('assets/albums/the-album.png'); background-size: cover; background-position: center; min-height: 250px;"></div>
+        <div class="card-banner" style="background-image: url('assets/album_the_album.jpg'); background-size: cover; background-position: center; min-height: 250px;"></div>
         <div class="card-body">
           <div><span class="era-badge">◆ The Album</span><span class="type-badge">1st Full Album</span></div>
           <div class="card-title">THE ALBUM</div>
@@ -313,7 +324,7 @@
       </div>
 
       <div class="era-card" data-era="DEADLINE">
-        <div class="card-banner" style="background-image: url('assets/album_born_pink.jpg'); background-size: cover; background-position: center; min-height: 250px;"></div>
+        <div class="card-banner" style="background: linear-gradient(135deg, rgba(255,47,146,0.35), rgba(167,66,255,0.35)), repeating-linear-gradient(45deg, rgba(255,255,255,0.04) 0 2px, transparent 2px 12px), #0c0a0e; display:flex; align-items:center; justify-content:center; min-height: 250px;"><span style="font-family:var(--font-mono); font-size:0.75rem; letter-spacing:0.15em; text-transform:uppercase; color:rgba(255,255,255,0.6);">Cover art not yet released</span></div>
         <div class="card-body">
           <div><span class="era-badge">◆ Deadline</span><span class="type-badge">3rd Mini Album</span></div>
           <div class="card-title">DEADLINE</div>
@@ -328,56 +339,63 @@
       </div>
 
       <div class="era-card" data-era="SOLOS">
-        <div class="card-banner" style="background-image: url('https://upload.wikimedia.org/wikipedia/en/b/ba/Jisoo_-_Me.png'); background-size: cover; background-position: center; min-height: 250px;"></div>
+        <div class="card-banner" style="background-image: url('https://upload.wikimedia.org/wikipedia/en/thumb/2/2e/Jennie_%E2%80%93_Ruby_%28album_cover%29.png/500px-Jennie_%E2%80%93_Ruby_%28album_cover%29.png'); background-size: cover; background-position: center; min-height: 250px;"></div>
         <div class="card-body">
           <div><span class="era-badge">◆ Jennie</span><span class="type-badge">Solo</span></div>
           <div class="card-title">JENNIE SOLO WORKS</div>
           <div class="card-year">2018 – Present</div>
           <ul class="track-list">
-            <li><span class="track-num">♦</span> SOLO (2018)</li>
+            <li><span class="track-num">♦</span> Ruby — debut studio album (2025)</li>
+            <li><span class="track-num">♦</span> like JENNIE (2025)</li>
             <li><span class="track-num">♦</span> Mantra (2024)</li>
+            <li><span class="track-num">♦</span> SOLO (2018)</li>
           </ul>
           <a href="https://open.spotify.com/artist/1jeB4SiLDv1khDxH2LJYWL" class="spotify-btn" target="_blank" rel="noopener">⏯ Stream Jennie</a>
         </div>
       </div>
 
       <div class="era-card" data-era="SOLOS">
-        <div class="card-banner" style="background-image: url('https://upload.wikimedia.org/wikipedia/en/b/ba/Jisoo_-_Me.png'); background-size: cover; background-position: center; min-height: 250px;"></div>
+        <div class="card-banner" style="background-image: url('https://upload.wikimedia.org/wikipedia/en/thumb/a/a7/Ros%C3%A9_-_Rosie.png/500px-Ros%C3%A9_-_Rosie.png'); background-size: cover; background-position: center; min-height: 250px;"></div>
         <div class="card-body">
-          <div><span class="era-badge">◆ Rose</span><span class="type-badge">Solo</span></div>
-          <div class="card-title">ROSE SOLO WORKS</div>
+          <div><span class="era-badge">◆ Rosé</span><span class="type-badge">Solo</span></div>
+          <div class="card-title">ROSÉ SOLO WORKS</div>
           <div class="card-year">2021 – Present</div>
           <ul class="track-list">
-            <li><span class="track-num">♦</span> On The Ground (2021)</li>
-            <li><span class="track-num">♦</span> Gone (2021)</li>
+            <li><span class="track-num">♦</span> rosie — debut studio album (2024)</li>
             <li><span class="track-num">♦</span> APT. feat. Bruno Mars (2024)</li>
+            <li><span class="track-num">♦</span> Toxic Till the End (2024)</li>
+            <li><span class="track-num">♦</span> On The Ground (2021)</li>
           </ul>
-          <a href="https://open.spotify.com/artist/3eqjTLE0HfPfh78zjh6TqT" class="spotify-btn" target="_blank" rel="noopener">⏯ Stream Rose</a>
+          <a href="https://open.spotify.com/artist/3eqjTLE0HfPfh78zjh6TqT" class="spotify-btn" target="_blank" rel="noopener">⏯ Stream Rosé</a>
         </div>
       </div>
 
       <div class="era-card" data-era="SOLOS">
-        <div class="card-banner" style="background-image: url('https://upload.wikimedia.org/wikipedia/en/b/ba/Jisoo_-_Me.png'); background-size: cover; background-position: center; min-height: 250px;"></div>
+        <div class="card-banner" style="background-image: url('https://upload.wikimedia.org/wikipedia/en/thumb/0/0c/Lisa_-_Alter_Ego.png/500px-Lisa_-_Alter_Ego.png'); background-size: cover; background-position: center; min-height: 250px;"></div>
         <div class="card-body">
           <div><span class="era-badge">◆ Lisa</span><span class="type-badge">Solo</span></div>
           <div class="card-title">LISA SOLO WORKS</div>
           <div class="card-year">2021 – Present</div>
           <ul class="track-list">
-            <li><span class="track-num">♦</span> Lalisa (2021)</li>
-            <li><span class="track-num">♦</span> Money (2021)</li>
+            <li><span class="track-num">♦</span> Alter Ego — debut studio album (2025)</li>
             <li><span class="track-num">♦</span> Rockstar (2024)</li>
+            <li><span class="track-num">♦</span> New Woman feat. Rosalía (2024)</li>
+            <li><span class="track-num">♦</span> Lalisa / Money (2021)</li>
           </ul>
           <a href="https://open.spotify.com/artist/5L1lO4eRHmJ7zxYo5lFMoP" class="spotify-btn" target="_blank" rel="noopener">⏯ Stream Lisa</a>
         </div>
       </div>
 
       <div class="era-card" data-era="SOLOS">
-        <div class="card-banner" style="background-image: url('https://upload.wikimedia.org/wikipedia/en/b/ba/Jisoo_-_Me.png'); background-size: cover; background-position: center; min-height: 250px;"></div>
+        <div class="card-banner" style="background-image: url('https://upload.wikimedia.org/wikipedia/en/thumb/c/ce/Jisoo_-_Amortage.png/500px-Jisoo_-_Amortage.png'); background-size: cover; background-position: center; min-height: 250px;"></div>
         <div class="card-body">
           <div><span class="era-badge">◆ Jisoo</span><span class="type-badge">Solo</span></div>
           <div class="card-title">JISOO SOLO WORKS</div>
           <div class="card-year">2023 – Present</div>
           <ul class="track-list">
+            <li><span class="track-num">♦</span> Amortage — debut EP (2025)</li>
+            <li><span class="track-num">♦</span> Eyes Closed feat. Zayn (2025)</li>
+            <li><span class="track-num">♦</span> Earthquake (2025)</li>
             <li><span class="track-num">♦</span> Flower (꽃) (2023)</li>
           </ul>
           <a href="https://open.spotify.com/artist/7xJ6DPRFspDaSCmqjSqhp1" class="spotify-btn" target="_blank" rel="noopener">⏯ Stream Jisoo</a>
@@ -386,11 +404,11 @@
 
     </div>
 
-    <div class="glass-card text-center" style="padding:2rem;border-color:rgba(255,42,133,0.4);">
+    <div class="glass-card text-center" style="padding:2rem;border-color:rgba(255,47,146,0.4);">
       <h2 style="font-size:1.5rem;margin-bottom:1rem;">🎶 By The Numbers</h2>
       <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:2rem;">
         <div><div style="font-size:2.2rem;font-weight:900;color:var(--bp-pink);">7</div><div style="color:#aaa;font-size:0.85rem;">STUDIO RELEASES</div></div>
-        <div><div style="font-size:2.2rem;font-weight:900;color:#c471ed;">4</div><div style="color:#aaa;font-size:0.85rem;">SOLO ARTISTS</div></div>
+        <div><div style="font-size:2.2rem;font-weight:900;color:#a742ff;">4</div><div style="color:#aaa;font-size:0.85rem;">SOLO ARTISTS</div></div>
         <div><div style="font-size:2.2rem;font-weight:900;color:#ffd700;">3+</div><div style="color:#aaa;font-size:0.85rem;">BILLION-VIEW MVs</div></div>
         <div><div style="font-size:2.2rem;font-weight:900;color:#00d4ff;">10</div><div style="color:#aaa;font-size:0.85rem;">YEARS TOGETHER</div></div>
       </div>

@@ -51,18 +51,55 @@
   </script>
   <script defer src="/_vercel/insights/script.js"></script>
 </head>
-<body class="theme-ot4">
-  <div id="custom-cursor"></div>
+<body>
+  <!-- Loading Screen -->
+  <div id="loading-screen">
+    <div class="loading-logo">BLACKPINK</div>
+    <div class="loading-sub">Initializing Blink OS</div>
+    <div class="loading-bar"><div class="loading-fill"></div></div>
+  </div>
 
-  <header style="padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.5); border-bottom: 2px solid var(--bp-pink);">
-    <h1 style="margin: 0; font-size: 1.5rem; text-shadow: 0 0 10px var(--bp-pink);">🖤💖 BLINK ART</h1>
-    <nav style="display: flex; gap: 1rem;">
-      <a href="index.html" class="btn">Home</a>
-      <a href="profile.html" class="btn" id="nav-profile-btn">👤 Profile</a>
-    </nav>
+  <!-- Page Transition Overlay -->
+  <div id="page-transition"></div>
+
+  <!-- Lightstick Canvas Background -->
+  <canvas id="lightstick-canvas"></canvas>
+
+  <header class="hero" style="height: 30vh; background: radial-gradient(circle at center, var(--glass-border), transparent);">
+    <div class="hero-content">
+      <div class="hud-eyebrow"><span class="dot"></span> Fan Creations</div>
+      <h1 style="font-size: 3.5rem;">Blink Art</h1>
+    </div>
   </header>
 
   <main class="container">
+    <!-- Navigation Buttons -->
+    <nav class="btn-group">
+      <button id="era-toggle-btn" onclick="cycleEra()">&#x1F319; Square Up</button>
+      <a href="index.html" class="btn">Home</a>
+      <a href="aboutmembers.html" class="btn">Members</a>
+      <a href="discography.html" class="btn">Discography</a>
+      <a href="timeline.html" class="btn">Timeline</a>
+      <a href="records.html" class="btn">Records</a>
+      <a href="gallery.html" class="btn">Gallery</a>
+      <a href="worldtour.html" class="btn">World Tour</a>
+      <a href="videos.html" class="btn">Videos</a>
+      <a href="games.html" class="btn">Games</a>
+      <a href="quote-generator.html" class="btn">Quote Generator</a>
+      <a href="aboutme.html?v=1782403788303" class="btn">About Me</a>
+      <a href="blink-id.html?v=20260625" class="btn">Blink ID</a>
+      <a href="blink-wall.html" class="btn">Blink Wall</a>
+      <a href="vault.html?v=20260625" class="btn">Vault</a>
+      <a href="fanart.html" class="btn active">Fan Art</a>
+      <a href="feedback.html" class="btn">Feedback</a>
+      <a href="study.html" class="btn">Study Mode</a>
+      <a href="photobooth.html" class="btn">Photo Booth</a>
+      <a href="setlist.html" class="btn">Setlist Builder</a>
+      <a href="quiz.html" class="btn">Quiz</a>
+      <a href="photocards.html" class="btn">Photocards</a>
+      <a href="profile.html" class="btn" id="nav-profile-btn">Profile / Login</a>
+    </nav>
+
     <div class="glass-card text-center" style="margin-bottom: 2rem;">
       <h2 class="neon-text">Fan Art Gallery</h2>
       <p>Submit your favorite fan art by pasting an image URL below!</p>

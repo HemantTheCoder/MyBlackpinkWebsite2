@@ -40,6 +40,7 @@
   <!-- Loading Screen -->
   <div id="loading-screen">
     <div class="loading-logo">BLACKPINK</div>
+    <div class="loading-sub">Initializing Blink OS</div>
     <div class="loading-bar"><div class="loading-fill"></div></div>
   </div>
 
@@ -49,17 +50,42 @@
   <!-- Lightstick Canvas Background -->
   <canvas id="lightstick-canvas"></canvas>
 
-  <!-- Era Toggle Button -->
-  <button id="era-toggle-btn" onclick="cycleEra()">&#x1F5A4; Original</button>
-
   <header class="hero hero-jisoo">
     <div class="hero-content">
+      <div class="hud-eyebrow"><span class="dot"></span> Member Profile</div>
       <h1>Kim Ji-soo</h1>
       <p style="font-size: 1.2rem; font-weight: 300;">Lead Vocalist, Visual</p>
     </div>
   </header>
 
   <main class="container">
+    <!-- Navigation Buttons -->
+    <nav class="btn-group">
+      <button id="era-toggle-btn" onclick="cycleEra()">&#x1F319; Square Up</button>
+      <a href="index.html" class="btn">Home</a>
+      <a href="aboutmembers.html" class="btn active">Members</a>
+      <a href="discography.html" class="btn">Discography</a>
+      <a href="timeline.html" class="btn">Timeline</a>
+      <a href="records.html" class="btn">Records</a>
+      <a href="gallery.html" class="btn">Gallery</a>
+      <a href="worldtour.html" class="btn">World Tour</a>
+      <a href="videos.html" class="btn">Videos</a>
+      <a href="games.html" class="btn">Games</a>
+      <a href="quote-generator.html" class="btn">Quote Generator</a>
+      <a href="aboutme.html?v=1782403788303" class="btn">About Me</a>
+      <a href="blink-id.html?v=20260625" class="btn">Blink ID</a>
+      <a href="blink-wall.html" class="btn">Blink Wall</a>
+      <a href="vault.html?v=20260625" class="btn">Vault</a>
+      <a href="fanart.html" class="btn">Fan Art</a>
+      <a href="feedback.html" class="btn">Feedback</a>
+      <a href="study.html" class="btn">Study Mode</a>
+      <a href="photobooth.html" class="btn">Photo Booth</a>
+      <a href="setlist.html" class="btn">Setlist Builder</a>
+      <a href="quiz.html" class="btn">Quiz</a>
+      <a href="photocards.html" class="btn">Photocards</a>
+      <a href="profile.html" class="btn" id="nav-profile-btn">Profile / Login</a>
+    </nav>
+
     <div class="text-center" style="margin-bottom: 2rem;">
       <a href="aboutmembers.html?v=1782403788303" class="btn primary">Back to Members Hub</a>
     </div>
@@ -91,7 +117,7 @@
         <li>✨ Jisoo has a dog named Dalgom.</li>
         <li>✨ She is called "Man Heart's Destroyer" and "Boy Crush".</li>
         <li>✨ She acted as a leading actress for the drama 'Snowdrop'.</li>
-        <li>✨ <strong>Recent (2024-2026):</strong> Jisoo established her own label, <strong>BLISSOO</strong>. She has been taking the acting world by storm, starring in the highly anticipated zombie drama <em>Influenza</em> and the blockbuster movie <em>Omniscient Reader's Viewpoint</em>! She also returned with BLACKPINK for their 2026 <em>Deadline</em> EP.</li>
+        <li>✨ <strong>Recent (2024-2026):</strong> Jisoo established her own label, <strong>BLISSOO</strong>, and released her debut EP <strong>"Amortage"</strong> (Feb 2025) via Warner Records, followed by the duet <strong>"Eyes Closed"</strong> with Zayn (Oct 2025). She's also been taking the acting world by storm, starring in the zombie drama <em>Influenza</em> and the blockbuster movie <em>Omniscient Reader's Viewpoint</em>! She returned with BLACKPINK for their 2026 <em>Deadline</em> EP.</li>
       </ul>
       
       <div class="text-center" style="margin-top: 2rem;">
@@ -99,9 +125,9 @@
       </div>
     </section>
 
-    <div class="btn-group">
+    <div class="member-pagination">
       <a href="index.html?v=1782403788303" class="btn">Home</a>
-      <a href="Jennie.html?v=1782403788303" class="btn primary">Next Member: Jennie</a>
+      <a href="Jennie.html?v=1782403788303" class="btn btn-glow">Next Member: Jennie</a>
     </div>
 
   </main>

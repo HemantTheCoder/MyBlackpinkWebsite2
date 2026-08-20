@@ -34,18 +34,24 @@ const defaultYtPlaylist = [
   { title: "Don't Know What To Do", artist: "BLACKPINK", videoId: "bqzDuRz_P7g" },
   { title: "Stay", artist: "BLACKPINK", videoId: "FzVR_fymZw4" },
   { title: "Ready For Love", artist: "BLACKPINK", videoId: "ruaAvL8hYI0" },
+  { title: "GO", artist: "BLACKPINK", videoId: "2GJfWMYCWY0" },
+  { title: "JUMP", artist: "BLACKPINK", videoId: "CgCVZdcKcqY" },
+  { title: "Hard To Love", artist: "BLACKPINK", videoId: "rAhdioquBnI" },
   { title: "SOLO", artist: "Jennie", videoId: "b73BI9eUkjM" },
   { title: "Mantra", artist: "Jennie", videoId: "bB3-CUMERIU" },
+  { title: "like JENNIE", artist: "Jennie", videoId: "JSFG-IE8n_c" },
   { title: "On The Ground", artist: "Rosé", videoId: "CKZvWhCqx1s" },
   { title: "APT.", artist: "Rosé & Bruno Mars", videoId: "ekr2nIex040" },
+  { title: "number one girl", artist: "Rosé", videoId: "pZ1NdE69VTs" },
     { title: "BLACKPINK Lofi Mix", artist: "Chill Vibes", videoId: "vYXMpst8JP4" },
-  { title: "Hard To Love", artist: "Rosé", videoId: "rAhdioquBnI" },
   { title: "LALISA", artist: "Lisa", videoId: "awkkyBH2zEo" },
   { title: "ROCKSTAR", artist: "Lisa", videoId: "hbcGx4MGUMg" },
   { title: "MONEY", artist: "Lisa", videoId: "dNCWe_6HAM8" },
+  { title: "New Woman", artist: "Lisa & Rosalía", videoId: "UxXY_hR_wzo" },
   { title: "FLOWER", artist: "Jisoo", videoId: "YudHcBIxlYw" },
   { title: "All Eyes On Me", artist: "Jisoo", videoId: "NuxAOC6RU9c" },
-  { title: "earthquake", artist: "Jisoo", videoId: "2V6lvCUPT8I" }
+  { title: "earthquake", artist: "Jisoo", videoId: "2V6lvCUPT8I" },
+  { title: "Eyes Closed", artist: "Jisoo & Zayn", videoId: "EN1tMeXQii0" }
 ];
 
 let ytPlaylist = [...defaultYtPlaylist];
@@ -194,14 +200,15 @@ window.toggleMusicPlayer = function () {
 // =============================================
 const ERA_KEY = 'selectedEra';
 const eras = [
-  { key: 'default', label: '\uD83D\uDDA4 Original', body: '' },
+  { key: 'default', label: '\uD83C\uDF19 Square Up', body: '' },
+  { key: 'kill-this-love', label: '\uD83D\uDC8B Kill This Love', body: 'era-kill-this-love' },
   { key: 'born-pink', label: '\uD83C\uDF38 Born Pink', body: 'era-born-pink' },
   { key: 'deadline', label: '\u26A1 Deadline', body: 'era-deadline' },
 ];
 let eraIdx = 0;
 
 function applyEra() {
-  document.body.classList.remove('era-born-pink', 'era-deadline');
+  document.body.classList.remove('era-kill-this-love', 'era-born-pink', 'era-deadline');
   if (eras[eraIdx].body) document.body.classList.add(eras[eraIdx].body);
   const btn = document.getElementById('era-toggle-btn');
   if (btn) btn.textContent = eras[eraIdx].label;
@@ -237,7 +244,7 @@ function initLightstickCanvas() {
     rotSpeed: (Math.random() - 0.5) * 0.02,
     alpha: 0.3 + Math.random() * 0.5,
     scale: 0.6 + Math.random() * 0.8,
-    color: Math.random() > 0.5 ? '#ff2a85' : '#ff66b2',
+    color: Math.random() > 0.5 ? '#ff2f92' : '#a742ff',
     pulseSpeed: 0.02 + Math.random() * 0.03,
     pulsePhase: Math.random() * Math.PI * 2,
   }));
@@ -599,6 +606,10 @@ window.startTrivia = function (speedMode) {
   document.getElementById('game-start').style.display = 'none';
   document.getElementById('game-result').style.display = 'none';
   document.getElementById('game-active').style.display = 'block';
+  const timerContainer = document.getElementById('timer-bar-container');
+  if (timerContainer) timerContainer.style.display = speedRoundMode ? 'block' : 'none';
+  const timerNum = document.getElementById('timer-display');
+  if (timerNum) timerNum.style.display = speedRoundMode ? 'block' : 'none';
   loadQuestion();
 };
 
@@ -1226,9 +1237,31 @@ function showDailyResultScreen(correct, streak) {
   if (gameEl) gameEl.style.display = 'none';
   if (resultEl) resultEl.style.display = 'block';
   const resultText = document.getElementById('daily-result-text');
-  if (resultText) resultText.textContent = correct ? 'You got it right!' : 'Better luck tomorrow!';
+  if (resultText) resultText.textContent = correct ? 'Correct!' : 'Not quite!';
   const streakEl = document.getElementById('daily-result-streak');
   if (streakEl) streakEl.textContent = streak;
+
+  const emojiEl = document.getElementById('result-emoji');
+  if (emojiEl) emojiEl.textContent = correct ? '✅' : '❌';
+
+  const subtitleEl = document.getElementById('result-subtitle');
+  if (subtitleEl) subtitleEl.textContent = correct ? 'You got it right!' : 'Better luck tomorrow — come back for a fresh question!';
+
+  const championEl = document.getElementById('result-champion');
+  if (championEl) championEl.style.display = (correct && streak >= 7) ? 'block' : 'none';
+
+  const rankEl = document.getElementById('daily-result-rank');
+  if (rankEl) {
+    let rank = '';
+    if (correct) {
+      if (streak >= 30) rank = '👑 Legendary Blink';
+      else if (streak >= 14) rank = '💎 Dedicated Blink';
+      else if (streak >= 7) rank = '🔥 Daily Champion';
+      else if (streak >= 3) rank = '🌸 Rising Blink';
+      else rank = '🖤 Baby Blink';
+    }
+    rankEl.textContent = rank;
+  }
 }
 
 function showDailyLockScreen(question) {
@@ -1242,7 +1275,10 @@ function showDailyLockScreen(question) {
 
 function updateCountdown() {
   const countdownEl = document.getElementById('midnight-countdown');
-  if (!countdownEl) return;
+  const hoursEl = document.getElementById('cd-hours');
+  const minsEl = document.getElementById('cd-mins');
+  const secsEl = document.getElementById('cd-secs');
+  if (!countdownEl && !hoursEl) return;
   const now = new Date();
   const midnight = new Date();
   midnight.setHours(24, 0, 0, 0);
@@ -1250,7 +1286,10 @@ function updateCountdown() {
   const h = Math.floor(diff / 3600000).toString().padStart(2, '0');
   const m = Math.floor((diff % 3600000) / 60000).toString().padStart(2, '0');
   const s = Math.floor((diff % 60000) / 1000).toString().padStart(2, '0');
-  countdownEl.textContent = h + ':' + m + ':' + s;
+  if (countdownEl) countdownEl.textContent = h + ':' + m + ':' + s;
+  if (hoursEl) hoursEl.textContent = h;
+  if (minsEl) minsEl.textContent = m;
+  if (secsEl) secsEl.textContent = s;
 }
 
 // =============================================
@@ -1868,11 +1907,11 @@ let currentBias = localStorage.getItem('blink_bias');
 let biasEmoji = '✨';
 
 const biasProfiles = {
-  'OT4': { color: '#FF7698', emoji: '✨', trackIdx: 0 },
-  'JISOO': { color: '#ff2a2a', emoji: '🐰', trackIdx: 14 }, // Flower
-  'JENNIE': { color: '#4a90e2', emoji: '🐻', trackIdx: 11 }, // SOLO
-  'ROSE': { color: '#ffb6c1', emoji: '🌹', trackIdx: 12 }, // On The Ground
-  'LISA': { color: '#f1c40f', emoji: '🐥', trackIdx: 13 } // Lalisa
+  'OT4': { color: '#FF2F92', emoji: '✨', trackIdx: 0 },
+  'JISOO': { color: '#FF6B9D', emoji: '🐰', trackIdx: 14 }, // Flower
+  'JENNIE': { color: '#D4A94C', emoji: '🐻', trackIdx: 11 }, // SOLO
+  'ROSE': { color: '#FF8C7A', emoji: '🌹', trackIdx: 12 }, // On The Ground
+  'LISA': { color: '#A742FF', emoji: '🐥', trackIdx: 13 } // Lalisa
 };
 
 function initBiasEngine() {
@@ -1887,16 +1926,17 @@ function initBiasEngine() {
 function showBiasModal() {
   if (document.getElementById('bias-modal')) return;
   const modalHTML = `
-    <div id="bias-modal" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); backdrop-filter:blur(10px); z-index:10000; display:flex; justify-content:center; align-items:center; opacity:0; transition:opacity 0.5s;">
-      <div style="background:var(--glass-bg); padding:3rem; border-radius:20px; border:1px solid var(--glass-border); text-align:center; max-width:500px; width:90%; box-shadow:0 0 40px rgba(255,118,152,0.3); transform:scale(0.8); transition:transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);" id="bias-modal-content">
+    <div id="bias-modal" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(6,4,8,0.85); backdrop-filter:blur(10px); z-index:10000; display:flex; justify-content:center; align-items:center; opacity:0; transition:opacity 0.5s;">
+      <div style="background:var(--glass-bg); padding:3rem; border-radius:10px; border:1px solid var(--glass-border); text-align:center; max-width:500px; width:90%; box-shadow:0 0 40px rgba(255,47,146,0.35); transform:scale(0.8); transition:transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);" id="bias-modal-content">
+        <div class="hud-eyebrow" style="justify-content:center;"><span class="dot"></span> Personalization</div>
         <h2 style="font-size:2rem; margin-bottom:1rem; text-shadow:0 0 10px var(--bp-pink);">Who is your Bias?</h2>
-        <p style="margin-bottom:2rem; opacity:0.8;">Personalize your BLINK experience!</p>
+        <p style="margin-bottom:2rem; opacity:0.8; font-family:var(--font-body);">Personalize your BLINK experience!</p>
         <div style="display:flex; flex-wrap:wrap; gap:1rem; justify-content:center;">
-          <button class="btn btn-glow" onclick="selectBias('JISOO')" style="background:rgba(255,42,42,0.2); border-color:#ff2a2a;">🐰 JISOO</button>
-          <button class="btn btn-glow" onclick="selectBias('JENNIE')" style="background:rgba(74,144,226,0.2); border-color:#4a90e2;">🐻 JENNIE</button>
-          <button class="btn btn-glow" onclick="selectBias('ROSE')" style="background:rgba(255,182,193,0.2); border-color:#ffb6c1;">🌹 ROSÉ</button>
-          <button class="btn btn-glow" onclick="selectBias('LISA')" style="background:rgba(241,196,15,0.2); border-color:#f1c40f;">🐥 LISA</button>
-          <button class="btn btn-glow" onclick="selectBias('OT4')" style="background:rgba(255,118,152,0.2); border-color:#FF7698; width:100%;">✨ OT4 (All of them!)</button>
+          <button class="btn btn-glow" onclick="selectBias('JISOO')" style="background:rgba(255,107,157,0.2); border-color:#FF6B9D;">🐰 JISOO</button>
+          <button class="btn btn-glow" onclick="selectBias('JENNIE')" style="background:rgba(212,169,76,0.2); border-color:#D4A94C;">🐻 JENNIE</button>
+          <button class="btn btn-glow" onclick="selectBias('ROSE')" style="background:rgba(255,140,122,0.2); border-color:#FF8C7A;">🌹 ROSÉ</button>
+          <button class="btn btn-glow" onclick="selectBias('LISA')" style="background:rgba(167,66,255,0.2); border-color:#A742FF;">🐥 LISA</button>
+          <button class="btn btn-glow" onclick="selectBias('OT4')" style="background:rgba(255,47,146,0.2); border-color:#FF2F92; width:100%;">✨ OT4 (All of them!)</button>
         </div>
       </div>
     </div>
@@ -2675,16 +2715,49 @@ window.initLogin = function() {
 window.initProfile = async function() {
   await fetchCurrentUser();
   const token = localStorage.getItem('user_token');
+  const loadingEl = document.getElementById('profile-loading');
   if (!token || !currentUser) {
+    if (loadingEl) loadingEl.style.display = 'none';
     navigateTo('login.html');
     return;
   }
-  
+
+  if (loadingEl) loadingEl.style.display = 'none';
   document.getElementById('profile-dashboard').style.display = 'block';
   const unauthDiv = document.getElementById('profile-unauth');
   if (unauthDiv) unauthDiv.style.display = 'none';
   document.getElementById('profile-greeting').textContent = `Welcome, ${currentUser.username}!`;
-  
+
+  const headerEl = document.getElementById('profile-header');
+  if (headerEl) {
+    headerEl.style.display = 'block';
+    const avatarEl = document.getElementById('profile-avatar');
+    if (avatarEl) avatarEl.textContent = (currentUser.username || 'B').charAt(0).toUpperCase();
+    const nameEl = document.getElementById('profile-name');
+    if (nameEl) nameEl.textContent = currentUser.username || 'Blink';
+    const bpEl = document.getElementById('profile-bias');
+    if (bpEl) bpEl.textContent = `Bias: ${currentUser.bias || 'OT4'}`;
+  }
+
+  // Photocard collection progress
+  (async function updateCollectionProgress() {
+    const pctEl = document.getElementById('profile-collection-pct');
+    const barEl = document.getElementById('profile-collection-bar');
+    if (!pctEl || !barEl) return;
+    try {
+      if (!masterCardList) {
+        const res = await fetch(`${API_BASE}/api/cards`);
+        masterCardList = res.ok ? await res.json() : [];
+      }
+      const owned = (currentUser.photocards || []).filter(c => c && c.url).length;
+      const total = masterCardList.length || 1;
+      const pct = Math.min(100, Math.round((owned / total) * 100));
+      pctEl.textContent = pct + '%';
+      barEl.style.width = pct + '%';
+    } catch (e) { /* leave at 0% if the card index can't be reached */ }
+    renderAchievements();
+  })();
+
   // Stan Level Logic
   const plays = currentUser.playCount || 0;
   const comments = currentUser.commentsCount || 0;
@@ -2768,6 +2841,48 @@ window.initProfile = async function() {
   }
 };
 
+// =============================================
+// ACHIEVEMENTS (profile.html)
+// =============================================
+const achievementDefs = [
+  { id: 'first-pull', icon: '🎴', title: 'First Pull', check: u => (u.photocards || []).filter(c => c && c.url).length >= 1 },
+  { id: 'small-collection', icon: '📦', title: '10 Cards', check: u => (u.photocards || []).filter(c => c && c.url).length >= 10 },
+  { id: 'big-collection', icon: '💼', title: '25 Cards', check: u => (u.photocards || []).filter(c => c && c.url).length >= 25 },
+  { id: 'master-collector', icon: '👑', title: '50 Cards', check: u => (u.photocards || []).filter(c => c && c.url).length >= 50 },
+  { id: 'legendary-owner', icon: '✨', title: 'Legendary Pull', check: u => (u.photocards || []).some(c => c && c.rarity === 'Legendary') },
+  { id: 'completionist', icon: '🎯', title: 'Completionist', check: (u, total) => total > 0 && (u.photocards || []).filter(c => c && c.url).length >= total },
+  { id: 'music-lover', icon: '🎵', title: '50 Songs Played', check: u => (u.playCount || 0) >= 50 },
+  { id: 'ultimate-blink', icon: '💗', title: 'Ultimate Blink', check: u => (u.playCount || 0) >= 200 },
+  { id: 'chatterbox', icon: '💬', title: 'Chatterbox', check: u => (u.commentsCount || 0) >= 10 },
+  { id: 'week-streak', icon: '🔥', title: '7-Day Streak', check: u => (u.loginStreak || 0) >= 7 },
+  { id: 'month-streak', icon: '💎', title: '30-Day Streak', check: u => (u.loginStreak || 0) >= 30 },
+  { id: 'dreamer', icon: '🌙', title: 'Wishlist Dreamer', check: u => (u.wishlist || []).length >= 5 }
+];
+
+function renderAchievements() {
+  const grid = document.getElementById('achievements-grid');
+  const header = document.getElementById('achievements-header');
+  if (!grid || !currentUser) return;
+
+  const total = masterCardList ? masterCardList.length : 0;
+  let unlockedCount = 0;
+  grid.innerHTML = '';
+  achievementDefs.forEach(a => {
+    const unlocked = a.check(currentUser, total);
+    if (unlocked) unlockedCount++;
+    const div = document.createElement('div');
+    div.className = `achievement-badge ${unlocked ? 'unlocked' : 'locked'}`;
+    div.title = unlocked ? a.title + ' — unlocked!' : a.title + ' — locked';
+    div.innerHTML = `
+      <div class="achievement-icon">${a.icon}</div>
+      <div class="achievement-title">${a.title}</div>
+      ${unlocked ? '' : '<span class="achievement-lock">🔒</span>'}
+    `;
+    grid.appendChild(div);
+  });
+  if (header) header.textContent = `${unlockedCount} / ${achievementDefs.length} unlocked`;
+}
+
 window.showFullCollection = function() {
   const modal = document.getElementById('collection-modal');
   const grid = document.getElementById('full-collection-grid');
@@ -2802,6 +2917,100 @@ window.showFullCollection = function() {
 
 window.closeCollectionModal = function() {
   const modal = document.getElementById('collection-modal');
+  if (modal) modal.style.display = 'none';
+};
+
+window.shareCollection = function() {
+  if (!currentUser || !currentUser.username) {
+    if (typeof showToast === 'function') showToast('Log in to share your collection!');
+    return;
+  }
+  const url = `${window.location.origin}/collection.html?user=${encodeURIComponent(currentUser.username)}`;
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(url)
+      .then(() => { if (typeof showToast === 'function') showToast('Collection link copied! 🔗'); })
+      .catch(() => { if (typeof showToast === 'function') showToast(url); });
+  } else if (typeof showToast === 'function') {
+    showToast(url);
+  }
+};
+
+// =============================================
+// MASTER CARD INDEX (photocards.html)
+// =============================================
+let masterCardList = null;
+
+window.openMasterIndex = async function() {
+  const modal = document.getElementById('master-index-modal');
+  const grid = document.getElementById('master-index-grid');
+  if (!modal || !grid) return;
+
+  modal.style.display = 'block';
+  grid.innerHTML = '<p style="color:#aaa; grid-column: 1 / -1; text-align: center;">Loading card index...</p>';
+
+  try {
+    if (!masterCardList) {
+      const res = await fetch(`${API_BASE}/api/cards`);
+      masterCardList = res.ok ? await res.json() : [];
+    }
+    renderMasterIndex();
+  } catch (e) {
+    grid.innerHTML = '<p style="color:#ff3333; grid-column: 1 / -1; text-align: center;">Could not load the card index. Try again later.</p>';
+  }
+};
+
+function renderMasterIndex() {
+  const grid = document.getElementById('master-index-grid');
+  if (!grid || !masterCardList) return;
+
+  const ownedIds = new Set((currentUser && currentUser.photocards || []).map(c => c && c.id).filter(Boolean));
+  const wishlist = new Set((currentUser && currentUser.wishlist) || []);
+
+  grid.innerHTML = '';
+  masterCardList.forEach(card => {
+    const owned = ownedIds.has(card.id);
+    const wished = wishlist.has(card.id);
+    const div = document.createElement('div');
+    div.className = `gacha-card ${card.rarity ? card.rarity.toLowerCase() : 'common'}`;
+    if (!owned) div.style.filter = 'grayscale(85%) opacity(0.5)';
+    if (wished) div.style.boxShadow = '0 0 0 3px var(--bp-pink)';
+    div.style.cursor = owned ? 'default' : 'pointer';
+    div.title = owned ? card.name : (wished ? 'On your wishlist — click to remove' : 'Click to add to your wishlist');
+    div.innerHTML = `
+      <img src="${card.url}" alt="${card.name || 'Photocard'}" loading="lazy">
+      <div class="rarity-label">${card.rarity || 'Common'}${owned ? ' ✓' : ''}</div>
+    `;
+    if (!owned) {
+      div.addEventListener('click', function () { toggleWishlistCard(card.id); });
+    }
+    grid.appendChild(div);
+  });
+}
+
+window.toggleWishlistCard = async function(cardId) {
+  const token = localStorage.getItem('user_token');
+  if (!token) {
+    if (typeof showToast === 'function') showToast('Log in to save cards to your wishlist!');
+    return;
+  }
+  try {
+    const res = await fetch(`${API_BASE}/api/wishlist`, {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ cardId })
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (currentUser) currentUser.wishlist = data.wishlist;
+      renderMasterIndex();
+    }
+  } catch (e) {
+    if (typeof showToast === 'function') showToast('Could not update wishlist right now.');
+  }
+};
+
+window.closeMasterIndex = function() {
+  const modal = document.getElementById('master-index-modal');
   if (modal) modal.style.display = 'none';
 };
 

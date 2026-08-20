@@ -38,17 +38,17 @@
       padding: 1.5rem;
       border-radius: 15px;
       font-size: 1.2rem;
-      font-family: 'Outfit', sans-serif;
+      font-family: var(--font-body);
       cursor: pointer;
       transition: all 0.3s ease;
       position: relative;
       overflow: hidden;
     }
     .option-btn:hover {
-      background: rgba(255, 42, 133, 0.2);
+      background: rgba(255, 47, 146, 0.2);
       border-color: var(--bp-pink);
       transform: translateY(-5px);
-      box-shadow: 0 10px 20px rgba(255, 42, 133, 0.3);
+      box-shadow: 0 10px 20px rgba(255, 47, 146, 0.3);
     }
     .option-btn::before {
       content: '';
@@ -114,12 +114,21 @@
 </head>
 <body>
 
+  <!-- Loading Screen -->
+  <div id="loading-screen">
+    <div class="loading-logo">BLACKPINK</div>
+    <div class="loading-sub">Initializing Blink OS</div>
+    <div class="loading-bar"><div class="loading-fill"></div></div>
+  </div>
 
+  <!-- Page Transition Overlay -->
+  <div id="page-transition"></div>
 
   <!-- Lightstick Canvas Background -->
   <canvas id="lightstick-canvas"></canvas>
 
   <header class="hero">
+    <div class="hud-eyebrow" style="justify-content:center; position:relative; z-index:2;"><span class="dot"></span> Mini-Game</div>
     <div class="hero-content">
       <h1>PERSONALITY QUIZ</h1>
       <p style="font-size: 1.2rem; font-weight: 300; margin-top: 0.5rem;">Which BLACKPINK Song Are You?</p>
@@ -127,12 +136,32 @@
   </header>
 
   <main class="container">
-    
+
     <!-- Navigation Buttons -->
     <nav class="btn-group">
-      <a href="index.html" class="btn">&#127968; Home</a>
-      <a href="games.html" class="btn">&#127918; Games</a>
-      <a href="quiz.html" class="btn active">✨ Quiz</a>
+      <button id="era-toggle-btn" onclick="cycleEra()">&#x1F319; Square Up</button>
+      <a href="index.html" class="btn">Home</a>
+      <a href="aboutmembers.html" class="btn">Members</a>
+      <a href="discography.html" class="btn">Discography</a>
+      <a href="timeline.html" class="btn">Timeline</a>
+      <a href="records.html" class="btn">Records</a>
+      <a href="gallery.html" class="btn">Gallery</a>
+      <a href="worldtour.html" class="btn">World Tour</a>
+      <a href="videos.html" class="btn">Videos</a>
+      <a href="games.html" class="btn">Games</a>
+      <a href="quote-generator.html" class="btn">Quote Generator</a>
+      <a href="aboutme.html?v=1782403788303" class="btn">About Me</a>
+      <a href="blink-id.html?v=20260625" class="btn">Blink ID</a>
+      <a href="blink-wall.html" class="btn">Blink Wall</a>
+      <a href="vault.html?v=20260625" class="btn">Vault</a>
+      <a href="fanart.html" class="btn">Fan Art</a>
+      <a href="feedback.html" class="btn">Feedback</a>
+      <a href="study.html" class="btn">Study Mode</a>
+      <a href="photobooth.html" class="btn">Photo Booth</a>
+      <a href="setlist.html" class="btn">Setlist Builder</a>
+      <a href="quiz.html" class="btn active">Quiz</a>
+      <a href="photocards.html" class="btn">Photocards</a>
+      <a href="profile.html" class="btn" id="nav-profile-btn">Profile / Login</a>
     </nav>
 
     <div class="quiz-container">
@@ -303,7 +332,7 @@
           particleCount: 100,
           spread: 70,
           origin: { y: 0.6 },
-          colors: ['#ff2a85', '#000000', '#ffffff']
+          colors: ['#ff2f92', '#000000', '#ffffff']
         });
       }
     }

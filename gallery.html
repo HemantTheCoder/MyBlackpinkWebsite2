@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="styles.css?v=1782403755244">
   <link rel="stylesheet" href="pages.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <script src="script.js?v=1782403755244" defer></script>
   
 <style>/* INJECTED-PAGE-CSS */
@@ -23,13 +23,13 @@
   overflow: hidden;
   position: relative;
   cursor: pointer;
-  border: 1.5px solid rgba(255,42,133,0.18);
+  border: 1.5px solid rgba(255,47,146,0.18);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 .photo-card:hover {
   transform: translateY(-6px) scale(1.02);
-  box-shadow: 0 0 30px rgba(255,42,133,0.55);
-  border-color: rgba(255,42,133,0.7);
+  box-shadow: 0 0 30px rgba(255,47,146,0.55);
+  border-color: rgba(255,47,146,0.7);
 }
 .photo-card img {
   width: 100%;
@@ -57,7 +57,7 @@
   max-height: 75vh;
   border-radius: 12px;
   object-fit: contain;
-  box-shadow: 0 0 60px rgba(255,42,133,0.3);
+  box-shadow: 0 0 60px rgba(255,47,146,0.3);
 }
 .lb-controls {
   display: flex;
@@ -68,15 +68,15 @@
 .lb-btn {
   width: 2.8rem; height: 2.8rem;
   border-radius: 50%;
-  border: 1.5px solid rgba(255,42,133,0.5);
-  background: rgba(255,42,133,0.15);
+  border: 1.5px solid rgba(255,47,146,0.5);
+  background: rgba(255,47,146,0.15);
   color: #fff;
   font-size: 1.3rem;
   cursor: pointer;
   display: flex; align-items: center; justify-content: center;
   transition: all 0.2s;
 }
-.lb-btn:hover { background: rgba(255,42,133,0.4); box-shadow: 0 0 16px rgba(255,42,133,0.6); }
+.lb-btn:hover { background: rgba(255,47,146,0.4); box-shadow: 0 0 16px rgba(255,47,146,0.6); }
 .lb-caption { color: rgba(255,255,255,0.7); font-size: 0.9rem; text-align: center; }
 .lb-counter { color: rgba(255,255,255,0.4); font-size: 0.82rem; }
 </style>
@@ -96,6 +96,7 @@
   <!-- Loading Screen -->
   <div id="loading-screen">
     <div class="loading-logo">BLACKPINK</div>
+    <div class="loading-sub">Initializing Blink OS</div>
     <div class="loading-bar"><div class="loading-fill"></div></div>
   </div>
 
@@ -105,12 +106,10 @@
   <!-- Lightstick Canvas Background -->
   <canvas id="lightstick-canvas"></canvas>
 
-  <!-- Era Toggle Button -->
-  <button id="era-toggle-btn" onclick="cycleEra()">&#x1F5A4; Original</button>
-
 <header class="hero" style="height:38vh; background: linear-gradient(135deg,#0a0010 0%,#1a0035 40%,#330015 70%,#0a0a0d 100%);">
     <div class="hero-content">
-      <h1 style="font-size:clamp(2rem,7vw,4rem);font-weight:900;letter-spacing:0.04em;">📸 Photo Gallery</h1>
+      <div class="hud-eyebrow"><span class="dot"></span> Media</div>
+      <h1 style="font-size:clamp(2rem,7vw,4rem);font-weight:900;letter-spacing:0.04em;">Photo Gallery</h1>
       <p style="margin-top:0.7rem;color:rgba(255,255,255,0.65);font-size:1rem;letter-spacing:0.05em;">Moments frozen in pink light</p>
     </div>
   </header>
@@ -119,17 +118,29 @@
 
     <!-- Navigation Buttons -->
     <nav class="btn-group">
-      <a href="index.html?v=1782403788303" class="btn">&#127968; Home</a>
-      <a href="aboutmembers.html?v=1782403788303" class="btn">&#127915; Members</a>
-      <a href="discography.html?v=1782403788303" class="btn">&#127925; Discography</a>
-      <a href="timeline.html?v=1782403788303" class="btn">&#9203; Timeline</a>
-      <a href="records.html?v=1782403788303" class="btn">&#127942; Records</a>
-      <a href="gallery.html?v=1782403788303" class="btn">&#128247; Gallery</a>
-      <a href="worldtour.html?v=1782403788303" class="btn">&#127758; World Tour</a>
-      <a href="videos.html?v=1782403788303" class="btn">&#127909; Videos</a>
-      <a href="games.html?v=1782403788303" class="btn">&#127918; Games</a>
-      <a href="quote-generator.html?v=1782403788303" class="btn">&#128172; Quote Generator</a>
-      <a href="aboutme.html?v=1782403788303" class="btn">&#129492; About Me!</a>
+      <button id="era-toggle-btn" onclick="cycleEra()">&#x1F319; Square Up</button>
+      <a href="index.html" class="btn">Home</a>
+      <a href="aboutmembers.html" class="btn">Members</a>
+      <a href="discography.html" class="btn">Discography</a>
+      <a href="timeline.html" class="btn">Timeline</a>
+      <a href="records.html" class="btn">Records</a>
+      <a href="gallery.html" class="btn active">Gallery</a>
+      <a href="worldtour.html" class="btn">World Tour</a>
+      <a href="videos.html" class="btn">Videos</a>
+      <a href="games.html" class="btn">Games</a>
+      <a href="quote-generator.html" class="btn">Quote Generator</a>
+      <a href="aboutme.html?v=1782403788303" class="btn">About Me</a>
+      <a href="blink-id.html?v=20260625" class="btn">Blink ID</a>
+      <a href="blink-wall.html" class="btn">Blink Wall</a>
+      <a href="vault.html?v=20260625" class="btn">Vault</a>
+      <a href="fanart.html" class="btn">Fan Art</a>
+      <a href="feedback.html" class="btn">Feedback</a>
+      <a href="study.html" class="btn">Study Mode</a>
+      <a href="photobooth.html" class="btn">Photo Booth</a>
+      <a href="setlist.html" class="btn">Setlist Builder</a>
+      <a href="quiz.html" class="btn">Quiz</a>
+      <a href="photocards.html" class="btn">Photocards</a>
+      <a href="profile.html" class="btn" id="nav-profile-btn">Profile / Login</a>
     </nav>
 
 
@@ -153,7 +164,62 @@
 
     <div class="results-count">Showing <span id="count-num">12</span> photos</div>
 
-    <div class="masonry-grid" id="masonry-grid">\n  <!-- Group -->\n  <div class="photo-card" data-category="GROUP">\n    <img src="assets/gal_group1.jpg" alt="BLACKPINK Group" loading="lazy">\n    <div class="photo-overlay"><h3 class="bp-font">PUBG 2021</h3></div>\n  </div>\n  <div class="photo-card" data-category="GROUP">\n    <img src="assets/gal_group2.png" alt="BLACKPINK Group" loading="lazy">\n    <div class="photo-overlay"><h3 class="bp-font">MTV VMAs</h3></div>\n  </div>\n  <div class="photo-card" data-category="GROUP">\n    <img src="assets/gal_group3.jpg" alt="BLACKPINK Group" loading="lazy">\n    <div class="photo-overlay"><h3 class="bp-font">Coachella</h3></div>\n  </div>\n  <div class="photo-card" data-category="GROUP">\n    <img src="assets/gal_group4.jpg" alt="BLACKPINK Group" loading="lazy">\n    <div class="photo-overlay"><h3 class="bp-font">Coachella Stage</h3></div>\n  </div>\n  <!-- Jisoo -->\n  <div class="photo-card" data-category="JISOO">\n    <img src="assets/gal_jisoo1.jpg" alt="Jisoo" loading="lazy">\n    <div class="photo-overlay"><h3 class="bp-font">Jisoo - PUBG</h3></div>\n  </div>\n  <div class="photo-card" data-category="JISOO">\n    <img src="assets/gal_jisoo2.jpg" alt="Jisoo" loading="lazy">\n    <div class="photo-overlay"><h3 class="bp-font">Jisoo - Cannes</h3></div>\n  </div>\n  <!-- Jennie -->\n  <div class="photo-card" data-category="JENNIE">\n    <img src="assets/gal_jennie1.jpg" alt="Jennie" loading="lazy">\n    <div class="photo-overlay"><h3 class="bp-font">Jennie - PUBG</h3></div>\n  </div>\n  <div class="photo-card" data-category="JENNIE">\n    <img src="assets/gal_jennie2.jpg" alt="Jennie" loading="lazy">\n    <div class="photo-overlay"><h3 class="bp-font">Jennie - SOLO</h3></div>\n  </div>\n  <!-- Rose -->\n  <div class="photo-card" data-category="ROSÉ">\n    <img src="assets/gal_rose1.jpg" alt="Rosé" loading="lazy">\n    <div class="photo-overlay"><h3 class="bp-font">Rosé - Rimowa</h3></div>\n  </div>\n  <div class="photo-card" data-category="ROSÉ">\n    <img src="assets/gal_rose2.jpg" alt="Rosé" loading="lazy">\n    <div class="photo-overlay"><h3 class="bp-font">Rosé</h3></div>\n  </div>\n  <!-- Lisa -->\n  <div class="photo-card" data-category="LISA">\n    <img src="assets/gal_lisa1.jpg" alt="Lisa" loading="lazy">\n    <div class="photo-overlay"><h3 class="bp-font">Lisa 2024</h3></div>\n  </div>\n  <div class="photo-card" data-category="LISA">\n    <img src="assets/gal_lisa2.jpg" alt="Lisa" loading="lazy">\n    <div class="photo-overlay"><h3 class="bp-font">Lisa - VMAs</h3></div>\n  </div>\n</div>\n</main>
+    <div class="masonry-grid" id="masonry-grid">
+      <!-- Group -->
+      <div class="photo-card" data-member="group">
+        <img src="assets/gal_mv_1.jpg" alt="BLACKPINK Group" loading="lazy">
+        <div class="photo-overlay"><h3 class="bp-font">How You Like That</h3></div>
+      </div>
+      <div class="photo-card" data-member="group">
+        <img src="assets/gal_mv_2.jpg" alt="BLACKPINK Group" loading="lazy">
+        <div class="photo-overlay"><h3 class="bp-font">Kill This Love</h3></div>
+      </div>
+      <div class="photo-card" data-member="group">
+        <img src="assets/gal_mv_3.jpg" alt="BLACKPINK Group" loading="lazy">
+        <div class="photo-overlay"><h3 class="bp-font">As If It's Your Last</h3></div>
+      </div>
+      <div class="photo-card" data-member="group">
+        <img src="assets/gal_mv_12.jpg" alt="BLACKPINK Group" loading="lazy">
+        <div class="photo-overlay"><h3 class="bp-font">Ice Cream</h3></div>
+      </div>
+      <!-- Jisoo -->
+      <div class="photo-card" data-member="jisoo">
+        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Jisoo_from_BLACKPINK_PUBG_210321_(cropped).jpg?width=500" alt="Jisoo" loading="lazy">
+        <div class="photo-overlay"><h3 class="bp-font">Jisoo - PUBG</h3></div>
+      </div>
+      <div class="photo-card" data-member="jisoo">
+        <img src="assets/gal_mv_4.jpg" alt="Jisoo" loading="lazy">
+        <div class="photo-overlay"><h3 class="bp-font">Jisoo - Flower</h3></div>
+      </div>
+      <!-- Jennie -->
+      <div class="photo-card" data-member="jennie">
+        <img src="assets/gal_mv_14.jpg" alt="Jennie" loading="lazy">
+        <div class="photo-overlay"><h3 class="bp-font">Jennie - Kill This Love</h3></div>
+      </div>
+      <div class="photo-card" data-member="jennie">
+        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Jennie_Kim_from_BLACKPINK_PUBG_210321_(cropped).jpg?width=500" alt="Jennie" loading="lazy">
+        <div class="photo-overlay"><h3 class="bp-font">Jennie - PUBG</h3></div>
+      </div>
+      <!-- Rose -->
+      <div class="photo-card" data-member="rose">
+        <img src="assets/gal_mv_6.jpg" alt="Rosé" loading="lazy">
+        <div class="photo-overlay"><h3 class="bp-font">Rosé - On The Ground</h3></div>
+      </div>
+      <div class="photo-card" data-member="rose">
+        <img src="assets/gal_mv_9.jpg" alt="Rosé" loading="lazy">
+        <div class="photo-overlay"><h3 class="bp-font">Rosé</h3></div>
+      </div>
+      <!-- Lisa -->
+      <div class="photo-card" data-member="lisa">
+        <img src="assets/gal_mv_8.jpg" alt="Lisa" loading="lazy">
+        <div class="photo-overlay"><h3 class="bp-font">Lisa - Money</h3></div>
+      </div>
+      <div class="photo-card" data-member="lisa">
+        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/20240314_Lisa_Manoban_07.jpg?width=500" alt="Lisa" loading="lazy">
+        <div class="photo-overlay"><h3 class="bp-font">Lisa 2024</h3></div>
+      </div>
+    </div>
+  </main>
 
   <footer>
     <p>Created with ✨ by <a href="https://github.com/HemantTheCoder" target="_blank">Hemant</a></p>

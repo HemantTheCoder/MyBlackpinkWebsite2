@@ -34,7 +34,7 @@
     
     .song-list {
       background: rgba(15, 15, 15, 0.4);
-      border: 1px solid rgba(255, 42, 133, 0.2);
+      border: 1px solid rgba(255, 47, 146, 0.2);
       border-radius: 12px;
       padding: 1.5rem;
       min-height: 400px;
@@ -49,7 +49,7 @@
       text-transform: uppercase;
       letter-spacing: 2px;
       text-align: center;
-      text-shadow: 0 0 10px rgba(255, 42, 133, 0.5);
+      text-shadow: 0 0 10px rgba(255, 47, 146, 0.5);
     }
 
     .counter {
@@ -73,7 +73,7 @@
     /* Scrollbar for song lists */
     .song-list-body::-webkit-scrollbar { width: 6px; }
     .song-list-body::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); border-radius: 10px; }
-    .song-list-body::-webkit-scrollbar-thumb { background: var(--bp-pink, #ff2a85); border-radius: 10px; }
+    .song-list-body::-webkit-scrollbar-thumb { background: var(--bp-pink, #ff2f92); border-radius: 10px; }
 
     .song-item {
       display: flex;
@@ -87,7 +87,7 @@
     }
 
     .song-item:hover {
-      background: rgba(255, 42, 133, 0.1);
+      background: rgba(255, 47, 146, 0.1);
       border-color: var(--bp-pink, #FF2A85);
       transform: translateY(-2px);
     }
@@ -177,7 +177,7 @@
       max-width: 100%;
       max-height: 75vh;
       object-fit: contain;
-      box-shadow: 0 0 40px rgba(255, 42, 133, 0.5);
+      box-shadow: 0 0 40px rgba(255, 47, 146, 0.5);
       border-radius: 4px;
     }
     
@@ -221,6 +221,13 @@
 
 
   
+  <!-- Loading Screen -->
+  <div id="loading-screen">
+    <div class="loading-logo">BLACKPINK</div>
+    <div class="loading-sub">Initializing Blink OS</div>
+    <div class="loading-bar"><div class="loading-fill"></div></div>
+  </div>
+
   <div id="page-transition"></div>
 
   <!-- Lightstick Canvas Background -->
@@ -228,15 +235,40 @@
 
   <header class="hero" style="height:35vh;background-attachment:fixed;background-position:center;background-size:cover;background-image:linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8)), url('blackpinkgroup.webp');">
     <div class="hero-content">
+      <div class="hud-eyebrow" style="justify-content:center;"><span class="dot"></span> Fan Tool</div>
       <h1 style="text-shadow: 0 0 20px var(--bp-pink);">Dream Concert Setlist</h1>
       <p style="color:rgba(255,255,255,0.8);font-size:1.1rem;font-weight:300;letter-spacing:3px;margin-top:0.5rem;margin-bottom:1.5rem;">Build your perfect BLACKPINK world tour</p>
-      
-      <nav class="btn-group">
-        <a href="index.html" class="btn">&#127968; Home</a>
-        <a href="games.html" class="btn">&#127918; Games</a>
-      </nav>
     </div>
   </header>
+
+  <div class="container">
+    <!-- Navigation Buttons -->
+    <nav class="btn-group">
+      <button id="era-toggle-btn" onclick="cycleEra()">&#x1F319; Square Up</button>
+      <a href="index.html" class="btn">Home</a>
+      <a href="aboutmembers.html" class="btn">Members</a>
+      <a href="discography.html" class="btn">Discography</a>
+      <a href="timeline.html" class="btn">Timeline</a>
+      <a href="records.html" class="btn">Records</a>
+      <a href="gallery.html" class="btn">Gallery</a>
+      <a href="worldtour.html" class="btn">World Tour</a>
+      <a href="videos.html" class="btn">Videos</a>
+      <a href="games.html" class="btn">Games</a>
+      <a href="quote-generator.html" class="btn">Quote Generator</a>
+      <a href="aboutme.html?v=1782403788303" class="btn">About Me</a>
+      <a href="blink-id.html?v=20260625" class="btn">Blink ID</a>
+      <a href="blink-wall.html" class="btn">Blink Wall</a>
+      <a href="vault.html?v=20260625" class="btn">Vault</a>
+      <a href="fanart.html" class="btn">Fan Art</a>
+      <a href="feedback.html" class="btn">Feedback</a>
+      <a href="study.html" class="btn">Study Mode</a>
+      <a href="photobooth.html" class="btn">Photo Booth</a>
+      <a href="setlist.html" class="btn active">Setlist Builder</a>
+      <a href="quiz.html" class="btn">Quiz</a>
+      <a href="photocards.html" class="btn">Photocards</a>
+      <a href="profile.html" class="btn" id="nav-profile-btn">Profile / Login</a>
+    </nav>
+  </div>
 
   <main class="setlist-container">
     <div class="builder-layout">
@@ -383,7 +415,7 @@
       ctx.beginPath();
       ctx.arc(width/2, height/3, 500, 0, Math.PI * 2);
       const glow1 = ctx.createRadialGradient(width/2, height/3, 0, width/2, height/3, 500);
-      glow1.addColorStop(0, "rgba(255, 42, 133, 0.2)");
+      glow1.addColorStop(0, "rgba(255, 47, 146, 0.2)");
       glow1.addColorStop(1, "rgba(0, 0, 0, 0)");
       ctx.fillStyle = glow1;
       ctx.fill();
@@ -397,7 +429,7 @@
       }
       
       // Draw Border
-      ctx.strokeStyle = "rgba(255, 42, 133, 0.4)";
+      ctx.strokeStyle = "rgba(255, 47, 146, 0.4)";
       ctx.lineWidth = 2;
       ctx.strokeRect(30, 30, width - 60, height - 60);
       
@@ -433,7 +465,7 @@
       ctx.beginPath();
       ctx.moveTo(width/2 - 200, 310);
       ctx.lineTo(width/2 + 200, 310);
-      ctx.strokeStyle = "rgba(255, 42, 133, 0.8)";
+      ctx.strokeStyle = "rgba(255, 47, 146, 0.8)";
       ctx.lineWidth = 3;
       ctx.stroke();
       
@@ -460,7 +492,7 @@
         
         // Number
         ctx.font = "bold 22px 'Courier New', Courier, monospace";
-        ctx.fillStyle = "rgba(255, 42, 133, 0.7)";
+        ctx.fillStyle = "rgba(255, 47, 146, 0.7)";
         ctx.textAlign = "right";
         ctx.fillText(String(index + 1).padStart(2, '0') + " —", width/2 - 220, yPos);
         
@@ -478,7 +510,7 @@
       ctx.textAlign = "center";
       
       ctx.font = "italic 16px Arial";
-      ctx.fillStyle = "rgba(255, 42, 133, 0.6)";
+      ctx.fillStyle = "rgba(255, 47, 146, 0.6)";
       ctx.fillText("WWW.BLACKPINKHUB.COM", width/2, height - 75);
       
       ctx.font = "14px Arial";

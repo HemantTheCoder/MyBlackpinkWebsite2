@@ -23,8 +23,8 @@
   left: 50%;
   top: 0; bottom: 0;
   width: 2px;
-  background: linear-gradient(to bottom, transparent, #ff2a85 10%, #ff2a85 90%, transparent);
-  box-shadow: 0 0 16px rgba(255,42,133,0.5);
+  background: linear-gradient(to bottom, transparent, #ff2f92 10%, #ff2f92 90%, transparent);
+  box-shadow: 0 0 16px rgba(255,47,146,0.5);
   transform: translateX(-50%);
 }
 .year-marker {
@@ -35,14 +35,14 @@
 }
 .year-marker-inner {
   display: inline-block;
-  background: linear-gradient(135deg, #ff2a85, #c471ed);
+  background: linear-gradient(135deg, #ff2f92, #a742ff);
   color: #fff;
   font-weight: 900;
   font-size: 1.1rem;
   letter-spacing: 0.1em;
   padding: 0.4rem 1.5rem;
   border-radius: 999px;
-  box-shadow: 0 0 20px rgba(255,42,133,0.5);
+  box-shadow: 0 0 20px rgba(255,47,146,0.5);
 }
 .tl-event {
   display: flex;
@@ -63,8 +63,8 @@
   top: 1.4rem;
   width: 2rem;
   height: 2px;
-  background: #ff2a85;
-  box-shadow: 0 0 8px rgba(255,42,133,0.6);
+  background: #ff2f92;
+  box-shadow: 0 0 8px rgba(255,47,146,0.6);
 }
 .tl-event.left .tl-connector {
   right: calc(50% + 0px);
@@ -79,15 +79,15 @@
   transform: translateY(-50%);
   width: 12px; height: 12px;
   border-radius: 50%;
-  background: #ff2a85;
-  box-shadow: 0 0 12px rgba(255,42,133,0.8);
+  background: #ff2f92;
+  box-shadow: 0 0 12px rgba(255,47,146,0.8);
 }
 .tl-event.left .tl-connector::after { right: -6px; }
 .tl-event.right .tl-connector::after { left: -6px; }
 .tl-card {
   background: rgba(20,10,30,0.6);
   backdrop-filter: blur(12px);
-  border: 1px solid rgba(255,42,133,0.2);
+  border: 1px solid rgba(255,47,146,0.2);
   border-radius: 16px;
   padding: 1.5rem 2rem;
   width: 100%;
@@ -103,15 +103,15 @@
 }
 .tl-card:hover {
   transform: translateY(-4px) !important;
-  box-shadow: 0 0 30px rgba(255,42,133,0.4);
-  border-color: #ff2a85;
+  box-shadow: 0 0 30px rgba(255,47,146,0.4);
+  border-color: #ff2f92;
 }
 .tl-year {
   font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: #ff2a85;
+  color: #ff2f92;
   margin-bottom: 0.4rem;
 }
 .tl-title {
@@ -134,8 +134,8 @@
 }
 .timeline-end-inner {
   display: inline-block;
-  background: rgba(255,42,133,0.1);
-  border: 1px solid rgba(255,42,133,0.4);
+  background: rgba(255,47,146,0.1);
+  border: 1px solid rgba(255,47,146,0.4);
   color: rgba(255,255,255,0.7);
   padding: 0.8rem 2rem;
   border-radius: 999px;
@@ -170,6 +170,7 @@
   <!-- Loading Screen -->
   <div id="loading-screen">
     <div class="loading-logo">BLACKPINK</div>
+    <div class="loading-sub">Initializing Blink OS</div>
     <div class="loading-bar"><div class="loading-fill"></div></div>
   </div>
 
@@ -179,12 +180,10 @@
   <!-- Lightstick Canvas Background -->
   <canvas id="lightstick-canvas"></canvas>
 
-  <!-- Era Toggle Button -->
-  <button id="era-toggle-btn" onclick="cycleEra()">&#x1F5A4; Original</button>
-
 <header class="hero" style="height:38vh;background-attachment:fixed;background-position:center;background-size:cover;">
     <div class="hero-content">
-      <h1>⏳ Timeline</h1>
+      <div class="hud-eyebrow"><span class="dot"></span> 2016 &ndash; 2026</div>
+      <h1>Timeline</h1>
       <p style="color:rgba(255,255,255,0.7);font-size:1.1rem;font-weight:300;letter-spacing:3px;margin-top:0.5rem;">From Debut to Deadline — A Decade of History</p>
     </div>
   </header>
@@ -193,17 +192,29 @@
 
     <!-- Navigation Buttons -->
     <nav class="btn-group">
-      <a href="index.html?v=1782403788303" class="btn">&#127968; Home</a>
-      <a href="aboutmembers.html?v=1782403788303" class="btn">&#127915; Members</a>
-      <a href="discography.html?v=1782403788303" class="btn">&#127925; Discography</a>
-      <a href="timeline.html?v=1782403788303" class="btn">&#9203; Timeline</a>
-      <a href="records.html?v=1782403788303" class="btn">&#127942; Records</a>
-      <a href="gallery.html?v=1782403788303" class="btn">&#128247; Gallery</a>
-      <a href="worldtour.html?v=1782403788303" class="btn">&#127758; World Tour</a>
-      <a href="videos.html?v=1782403788303" class="btn">&#127909; Videos</a>
-      <a href="games.html?v=1782403788303" class="btn">&#127918; Games</a>
-      <a href="quote-generator.html?v=1782403788303" class="btn">&#128172; Quote Generator</a>
-      <a href="aboutme.html?v=1782403788303" class="btn">&#129492; About Me!</a>
+      <button id="era-toggle-btn" onclick="cycleEra()">&#x1F319; Square Up</button>
+      <a href="index.html" class="btn">Home</a>
+      <a href="aboutmembers.html" class="btn">Members</a>
+      <a href="discography.html" class="btn">Discography</a>
+      <a href="timeline.html" class="btn active">Timeline</a>
+      <a href="records.html" class="btn">Records</a>
+      <a href="gallery.html" class="btn">Gallery</a>
+      <a href="worldtour.html" class="btn">World Tour</a>
+      <a href="videos.html" class="btn">Videos</a>
+      <a href="games.html" class="btn">Games</a>
+      <a href="quote-generator.html" class="btn">Quote Generator</a>
+      <a href="aboutme.html?v=1782403788303" class="btn">About Me</a>
+      <a href="blink-id.html?v=20260625" class="btn">Blink ID</a>
+      <a href="blink-wall.html" class="btn">Blink Wall</a>
+      <a href="vault.html?v=20260625" class="btn">Vault</a>
+      <a href="fanart.html" class="btn">Fan Art</a>
+      <a href="feedback.html" class="btn">Feedback</a>
+      <a href="study.html" class="btn">Study Mode</a>
+      <a href="photobooth.html" class="btn">Photo Booth</a>
+      <a href="setlist.html" class="btn">Setlist Builder</a>
+      <a href="quiz.html" class="btn">Quiz</a>
+      <a href="photocards.html" class="btn">Photocards</a>
+      <a href="profile.html" class="btn" id="nav-profile-btn">Profile / Login</a>
     </nav>
 
     
@@ -382,19 +393,67 @@
           </div>
         </div>
 
-        <!-- ══════ 2026 ══════ -->
-        <div class="year-marker"><div class="year-marker-inner">2026</div></div>
+        <div class="tl-event right">
+          <div class="tl-connector"></div>
+          <div class="tl-card">
+            <div class="tl-year">Dec 2024</div>
+            <div class="tl-title">🩷 Rosé — 'rosie'</div>
+            <div class="tl-desc">Rosé releases her debut studio album 'rosie' via Atlantic Records / THEBLACKLABEL, led by 'number one girl' and 'toxic till the end' — a raw, deeply personal record that becomes one of the year's most acclaimed pop debuts.</div>
+          </div>
+        </div>
+
+        <!-- ══════ 2025 ══════ -->
+        <div class="year-marker"><div class="year-marker-inner">2025</div></div>
+
+        <div class="tl-event left">
+          <div class="tl-connector"></div>
+          <div class="tl-card">
+            <div class="tl-year">Feb 2025</div>
+            <div class="tl-title">🖤 Jisoo — 'Amortage'</div>
+            <div class="tl-desc">Jisoo releases her debut EP 'Amortage' through her own label BLISSOO and Warner Records — her first release since departing YG Entertainment, exploring the stages of love across four tracks.</div>
+          </div>
+        </div>
 
         <div class="tl-event right">
           <div class="tl-connector"></div>
           <div class="tl-card">
-            <div class="tl-year">Jan 2026</div>
-            <div class="tl-title">⚡ JUMP — Pre-Release</div>
-            <div class="tl-desc">BLACKPINK drops 'JUMP' as a teaser to the new era, sending Blinks into a frenzy. The energetic pre-release single showcases a more mature, experimental sound from the group.</div>
+            <div class="tl-year">Feb 2025</div>
+            <div class="tl-title">🎭 Lisa — 'Alter Ego'</div>
+            <div class="tl-desc">Lisa drops her debut full-length album 'Alter Ego' via LLOUD and RCA Records — 15 tracks unveiling alter-persona sides ROXI, SUNNI, KIKI and more, led by 'Rockstar,' 'New Woman' feat. Rosalía, and 'Born Again.'</div>
           </div>
         </div>
 
         <div class="tl-event left">
+          <div class="tl-connector"></div>
+          <div class="tl-card">
+            <div class="tl-year">Mar 2025</div>
+            <div class="tl-title">💎 Jennie — 'Ruby'</div>
+            <div class="tl-desc">Jennie releases her debut studio album 'Ruby' through OA and Columbia Records — 15 tracks featuring Dua Lipa, Doechii, Childish Gambino and more, led by the title track 'like JENNIE.'</div>
+          </div>
+        </div>
+
+        <div class="tl-event right">
+          <div class="tl-connector"></div>
+          <div class="tl-card">
+            <div class="tl-year">Jul 2025</div>
+            <div class="tl-title">⚡ BLACKPINK — 'JUMP'</div>
+            <div class="tl-desc">BLACKPINK returns as a group with 'JUMP,' first debuted live on the Deadline World Tour before its official release — an instant hit that races past 300 million YouTube views.</div>
+          </div>
+        </div>
+
+        <div class="tl-event left">
+          <div class="tl-connector"></div>
+          <div class="tl-card">
+            <div class="tl-year">Oct 2025</div>
+            <div class="tl-title">✨ Jisoo & Zayn — 'Eyes Closed'</div>
+            <div class="tl-desc">Jisoo teams up with former One Direction member Zayn for the cinematic duet 'Eyes Closed,' blending both artists' vocal styles into a dark, atmospheric pop moment.</div>
+          </div>
+        </div>
+
+        <!-- ══════ 2026 ══════ -->
+        <div class="year-marker"><div class="year-marker-inner">2026</div></div>
+
+        <div class="tl-event right">
           <div class="tl-connector"></div>
           <div class="tl-card">
             <div class="tl-year">Feb 2026</div>

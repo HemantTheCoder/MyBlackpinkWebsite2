@@ -40,6 +40,7 @@
   <!-- Loading Screen -->
   <div id="loading-screen">
     <div class="loading-logo">BLACKPINK</div>
+    <div class="loading-sub">Initializing Blink OS</div>
     <div class="loading-bar"><div class="loading-fill"></div></div>
   </div>
 
@@ -49,17 +50,42 @@
   <!-- Lightstick Canvas Background -->
   <canvas id="lightstick-canvas"></canvas>
 
-  <!-- Era Toggle Button -->
-  <button id="era-toggle-btn" onclick="cycleEra()">&#x1F5A4; Original</button>
-
   <header class="hero hero-lisa">
     <div class="hero-content">
+      <div class="hud-eyebrow"><span class="dot"></span> Member Profile</div>
       <h1>Lalisa Manoban</h1>
       <p style="font-size: 1.2rem; font-weight: 300;">Main Dancer, Lead Rapper</p>
     </div>
   </header>
 
   <main class="container">
+    <!-- Navigation Buttons -->
+    <nav class="btn-group">
+      <button id="era-toggle-btn" onclick="cycleEra()">&#x1F319; Square Up</button>
+      <a href="index.html" class="btn">Home</a>
+      <a href="aboutmembers.html" class="btn active">Members</a>
+      <a href="discography.html" class="btn">Discography</a>
+      <a href="timeline.html" class="btn">Timeline</a>
+      <a href="records.html" class="btn">Records</a>
+      <a href="gallery.html" class="btn">Gallery</a>
+      <a href="worldtour.html" class="btn">World Tour</a>
+      <a href="videos.html" class="btn">Videos</a>
+      <a href="games.html" class="btn">Games</a>
+      <a href="quote-generator.html" class="btn">Quote Generator</a>
+      <a href="aboutme.html?v=1782403788303" class="btn">About Me</a>
+      <a href="blink-id.html?v=20260625" class="btn">Blink ID</a>
+      <a href="blink-wall.html" class="btn">Blink Wall</a>
+      <a href="vault.html?v=20260625" class="btn">Vault</a>
+      <a href="fanart.html" class="btn">Fan Art</a>
+      <a href="feedback.html" class="btn">Feedback</a>
+      <a href="study.html" class="btn">Study Mode</a>
+      <a href="photobooth.html" class="btn">Photo Booth</a>
+      <a href="setlist.html" class="btn">Setlist Builder</a>
+      <a href="quiz.html" class="btn">Quiz</a>
+      <a href="photocards.html" class="btn">Photocards</a>
+      <a href="profile.html" class="btn" id="nav-profile-btn">Profile / Login</a>
+    </nav>
+
     <div class="text-center" style="margin-bottom: 2rem;">
       <a href="aboutmembers.html?v=1782403788303" class="btn primary">Back to Members Hub</a>
     </div>
@@ -86,7 +112,7 @@
         <li>✨ Her favorite food is French fries and she loves yellow.</li>
         <li>✨ She is the most followed K-pop idol on Instagram.</li>
         <li>✨ She debuted as a soloist on September 10, 2021 with the album "Lalisa".</li>
-        <li>✨ <strong>Recent (2024-2026):</strong> Lisa launched her own management company, <strong>LLOUD</strong>, and partnered with RCA Records. She dominated the global charts with a string of mega-hits including <strong>"Rockstar"</strong>, <strong>"New Woman"</strong> (feat. Rosalía), and <strong>"Bad Angel"</strong>! She continues to slay in group promotions for the 2026 <em>Deadline</em> EP.</li>
+        <li>✨ <strong>Recent (2024-2026):</strong> Lisa launched her own management company, <strong>LLOUD</strong>, and partnered with RCA Records. After hit singles <strong>"Rockstar"</strong> and <strong>"New Woman"</strong> (feat. Rosalía), she released her debut full-length album <strong>"Alter Ego"</strong> (Feb 2025) — 15 tracks unveiling her alter-persona sides ROXI, SUNNI and KIKI! She continues to slay in group promotions for the 2026 <em>Deadline</em> EP.</li>
         <li>✨ She has expanded her global representation, signing with Wasserman Music for worldwide touring and RCA Records.</li>
       </ul>
       
@@ -95,9 +121,9 @@
       </div>
     </section>
 
-    <div class="btn-group">
+    <div class="member-pagination">
       <a href="RoséSolo.html?v=1782403788303" class="btn">Previous Member: Rosé</a>
-      <a href="index.html?v=1782403788303" class="btn primary">Home</a>
+      <a href="index.html?v=1782403788303" class="btn btn-glow">Home</a>
     </div>
 
   </main>

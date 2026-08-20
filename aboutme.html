@@ -22,6 +22,7 @@
   <!-- Loading Screen -->
   <div id="loading-screen">
     <div class="loading-logo">BLACKPINK</div>
+    <div class="loading-sub">Initializing Blink OS</div>
     <div class="loading-bar"><div class="loading-fill"></div></div>
   </div>
 
@@ -31,22 +32,40 @@
   <!-- Lightstick Canvas Background -->
   <canvas id="lightstick-canvas"></canvas>
 
-  <!-- Era Toggle Button -->
-  <button id="era-toggle-btn" onclick="cycleEra()">&#x1F5A4; Original</button>
-
   <header class="hero" style="height: 30vh; background-image: url('header_bg.png');">
     <div class="hero-content">
+      <div class="hud-eyebrow"><span class="dot"></span> Behind the Site</div>
       <h1>About the Creator</h1>
     </div>
   </header>
 
   <main class="container">
-    <div class="text-center" style="margin-bottom: 2rem;">
-      <a href="index.html?v=1782403788303" class="btn primary">Back to Home</a>
-      <a href="aboutmembers.html?v=1782403788303" class="btn">About Members</a>
-      <a href="videos.html?v=1782403788303" class="btn">Latest Videos</a>
-      <a href="games.html?v=1782403788303" class="btn">🎮 Blink Trivia</a>
-    </div>
+    <!-- Navigation Buttons -->
+    <nav class="btn-group">
+      <button id="era-toggle-btn" onclick="cycleEra()">&#x1F319; Square Up</button>
+      <a href="index.html" class="btn">Home</a>
+      <a href="aboutmembers.html" class="btn">Members</a>
+      <a href="discography.html" class="btn">Discography</a>
+      <a href="timeline.html" class="btn">Timeline</a>
+      <a href="records.html" class="btn">Records</a>
+      <a href="gallery.html" class="btn">Gallery</a>
+      <a href="worldtour.html" class="btn">World Tour</a>
+      <a href="videos.html" class="btn">Videos</a>
+      <a href="games.html" class="btn">Games</a>
+      <a href="quote-generator.html" class="btn">Quote Generator</a>
+      <a href="aboutme.html?v=1782403788303" class="btn active">About Me</a>
+      <a href="blink-id.html?v=20260625" class="btn">Blink ID</a>
+      <a href="blink-wall.html" class="btn">Blink Wall</a>
+      <a href="vault.html?v=20260625" class="btn">Vault</a>
+      <a href="fanart.html" class="btn">Fan Art</a>
+      <a href="feedback.html" class="btn">Feedback</a>
+      <a href="study.html" class="btn">Study Mode</a>
+      <a href="photobooth.html" class="btn">Photo Booth</a>
+      <a href="setlist.html" class="btn">Setlist Builder</a>
+      <a href="quiz.html" class="btn">Quiz</a>
+      <a href="photocards.html" class="btn">Photocards</a>
+      <a href="profile.html" class="btn" id="nav-profile-btn">Profile / Login</a>
+    </nav>
 
     <section class="glass-card text-center" style="max-width: 800px; margin: 0 auto;">
       <img src="hemant_avatar.png" alt="Hemant" class="featured-img" style="max-width: 250px; border-radius: 50%; box-shadow: 0 0 30px var(--bp-pink-glow); border: 3px solid var(--bp-pink);">

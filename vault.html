@@ -55,10 +55,21 @@
 </head>
 <body>
 
+  <!-- Loading Screen -->
+  <div id="loading-screen">
+    <div class="loading-logo">BLACKPINK</div>
+    <div class="loading-sub">Initializing Blink OS</div>
+    <div class="loading-bar"><div class="loading-fill"></div></div>
+  </div>
+
   <div id="page-transition"></div>
+
+  <!-- Lightstick Canvas Background -->
+  <canvas id="lightstick-canvas"></canvas>
 
   <header class="hero">
     <div class="hero-content">
+      <div class="hud-eyebrow"><span class="dot"></span> Exclusive</div>
       <h1>🔒 Blink Vault</h1>
       <p class="hero-sub">Keep your login streak to unlock exclusive content!</p>
     </div>
@@ -66,9 +77,29 @@
 
   <main class="container">
     <nav class="btn-group">
-      <a href="index.html?v=20260625" class="btn">&#127968; Home</a>
-      <a href="blink-id.html?v=20260625" class="btn">🪪 Blink ID</a>
-      <a href="vault.html?v=20260625" class="btn active">🔒 Vault</a>
+      <button id="era-toggle-btn" onclick="cycleEra()">&#x1F319; Square Up</button>
+      <a href="index.html" class="btn">Home</a>
+      <a href="aboutmembers.html" class="btn">Members</a>
+      <a href="discography.html" class="btn">Discography</a>
+      <a href="timeline.html" class="btn">Timeline</a>
+      <a href="records.html" class="btn">Records</a>
+      <a href="gallery.html" class="btn">Gallery</a>
+      <a href="worldtour.html" class="btn">World Tour</a>
+      <a href="videos.html" class="btn">Videos</a>
+      <a href="games.html" class="btn">Games</a>
+      <a href="quote-generator.html" class="btn">Quote Generator</a>
+      <a href="aboutme.html?v=1782403788303" class="btn">About Me</a>
+      <a href="blink-id.html?v=20260625" class="btn">Blink ID</a>
+      <a href="blink-wall.html" class="btn">Blink Wall</a>
+      <a href="vault.html?v=20260625" class="btn active">Vault</a>
+      <a href="fanart.html" class="btn">Fan Art</a>
+      <a href="feedback.html" class="btn">Feedback</a>
+      <a href="study.html" class="btn">Study Mode</a>
+      <a href="photobooth.html" class="btn">Photo Booth</a>
+      <a href="setlist.html" class="btn">Setlist Builder</a>
+      <a href="quiz.html" class="btn">Quiz</a>
+      <a href="photocards.html" class="btn">Photocards</a>
+      <a href="profile.html" class="btn" id="nav-profile-btn">Profile / Login</a>
     </nav>
 
     <section class="glass-card text-center" style="max-width: 800px; margin: 0 auto;">
@@ -102,12 +133,12 @@
       let html = '';
       rewards.forEach(r => {
         const unlocked = streak >= r.days;
-        html += \`
-          <div class="vault-item \${unlocked ? 'unlocked' : ''}" title="\${unlocked ? r.title : 'Unlocks at ' + r.days + ' Days'}">
-            <img src="\${r.url}" alt="\${r.title}">
-            <div class="vault-lock">\${unlocked ? '' : '🔒<div style="font-size:1rem;margin-top:10px;">Requires ' + r.days + ' Days</div>'}</div>
+        html += `
+          <div class="vault-item ${unlocked ? 'unlocked' : ''}" title="${unlocked ? r.title : 'Unlocks at ' + r.days + ' Days'}">
+            <img src="${r.url}" alt="${r.title}">
+            <div class="vault-lock">${unlocked ? '' : '🔒<div style="font-size:1rem;margin-top:10px;">Requires ' + r.days + ' Days</div>'}</div>
           </div>
-        \`;
+        `;
       });
       grid.innerHTML = html;
     }
