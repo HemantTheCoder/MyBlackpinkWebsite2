@@ -866,13 +866,13 @@
       flex-shrink: 0;
     }
 
-    .member-grid {
+    .qg-member-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 1rem;
       margin-bottom: 0;
     }
-    .member-btn {
+    .qg-member-btn {
       position: relative;
       background: var(--glass-bg);
       border: 2px solid rgba(255,47,146,0.15);
@@ -885,9 +885,9 @@
       flex-direction: column;
       align-items: center;
     }
-    .member-btn:hover { border-color: var(--bp-pink); transform: translateY(-4px); box-shadow: 0 12px 30px rgba(255,47,146,0.25); }
-    .member-btn.active { border-color: var(--bp-pink); box-shadow: 0 0 0 3px rgba(255,47,146,0.35), 0 12px 30px rgba(255,47,146,0.3); }
-    .member-btn.active::after {
+    .qg-member-btn:hover { border-color: var(--bp-pink); transform: translateY(-4px); box-shadow: 0 12px 30px rgba(255,47,146,0.25); }
+    .qg-member-btn.active { border-color: var(--bp-pink); box-shadow: 0 0 0 3px rgba(255,47,146,0.35), 0 12px 30px rgba(255,47,146,0.3); }
+    .qg-member-btn.active::after {
       content: '✓';
       position: absolute; top: 8px; right: 10px;
       background: var(--bp-pink); color: #fff;
@@ -896,13 +896,13 @@
       display: flex; align-items: center; justify-content: center;
       line-height: 20px; text-align: center;
     }
-    .member-btn img { width: 100%; aspect-ratio: 3/4; object-fit: cover; object-position: top center; display: block; border-radius: 16px 16px 0 0; }
-    .member-btn-name { font-weight: 800; font-size: 0.85rem; padding: 0.55rem 0; letter-spacing: 0.05em; color: #fff; }
+    .qg-member-btn img { width: 100%; aspect-ratio: 3/4; object-fit: cover; object-position: top center; display: block; border-radius: 16px 16px 0 0; }
+    .qg-member-btn-name { font-weight: 800; font-size: 0.85rem; padding: 0.55rem 0; letter-spacing: 0.05em; color: #fff; }
 
-    .member-btn[data-member="jisoo"]:hover, .member-btn[data-member="jisoo"].active { border-color: #E8B4C8; box-shadow: 0 0 0 3px rgba(232,180,200,0.3), 0 12px 30px rgba(232,180,200,0.25); }
-    .member-btn[data-member="jennie"]:hover, .member-btn[data-member="jennie"].active { border-color: #C9A84C; box-shadow: 0 0 0 3px rgba(201,168,76,0.3), 0 12px 30px rgba(201,168,76,0.25); }
-    .member-btn[data-member="rose"]:hover, .member-btn[data-member="rose"].active { border-color: #E8736C; box-shadow: 0 0 0 3px rgba(232,115,108,0.3), 0 12px 30px rgba(232,115,108,0.25); }
-    .member-btn[data-member="lisa"]:hover, .member-btn[data-member="lisa"].active { border-color: #8B5CF6; box-shadow: 0 0 0 3px rgba(139,92,246,0.3), 0 12px 30px rgba(139,92,246,0.25); }
+    .qg-member-btn[data-member="jisoo"]:hover, .qg-member-btn[data-member="jisoo"].active { border-color: #E8B4C8; box-shadow: 0 0 0 3px rgba(232,180,200,0.3), 0 12px 30px rgba(232,180,200,0.25); }
+    .qg-member-btn[data-member="jennie"]:hover, .qg-member-btn[data-member="jennie"].active { border-color: #C9A84C; box-shadow: 0 0 0 3px rgba(201,168,76,0.3), 0 12px 30px rgba(201,168,76,0.25); }
+    .qg-member-btn[data-member="rose"]:hover, .qg-member-btn[data-member="rose"].active { border-color: #E8736C; box-shadow: 0 0 0 3px rgba(232,115,108,0.3), 0 12px 30px rgba(232,115,108,0.25); }
+    .qg-member-btn[data-member="lisa"]:hover, .qg-member-btn[data-member="lisa"].active { border-color: #8B5CF6; box-shadow: 0 0 0 3px rgba(139,92,246,0.3), 0 12px 30px rgba(139,92,246,0.25); }
 
     .lyric-select-wrap { position: relative; }
     .lyric-select {
@@ -1817,26 +1817,26 @@
 
 
 /* --- QUOTE GENERATOR UI POLISH --- */
-.member-grid {
+.qg-member-grid {
   grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)) !important;
   gap: 1.5rem !important;
 }
 
-.member-btn {
+.qg-member-btn {
   border-radius: 20px !important;
   box-shadow: 0 4px 15px rgba(0,0,0,0.3);
 }
 
-.member-btn img {
+.qg-member-btn img {
   border-radius: 18px 18px 0 0 !important;
   transition: transform 0.4s ease;
 }
 
-.member-btn:hover img {
+.qg-member-btn:hover img {
   transform: scale(1.05);
 }
 
-.member-btn-name {
+.qg-member-btn-name {
   font-size: 1rem !important;
   padding: 0.8rem 0 !important;
   text-transform: uppercase;

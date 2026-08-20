@@ -411,9 +411,9 @@ function initAll() {
     initSilhouetteGame();
   }
   if (document.getElementById('masonry-grid')) initGallery();
-  if (document.querySelector('.timeline-item')) initTimeline();
+  if (document.querySelector('.tl-card')) initTimeline();
   if (document.querySelector('.era-tab')) initDiscography();
-  if (document.getElementById('tour-map')) initWorldTour();
+  if (document.getElementById('tour-map')) loadLeafletThenInitWorldTour();
   if (document.getElementById('quote-card')) initQuoteGenerator();
   if (document.querySelector('.stat-card[data-display]')) initRecords();
   if (document.getElementById('poll-opt-Square-Up')) {
@@ -505,6 +505,10 @@ async function navigateTo(url, push) {
     eraIdx = parseInt(localStorage.getItem(ERA_KEY) || '0');
     applyEra();
 
+    if (document.getElementById('masonry-grid')) initGallery();
+    if (document.querySelector('.tl-card')) initTimeline();
+    if (document.querySelector('.era-tab')) initDiscography();
+    if (document.getElementById('tour-map')) loadLeafletThenInitWorldTour();
     if (document.querySelector('.stat-card[data-display]')) initRecords();
     if (document.getElementById('game-start') && document.getElementById('question-text')) initTriviaGame();
     if (document.getElementById('board')) initPuzzle();
@@ -1457,7 +1461,7 @@ window.initGallery = function () {
 // TIMELINE PAGE
 // =============================================
 window.initTimeline = function () {
-  if (!document.querySelector('.timeline-item')) return;
+  if (!document.querySelector('.tl-card')) return;
   const observer = new IntersectionObserver(function (entries) {
     entries.forEach(function (entry) {
       if (entry.isIntersecting) {
@@ -1466,7 +1470,7 @@ window.initTimeline = function () {
       }
     });
   }, { threshold: 0.15 });
-  document.querySelectorAll('.timeline-item').forEach(function (item) {
+  document.querySelectorAll('.tl-card').forEach(function (item) {
     observer.observe(item);
   });
 };
@@ -1508,6 +1512,31 @@ window.initDiscography = function () {
 // =============================================
 // WORLD TOUR MAP PAGE (Leaflet.js)
 // =============================================
+// Leaflet is only <script>-included in worldtour.html's own <head>, which the
+// SPA router never re-parses when navigating in via a same-site link click.
+// Load it on demand so the map still initializes when reached that way.
+function loadLeafletThenInitWorldTour() {
+  if (typeof L !== 'undefined') {
+    window.initWorldTour();
+    return;
+  }
+  if (!document.querySelector('link[href*="leaflet.css"]')) {
+    const css = document.createElement('link');
+    css.rel = 'stylesheet';
+    css.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+    css.crossOrigin = '';
+    document.head.appendChild(css);
+  }
+  let script = document.querySelector('script[src*="leaflet.js"]');
+  if (!script) {
+    script = document.createElement('script');
+    script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+    script.crossOrigin = '';
+    document.head.appendChild(script);
+  }
+  script.addEventListener('load', window.initWorldTour, { once: true });
+}
+
 window.initWorldTour = function () {
   if (!document.getElementById('tour-map')) return;
   if (typeof L === 'undefined') {
@@ -1534,18 +1563,22 @@ window.initWorldTour = function () {
   ];
 
   const dlStops = [
-    { city: 'Seoul', coords: [37.5665, 126.9780], venue: 'Olympic Stadium', date: 'Mar 2026' },
-    { city: 'Tokyo', coords: [35.6762, 139.6503], venue: 'Tokyo Dome', date: 'Mar 2026' },
-    { city: 'Los Angeles', coords: [34.0522, -118.2437], venue: 'SoFi Stadium', date: 'Apr 2026' },
-    { city: 'Las Vegas', coords: [36.1699, -115.1398], venue: 'Allegiant Stadium', date: 'Apr 2026' },
-    { city: 'New York', coords: [40.7128, -74.0060], venue: 'MetLife Stadium', date: 'Apr 2026' },
-    { city: 'London', coords: [51.5074, -0.1278], venue: 'Wembley Stadium', date: 'May 2026' },
-    { city: 'Paris', coords: [48.8566, 2.3522], venue: 'Stade de France', date: 'May 2026' },
-    { city: 'Berlin', coords: [52.5200, 13.4050], venue: 'Olympiastadion', date: 'May 2026' },
-    { city: 'Dubai', coords: [25.2048, 55.2708], venue: 'Coca-Cola Arena', date: 'Jun 2026' },
-    { city: 'Mumbai', coords: [19.0760, 72.8777], venue: 'DY Patil Stadium', date: 'Jun 2026' },
-    { city: 'Bangkok', coords: [13.7563, 100.5018], venue: 'National Stadium', date: 'Jun 2026' },
-    { city: 'Manila', coords: [14.5995, 120.9842], venue: 'Philippine Arena', date: 'Jul 2026' }
+    { city: 'Goyang', coords: [37.6584, 126.8320], venue: 'Goyang Stadium', date: 'Jul 5-6, 2025' },
+    { city: 'Inglewood (LA)', coords: [33.9535, -118.3387], venue: 'SoFi Stadium', date: 'Jul 12-13, 2025' },
+    { city: 'Chicago', coords: [41.8781, -87.6298], venue: 'Soldier Field', date: 'Jul 18, 2025' },
+    { city: 'Toronto', coords: [43.6532, -79.3832], venue: 'Rogers Stadium', date: 'Jul 22-23, 2025' },
+    { city: 'New York', coords: [40.7128, -74.0060], venue: 'Citi Field', date: 'Jul 26-27, 2025' },
+    { city: 'Paris', coords: [48.9244, 2.3601], venue: 'Stade de France', date: 'Aug 2-3, 2025' },
+    { city: 'Milan', coords: [45.4642, 9.1900], venue: 'Ippodromo La Maura', date: 'Aug 6, 2025' },
+    { city: 'Barcelona', coords: [41.3851, 2.1734], venue: 'Estadi Olímpic Lluís Companys', date: 'Aug 9, 2025' },
+    { city: 'London', coords: [51.5074, -0.1278], venue: 'Wembley Stadium', date: 'Aug 15-16, 2025' },
+    { city: 'Kaohsiung', coords: [22.6273, 120.3014], venue: 'Kaohsiung National Stadium', date: 'Oct 18-19, 2025' },
+    { city: 'Bangkok', coords: [13.7563, 100.5018], venue: 'Rajamangala National Stadium', date: 'Oct 24-25, 2025' },
+    { city: 'Jakarta', coords: [-6.2088, 106.8456], venue: 'Gelora Bung Karno Main Stadium', date: 'Oct 26 & Nov 1-2, 2025' },
+    { city: 'Bocaue (Manila)', coords: [14.8072, 120.9506], venue: 'Philippine Arena', date: 'Nov 22-23, 2025' },
+    { city: 'Singapore', coords: [1.3521, 103.8198], venue: 'Singapore National Stadium', date: 'Nov 28-29, 2025' },
+    { city: 'Tokyo', coords: [35.6762, 139.6503], venue: 'Tokyo Dome', date: 'Jan 16-18, 2026' },
+    { city: 'Hong Kong', coords: [22.3193, 114.1694], venue: 'Kai Tak Stadium', date: 'Jan 24-26, 2026' }
   ];
 
   const map = L.map('tour-map', { center: [20, 10], zoom: 2 });
@@ -1794,7 +1827,7 @@ let qgCurrentMember = null;
 
 window.selectMember = function (member) {
   qgCurrentMember = member;
-  document.querySelectorAll('.member-btn').forEach(function (btn) {
+  document.querySelectorAll('.qg-member-btn').forEach(function (btn) {
     btn.classList.toggle('active', btn.dataset.member === member);
   });
 
@@ -3236,38 +3269,69 @@ window.toggleLike = async function(id) {
   } catch(e) {}
 };
 
+const RARITY_CONFETTI = {
+  Common:    { colors: ['#a0a0a0', '#d0d0d0'], particleCount: 60,  spread: 55, scalar: 0.8 },
+  Rare:      { colors: ['#4287f5', '#8fb8ff'], particleCount: 100, spread: 65, scalar: 0.9 },
+  Epic:      { colors: ['#b742f5', '#e0a8ff'], particleCount: 150, spread: 75, scalar: 1.0 },
+  Legendary: { colors: ['#f5b942', '#fff2c2', '#ff2f92'], particleCount: 260, spread: 100, scalar: 1.2 }
+};
+
 window.initPhotocards = function() {
   const btn = document.getElementById('pull-card-btn');
   if(!btn) return;
-  
-  window.updatePhotocardUI = function() {
-    if (!currentUser || !document.getElementById('pull-card-btn')) return;
-    if (currentUser.lastPullDate === new Date().toDateString()) {
-      const b = document.getElementById('pull-card-btn');
-      const cd = document.getElementById('pull-countdown');
+
+  window.updatePhotocardUI = async function() {
+    if (!currentUser) return;
+
+    const streakEl = document.getElementById('streak-counter');
+    if (streakEl) streakEl.textContent = `🔥 ${currentUser.loginStreak || 0} Day Streak`;
+
+    const pullsEl = document.getElementById('pulls-available');
+    const pulls = currentUser.pullsAvailable != null ? currentUser.pullsAvailable : 1;
+    if (pullsEl) pullsEl.textContent = `Pulls Available: ${pulls}`;
+
+    const sinceEpic = currentUser.pullsSinceEpic || 0;
+    const sinceLegendary = currentUser.pullsSinceLegendary || 0;
+    const pityEl = document.getElementById('pity-counter');
+    if (pityEl) {
+      const toEpic = Math.max(0, 10 - sinceEpic);
+      const toLegendary = Math.max(0, 50 - sinceLegendary);
+      pityEl.textContent = toEpic <= toLegendary
+        ? `💎 ${toEpic} pull${toEpic === 1 ? '' : 's'} until guaranteed Epic!`
+        : `✨ ${toLegendary} pulls until guaranteed Legendary!`;
+    }
+
+    const pctEl = document.getElementById('collection-pct');
+    const barEl = document.getElementById('collection-bar');
+    if (pctEl || barEl) {
+      try {
+        if (!masterCardList) {
+          const res = await fetch(`${API_BASE}/api/cards`);
+          masterCardList = res.ok ? await res.json() : [];
+        }
+        const owned = (currentUser.photocards || []).filter(c => c && c.url).length;
+        const total = masterCardList.length || 1;
+        const pct = Math.min(100, Math.round((owned / total) * 100));
+        if (pctEl) pctEl.textContent = pct + '%';
+        if (barEl) barEl.style.width = pct + '%';
+      } catch (e) { /* leave dashboard at last-known values */ }
+    }
+
+    const b = document.getElementById('pull-card-btn');
+    const cd = document.getElementById('pull-countdown');
+    if (pulls > 0) {
+      if (b) { b.style.display = 'inline-block'; b.disabled = false; }
+      if (cd) cd.style.display = 'none';
+    } else {
       if (b) b.style.display = 'none';
       if (cd) {
         cd.style.display = 'block';
-        if (window.pullInterval) clearInterval(window.pullInterval);
-        window.pullInterval = setInterval(() => {
-          const now = new Date();
-          const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
-          const diff = tomorrow - now;
-          if (diff <= 0) {
-            clearInterval(window.pullInterval);
-            b.style.display = 'inline-block';
-            cd.style.display = 'none';
-          } else {
-            const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
-            const m = Math.floor((diff / 1000 / 60) % 60);
-            const s = Math.floor((diff / 1000) % 60);
-            cd.innerHTML = `Next pull available in: <span style="color:var(--bp-pink);">${h}h ${m}m ${s}s</span>`;
-          }
-        }, 1000);
+        cd.style.color = '#aaa';
+        cd.innerHTML = 'No pulls available — build your login streak for more! 🔥';
       }
     }
   };
-  
+
   // Call immediately in case currentUser is already loaded
   if (typeof currentUser !== 'undefined' && currentUser) {
     window.updatePhotocardUI();
@@ -3275,27 +3339,80 @@ window.initPhotocards = function() {
 
   btn.addEventListener('click', async () => {
     if(!currentUser) return alert('Please login first!');
+    if ((currentUser.pullsAvailable || 0) <= 0) { window.updatePhotocardUI(); return; }
+
+    const packContainer = document.getElementById('pack-anim-container');
+    const pack = document.getElementById('card-pack');
+    const reveal = document.getElementById('card-reveal');
+    btn.disabled = true;
+    reveal.style.display = 'none';
+    if (packContainer) packContainer.style.display = 'block';
+    if (pack) { pack.classList.remove('bursting'); pack.classList.add('shaking'); }
+
     try {
-      const res = await fetch(`${API_BASE}/api/me/pull`, {
-        method: 'POST',
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('user_token')}` }
-      });
+      const [res] = await Promise.all([
+        fetch(`${API_BASE}/api/me/pull`, {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${localStorage.getItem('user_token')}` }
+        }),
+        new Promise(r => setTimeout(r, 1100)) // let the shake build suspense
+      ]);
       const data = await res.json();
+
       if(res.ok) {
-        document.getElementById('card-reveal').style.display = 'block';
-        document.getElementById('pulled-card-img').src = data.card.url;
-        document.getElementById('pulled-card-rarity').textContent = data.card.rarity;
-        document.getElementById('pulled-card-rarity').className = 'card-rarity ' + data.card.rarity.toLowerCase();
-        
-        // Save to currentUser memory
-        if(!currentUser.photocards) currentUser.photocards = [];
-        currentUser.photocards.push(data.card);
-        currentUser.lastPullDate = new Date().toDateString();
-        localStorage.setItem('bp_user', JSON.stringify(currentUser));
-        
-        if(window.triggerConfetti) window.triggerConfetti();
+        if (pack) {
+          pack.classList.remove('shaking');
+          pack.classList.add('bursting');
+        }
+        await new Promise(r => setTimeout(r, 420));
+        if (packContainer) packContainer.style.display = 'none';
+
+        const rarity = data.card.rarity;
+        const rarityLower = rarity.toLowerCase();
+
+        reveal.style.display = 'block';
+        const img = document.getElementById('pulled-card-img');
+        img.style.animation = 'none';
+        void img.offsetWidth; // restart the flip-in animation on repeat pulls
+        img.style.animation = '';
+        img.src = data.card.url;
+
+        const rarityEl = document.getElementById('pulled-card-rarity');
+        rarityEl.textContent = rarity;
+        rarityEl.className = 'card-rarity ' + rarityLower;
+
+        const rays = document.getElementById('reveal-rays');
+        if (rays) {
+          rays.classList.remove('spin');
+          void rays.offsetWidth;
+          rays.classList.add('spin');
+        }
+
+        const flash = document.getElementById('pull-flash');
+        if (flash) {
+          flash.classList.remove('fire');
+          void flash.offsetWidth;
+          flash.classList.add('fire');
+        }
+
+        const dupMsg = document.getElementById('duplicate-msg');
+        if (dupMsg) dupMsg.style.display = data.isDuplicate ? 'block' : 'none';
+
+        if (typeof confetti === 'function') {
+          const conf = RARITY_CONFETTI[rarity] || RARITY_CONFETTI.Common;
+          confetti(Object.assign({ origin: { y: 0.55 } }, conf));
+          if (rarity === 'Legendary') {
+            setTimeout(() => confetti(Object.assign({ origin: { y: 0.4 }, angle: 60 }, conf)), 200);
+            setTimeout(() => confetti(Object.assign({ origin: { y: 0.4 }, angle: 120 }, conf)), 350);
+          }
+        }
+
+        // Trust the server's authoritative user state (streak/pity/pulls/collection)
+        if (data.user) currentUser = data.user;
         window.updatePhotocardUI();
       } else {
+        if (pack) pack.classList.remove('shaking');
+        if (packContainer) packContainer.style.display = 'none';
         const cd = document.getElementById('pull-countdown');
         if (cd) {
            cd.style.display = 'block';
@@ -3304,8 +3421,12 @@ window.initPhotocards = function() {
         } else {
            alert(data.error || 'Failed to pull card');
         }
+        btn.disabled = false;
       }
     } catch(e) {
+      if (pack) pack.classList.remove('shaking');
+      if (packContainer) packContainer.style.display = 'none';
+      btn.disabled = false;
       alert('Error pulling card: ' + e.message);
     }
   });

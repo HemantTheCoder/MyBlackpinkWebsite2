@@ -141,6 +141,54 @@
       0% { transform: perspective(400px) rotateY(90deg); opacity: 0; }
       100% { transform: perspective(400px) rotateY(0deg); opacity: 1; }
     }
+
+    /* ── Reveal stage: rays + rarity flash ── */
+    #reveal-stage { position: relative; display: inline-block; }
+    .reveal-rays {
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 700px; height: 700px;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      opacity: 0;
+      z-index: 0;
+      background: repeating-conic-gradient(from 0deg, var(--rarity-color, var(--bp-pink)) 0deg 4deg, transparent 4deg 18deg);
+      -webkit-mask-image: radial-gradient(circle, rgba(0,0,0,0.9) 0%, transparent 65%);
+      mask-image: radial-gradient(circle, rgba(0,0,0,0.9) 0%, transparent 65%);
+    }
+    .reveal-rays.spin {
+      animation: raySpin 6s linear infinite, rayFade 0.6s ease-out forwards;
+    }
+    @keyframes raySpin { to { transform: translate(-50%, -50%) rotate(360deg); } }
+    @keyframes rayFade { from { opacity: 0; } to { opacity: 0.5; } }
+    #reveal-stage img, #reveal-stage .card-rarity { position: relative; z-index: 1; }
+
+    .pull-flash {
+      position: fixed; inset: 0;
+      background: var(--rarity-color, var(--bp-pink));
+      opacity: 0;
+      pointer-events: none;
+      z-index: 9990;
+    }
+    .pull-flash.fire { animation: pullFlash 0.5s ease-out forwards; }
+    @keyframes pullFlash { 0% { opacity: 0; } 15% { opacity: 0.55; } 100% { opacity: 0; } }
+
+    .card-rarity.common   { --rarity-color: #a0a0a0; }
+    .card-rarity.rare     { --rarity-color: #4287f5; }
+    .card-rarity.epic     { --rarity-color: #b742f5; }
+    .card-rarity.legendary{ --rarity-color: #f5b942; }
+
+    #card-pack.shaking { animation: packShakeBuild 1.1s ease-in-out; }
+    @keyframes packShakeBuild {
+      0%, 100% { transform: translate(0,0) rotate(0deg) scale(1); }
+      10% { transform: translate(-2px,-1px) rotate(-1deg) scale(1.01); }
+      20% { transform: translate(2px,1px) rotate(1deg) scale(1.01); }
+      40% { transform: translate(-4px,0) rotate(-2deg) scale(1.03); }
+      60% { transform: translate(4px,-2px) rotate(2deg) scale(1.05); }
+      80% { transform: translate(-6px,2px) rotate(-3deg) scale(1.08); }
+      95% { transform: translate(6px,-3px) rotate(3deg) scale(1.12); }
+    }
+    #card-pack.bursting { animation: packBurst 0.45s ease-out forwards; }
   </style>
 
   <!-- Vercel Web Analytics -->
@@ -290,11 +338,16 @@
       <div id="card-reveal">
         <h3 id="pull-status-msg" style="margin-bottom: 1rem; color: var(--bp-pink);">You Pulled:</h3>
         <p id="duplicate-msg" style="display:none; color: #ff6b9e; font-weight:bold; margin-bottom: 1rem;">Duplicate! Added to your trade pile. 🔄</p>
-        <img id="pulled-card-img" src="" alt="Pulled Photocard">
+        <div id="reveal-stage">
+          <div class="reveal-rays" id="reveal-rays"></div>
+          <img id="pulled-card-img" src="" alt="Pulled Photocard">
+        </div>
         <div id="pulled-card-rarity" class="card-rarity"></div>
       </div>
     </div>
   </main>
+
+  <div class="pull-flash" id="pull-flash"></div>
 
   <script src="script.js" defer></script>
 </body>
