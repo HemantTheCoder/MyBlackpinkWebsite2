@@ -374,7 +374,7 @@
     
     function addSong(song) {
       if (mySetlist.length >= MAX_SONGS) {
-        alert("You can only add up to 10 songs to your setlist!");
+        showToast("You can only add up to 10 songs to your setlist!");
         return;
       }
       mySetlist.push(song);

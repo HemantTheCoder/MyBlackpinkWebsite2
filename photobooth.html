@@ -147,12 +147,12 @@
 
     generateBtn.addEventListener('click', () => {
       if (!uploadedImage) {
-        alert('Please upload an image first.');
+        showToast('Please upload an image first.');
         return;
       }
       const bias = biasSelect.value;
       if (!bias) {
-        alert('Please select your bias.');
+        showToast('Please select your bias.');
         return;
       }
 

@@ -292,7 +292,7 @@
             isRunning = false;
             startBtn.textContent = 'Start';
             if(window.confetti) confetti();
-            alert(currentMode === 'work' ? 'Time for a break, Blink!' : 'Break is over, back to work!');
+            showToast(currentMode === 'work' ? 'Time for a break, Blink!' : 'Break is over, back to work!');
             setMode(currentMode === 'work' ? 'break' : 'work');
           }
         }, 1000);

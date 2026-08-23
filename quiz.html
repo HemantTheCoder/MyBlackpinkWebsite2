@@ -360,8 +360,8 @@
       } else {
         // Fallback
         navigator.clipboard.writeText(text + " " + window.location.href)
-          .then(() => alert("Result copied to clipboard!"))
-          .catch(() => alert("Failed to copy."));
+          .then(() => showToast("Result copied to clipboard!"))
+          .catch(() => showToast("Failed to copy."));
       }
     }
 
