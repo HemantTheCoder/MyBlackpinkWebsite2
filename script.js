@@ -357,11 +357,18 @@ window.showToast = function (message, duration) {
 function initScrollReveal() {
   const els = document.querySelectorAll('.reveal, .reveal-left, .reveal-right');
   if (!els.length) return;
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const observer = new IntersectionObserver((entries) => {
+    // Entries that cross the threshold in the same frame (e.g. a card grid
+    // scrolling into view together) get a small incremental delay so they
+    // cascade in rather than all popping at once.
+    let batchIndex = 0;
     entries.forEach(e => {
       if (e.isIntersecting) {
+        if (!reduceMotion) e.target.style.transitionDelay = (batchIndex * 60) + 'ms';
         e.target.classList.add('visible');
         observer.unobserve(e.target);
+        batchIndex++;
       }
     });
   }, { threshold: 0.1 });
