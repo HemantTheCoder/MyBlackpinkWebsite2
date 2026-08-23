@@ -435,6 +435,31 @@ function initNavScrollControls() {
   updateArrows();
 }
 
+function initCinematicHero() {
+  const hamburger = document.getElementById('cinematic-hamburger');
+  const menu = document.getElementById('cinematic-mobile-menu');
+  if (hamburger && menu) {
+    hamburger.onclick = function () {
+      const open = menu.classList.toggle('open');
+      hamburger.setAttribute('aria-expanded', open ? 'true' : 'false');
+      hamburger.innerHTML = open
+        ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>'
+        : '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="7" x2="20" y2="7"></line><line x1="4" y1="12" x2="20" y2="12"></line><line x1="4" y1="17" x2="20" y2="17"></line></svg>';
+    };
+  }
+
+  const quickstart = document.getElementById('cinematic-quickstart');
+  if (quickstart) {
+    quickstart.onsubmit = function (e) {
+      e.preventDefault();
+      const input = document.getElementById('quickstart-username');
+      const name = input.value.trim();
+      if (name) sessionStorage.setItem('quickstart_username', name);
+      navigateTo(new URL('login.html', window.location.href).href);
+    };
+  }
+}
+
 function initSkipLink() {
   if (document.getElementById('skip-link')) return;
   const link = document.createElement('a');
@@ -467,6 +492,7 @@ function initAll() {
   initLoadingScreen();
   setupSPA();
   initNavScrollControls();
+  if (document.getElementById('cinematic-quickstart')) initCinematicHero();
   setupClickEffect();
   initBackToTop();
   initPetalRain();
@@ -586,6 +612,7 @@ async function navigateTo(url, push) {
 
     initScrollReveal();
     initNavScrollControls();
+    if (document.getElementById('cinematic-quickstart')) initCinematicHero();
     eraIdx = parseInt(localStorage.getItem(ERA_KEY) || '0');
     applyEra();
 
@@ -2819,6 +2846,14 @@ window.initLogin = function() {
   const loginForm = document.getElementById('user-login-form');
   const regForm = document.getElementById('user-register-form');
   const forgotForm = document.getElementById('forgot-password-form');
+
+  const quickstartName = sessionStorage.getItem('quickstart_username');
+  if (quickstartName) {
+    sessionStorage.removeItem('quickstart_username');
+    const regUsernameInput = document.getElementById('reg-username');
+    if (regUsernameInput) regUsernameInput.value = quickstartName;
+    if (typeof window.toggleAuthMode === 'function') window.toggleAuthMode();
+  }
 
   if (forgotForm) {
     forgotForm.onsubmit = async (e) => {

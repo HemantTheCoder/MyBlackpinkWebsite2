@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800;900&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800;900&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap');
 
 :root {
   /* ===== STAGE HUD DESIGN SYSTEM ===== */
@@ -439,6 +439,247 @@ a.glass-card:hover,
   z-index: 2;
 }
 .hero-meta b { color: var(--text-main); font-weight: 600; }
+
+/* =========================================
+   CINEMATIC VIDEO HERO — index.html only.
+   Keeps the base .hero class (the SPA router swaps by that selector on every
+   navigation) but overrides it for a full-viewport autoplaying video hero
+   instead of the shared image/gradient treatment every other page uses.
+   ========================================= */
+.cinematic-hero {
+  height: 100vh;
+  min-height: 100dvh;
+  border-radius: 0;
+  background-image: none;
+  margin-bottom: 0;
+}
+.cinematic-hero::before,
+.cinematic-hero::after {
+  content: none;
+}
+.cinematic-hero-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+.cinematic-hero-fade {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 10rem;
+  background: linear-gradient(to top, var(--bp-black) 0%, transparent 100%);
+  z-index: 1;
+  pointer-events: none;
+}
+.cinematic-hero .hero-content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+
+/* Liquid glass — thin luminous border via a masked gradient pseudo-element,
+   distinct from the site's usual .glass-card (which leans on a heavier pink
+   tint + HUD corner brackets). Used only inside the cinematic hero so its
+   more neutral, video-first look doesn't compete with the footage itself. */
+.liquid-glass {
+  background: rgba(255, 255, 255, 0.01);
+  background-blend-mode: luminosity;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border: none;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+.liquid-glass::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.4px;
+  background: linear-gradient(180deg,
+    rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0.15) 20%,
+    rgba(255, 255, 255, 0) 40%, rgba(255, 255, 255, 0) 60%,
+    rgba(255, 255, 255, 0.15) 80%, rgba(255, 255, 255, 0.45) 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.cinematic-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  max-width: 72rem;
+  margin: 1.25rem auto 0;
+  padding: 0.75rem 1.25rem;
+  border-radius: 999px;
+  width: calc(100% - 2.5rem);
+}
+.cinematic-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #fff;
+  font-weight: 700;
+  font-size: 1.05rem;
+  text-decoration: none;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+.cinematic-logo .dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--bp-pink);
+  box-shadow: 0 0 10px var(--bp-pink);
+  animation: hudPulse 1.8s ease-in-out infinite;
+}
+.cinematic-nav-links {
+  display: none;
+  align-items: center;
+  gap: 2rem;
+}
+.cinematic-nav-links a {
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.2s ease;
+}
+.cinematic-nav-links a:hover { color: #fff; }
+.cinematic-nav-actions {
+  display: none;
+  align-items: center;
+  gap: 1.25rem;
+}
+.cinematic-login {
+  color: #fff;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+.cinematic-cta {
+  color: #fff;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 0.5rem 1.35rem;
+  border-radius: 999px;
+  white-space: nowrap;
+  transition: transform 0.2s ease;
+}
+.cinematic-cta:hover { transform: scale(1.04); }
+
+.cinematic-hamburger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: #fff;
+  cursor: pointer;
+}
+.cinematic-mobile-menu {
+  display: none;
+  flex-direction: column;
+  gap: 0.25rem;
+  max-width: 72rem;
+  margin: 0.5rem auto 0;
+  width: calc(100% - 2.5rem);
+  border-radius: 20px;
+  padding: 0.5rem;
+  overflow: hidden;
+}
+.cinematic-mobile-menu.open { display: flex; }
+.cinematic-mobile-menu a {
+  color: rgba(255, 255, 255, 0.85);
+  text-decoration: none;
+  font-size: 0.95rem;
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  transition: background 0.2s ease;
+}
+.cinematic-mobile-menu a:hover { background: rgba(255, 255, 255, 0.06); color: #fff; }
+
+.cinematic-hero-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 1.5rem;
+}
+.cinematic-hero-text h1 {
+  font-family: 'Instrument Serif', serif;
+  font-weight: 400;
+  font-style: italic;
+  font-size: 3rem;
+  color: #fff;
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+  text-wrap: balance;
+}
+.cinematic-hero-text p {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.95rem;
+  max-width: 34rem;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
+.cinematic-quickstart {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  width: 100%;
+  max-width: 22rem;
+  border-radius: 999px;
+  padding: 0.4rem 0.4rem 0.4rem 1.25rem;
+}
+.cinematic-quickstart input {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #fff;
+  font-size: 0.95rem;
+  font-family: var(--font-body);
+}
+.cinematic-quickstart input::placeholder { color: rgba(255, 255, 255, 0.5); }
+.cinematic-quickstart button {
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: none;
+  background: #fff;
+  color: #0a0a0a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+.cinematic-quickstart button:hover { transform: scale(1.08); }
+
+@media (min-width: 768px) {
+  .cinematic-nav-links,
+  .cinematic-nav-actions { display: flex; }
+  .cinematic-hamburger { display: none; }
+  .cinematic-hero-text h1 { font-size: 4.5rem; }
+}
+@media (min-width: 1024px) {
+  .cinematic-hero-text h1 { font-size: 5.5rem; }
+}
 
 /* Image styling */
 .responsive-img {

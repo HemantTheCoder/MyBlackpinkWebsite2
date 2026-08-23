@@ -64,15 +64,44 @@
   <canvas id="lightstick-canvas"></canvas>
 
   <!-- Hero Section -->
-  <header class="hero">
+  <header class="hero cinematic-hero">
+    <video class="cinematic-hero-video" autoplay muted loop playsinline>
+      <source src="assets/hero-video.mp4" type="video/mp4">
+    </video>
+    <div class="cinematic-hero-fade"></div>
     <div class="hero-content">
-      <div class="hud-eyebrow"><span class="dot"></span> Blink Control Deck</div>
-      <h1>BLACKPINK WIKI</h1>
-      <p style="font-size: 1.2rem; font-weight: 300; margin-top: 0.5rem; position:relative; z-index:2;">Welcome to the ultimate resource for Blinks</p>
-      <div class="hero-meta">
-        <div>MEMBERS <b>04 ACTIVE</b></div>
-        <div>FANDOM <b>BLINK</b></div>
-        <div>STATUS <b style="color:var(--bp-lime)">&#9679; LIVE</b></div>
+      <nav class="liquid-glass cinematic-nav">
+        <a href="index.html" class="cinematic-logo"><span class="dot"></span> BLACKPINK HUB</a>
+        <div class="cinematic-nav-links">
+          <a href="photocards.html">Photocards</a>
+          <a href="gallery.html">Gallery</a>
+          <a href="timeline.html">Timeline</a>
+          <a href="games.html">Games</a>
+        </div>
+        <div class="cinematic-nav-actions">
+          <a href="login.html" class="cinematic-login">Login</a>
+          <a href="login.html" class="liquid-glass cinematic-cta">Join the Hub</a>
+        </div>
+        <button type="button" class="cinematic-hamburger" id="cinematic-hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="cinematic-mobile-menu">
+          <svg id="cinematic-hamburger-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="7" x2="20" y2="7"></line><line x1="4" y1="12" x2="20" y2="12"></line><line x1="4" y1="17" x2="20" y2="17"></line></svg>
+        </button>
+      </nav>
+      <div class="liquid-glass cinematic-mobile-menu" id="cinematic-mobile-menu">
+        <a href="photocards.html">Photocards</a>
+        <a href="gallery.html">Gallery</a>
+        <a href="timeline.html">Timeline</a>
+        <a href="games.html">Games</a>
+        <a href="login.html">Login</a>
+      </div>
+      <div class="cinematic-hero-text">
+        <h1>Where Every Blink Belongs.</h1>
+        <p>Photocards, games, lore, and a community — built by a Blink, for Blinks everywhere.</p>
+        <form class="liquid-glass cinematic-quickstart" id="cinematic-quickstart">
+          <input type="text" id="quickstart-username" placeholder="Choose your Blink name" autocomplete="off" maxlength="40">
+          <button type="submit" aria-label="Get started">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+          </button>
+        </form>
       </div>
     </div>
   </header>
