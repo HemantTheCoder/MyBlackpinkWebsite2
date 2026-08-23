@@ -337,6 +337,8 @@ window.showToast = function (message, duration) {
   if (!container) {
     container = document.createElement('div');
     container.id = 'toast-container';
+    container.setAttribute('role', 'status');
+    container.setAttribute('aria-live', 'polite');
     document.body.appendChild(container);
   }
   const toast = document.createElement('div');
@@ -369,9 +371,28 @@ function initScrollReveal() {
 // =============================================
 // SPA ROUTING
 // =============================================
+function initSkipLink() {
+  if (document.getElementById('skip-link')) return;
+  const link = document.createElement('a');
+  link.id = 'skip-link';
+  link.className = 'skip-link';
+  link.href = '#main-content';
+  link.textContent = 'Skip to content';
+  link.addEventListener('click', function (e) {
+    const main = document.querySelector('main');
+    if (!main) return;
+    e.preventDefault();
+    main.id = main.id || 'main-content';
+    main.setAttribute('tabindex', '-1');
+    main.focus();
+    main.scrollIntoView();
+  });
+  document.body.insertBefore(link, document.body.firstChild);
+}
+
 document.addEventListener('DOMContentLoaded', function () {
+  initSkipLink();
   initBiasEngine();
-    initLightstickMode();
   initLightstickMode();
   initDailyStreak();
   initAll();
@@ -2762,6 +2783,8 @@ window.initLogin = function() {
   if (loginForm) {
     loginForm.onsubmit = async (e) => {
       e.preventDefault();
+      const statusEl = document.getElementById('login-status');
+      if (statusEl) statusEl.textContent = '';
       const username = document.getElementById('login-username').value;
       const password = document.getElementById('login-password').value;
       try {
@@ -2777,11 +2800,11 @@ window.initLogin = function() {
           await fetchCurrentUser();
           navigateTo('profile.html');
           if(typeof showToast === 'function') showToast(`Welcome back, ${data.username}!`);
-        } else {
-          alert(data.error || 'Login failed');
+        } else if (statusEl) {
+          statusEl.textContent = data.error || 'Login failed. Please try again.';
         }
       } catch (err) {
-        alert('Server error');
+        if (statusEl) statusEl.textContent = 'Server error. Please try again.';
       }
     };
   }
@@ -2789,6 +2812,8 @@ window.initLogin = function() {
   if (regForm) {
     regForm.onsubmit = async (e) => {
       e.preventDefault();
+      const statusEl = document.getElementById('register-status');
+      if (statusEl) statusEl.textContent = '';
       const username = document.getElementById('reg-username').value;
       const email = document.getElementById('reg-email').value;
       const password = document.getElementById('reg-password').value;
@@ -2807,11 +2832,11 @@ window.initLogin = function() {
           await fetchCurrentUser();
           navigateTo('profile.html');
           if(typeof showToast === 'function') showToast(`Welcome to the Blink family, ${data.username}!`);
-        } else {
-          alert(data.error || 'Registration failed');
+        } else if (statusEl) {
+          statusEl.textContent = data.error || 'Registration failed. Please try again.';
         }
       } catch (err) {
-        alert('Server error');
+        if (statusEl) statusEl.textContent = 'Server error. Please try again.';
       }
     };
   }

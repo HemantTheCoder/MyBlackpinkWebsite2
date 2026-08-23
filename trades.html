@@ -264,7 +264,7 @@
     }
 
     function openCreateTrade() {
-      if (!currentUser) return alert('Please login first!');
+      if (!currentUser) return showToast('Please login first!');
       const inv = document.getElementById('create-inv');
       inv.innerHTML = '';
       selectedCardUrl = null;
@@ -288,7 +288,7 @@
     }
 
     async function submitTrade() {
-      if (!selectedCardUrl) return alert('Select a card to offer!');
+      if (!selectedCardUrl) return showToast('Select a card to offer!');
       const reqRarity = document.getElementById('trade-req-rarity').value;
       
       try {
@@ -305,15 +305,15 @@
           showToast('Trade posted!', 2000);
           loadTrades();
         } else {
-          alert(data.error);
+          showToast(data.error || 'Could not create trade.');
         }
       } catch (e) {
-        alert('Error creating trade');
+        showToast('Error creating trade.');
       }
     }
 
     function openAcceptTrade(tradeId, requestedRarity) {
-      if (!currentUser) return alert('Please login first!');
+      if (!currentUser) return showToast('Please login first!');
       currentTradeTarget = tradeId;
       selectedCardUrl = null;
       
@@ -347,7 +347,7 @@
     }
 
     async function confirmAcceptTrade() {
-      if (!selectedCardUrl) return alert('Select a card to offer!');
+      if (!selectedCardUrl) return showToast('Select a card to offer!');
       try {
         const res = await authFetch(`${API_BASE}/api/trades/${currentTradeTarget}/accept`, {
           method: 'POST',
@@ -362,10 +362,10 @@
           showToast('Trade completed!', 2000);
           loadTrades();
         } else {
-          alert(data.error);
+          showToast(data.error || 'Could not accept trade.');
         }
       } catch (e) {
-        alert('Error accepting trade');
+        showToast('Error accepting trade.');
       }
     }
 
@@ -381,7 +381,7 @@
           loadTrades();
         }
       } catch (e) {
-        alert('Error cancelling trade');
+        showToast('Error cancelling trade.');
       }
     }
   </script>
