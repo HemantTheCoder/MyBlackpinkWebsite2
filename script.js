@@ -387,6 +387,54 @@ function initMotionEnhance() {
   document.head.appendChild(s);
 }
 
+// The top nav is a horizontally-scrolling strip with its native scrollbar hidden.
+// On desktop that's undiscoverable with a mouse (no trackpad swipe, no visible
+// scrollbar) — this adds a wheel-to-horizontal-scroll converter and visible
+// click arrows so PC visitors can actually reach the items past the fold.
+function initNavScrollControls() {
+  const nav = document.querySelector('.btn-group');
+  if (!nav || nav.closest('.nav-scroll-row')) return;
+
+  nav.addEventListener('wheel', (e) => {
+    if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return; // let native horizontal input through untouched
+    if (nav.scrollWidth <= nav.clientWidth) return; // nothing to scroll
+    e.preventDefault();
+    nav.scrollLeft += e.deltaY;
+  }, { passive: false });
+
+  const row = document.createElement('div');
+  row.className = 'nav-scroll-row';
+  nav.parentNode.insertBefore(row, nav);
+
+  const prevBtn = document.createElement('button');
+  prevBtn.type = 'button';
+  prevBtn.className = 'nav-scroll-arrow nav-scroll-prev';
+  prevBtn.setAttribute('aria-label', 'Scroll navigation left');
+  prevBtn.innerHTML = '&#8249;';
+
+  const nextBtn = document.createElement('button');
+  nextBtn.type = 'button';
+  nextBtn.className = 'nav-scroll-arrow nav-scroll-next';
+  nextBtn.setAttribute('aria-label', 'Scroll navigation right');
+  nextBtn.innerHTML = '&#8250;';
+
+  row.appendChild(prevBtn);
+  row.appendChild(nav);
+  row.appendChild(nextBtn);
+
+  prevBtn.addEventListener('click', () => nav.scrollBy({ left: -240, behavior: 'smooth' }));
+  nextBtn.addEventListener('click', () => nav.scrollBy({ left: 240, behavior: 'smooth' }));
+
+  function updateArrows() {
+    const maxScroll = nav.scrollWidth - nav.clientWidth;
+    prevBtn.classList.toggle('is-disabled', nav.scrollLeft <= 2);
+    nextBtn.classList.toggle('is-disabled', nav.scrollLeft >= maxScroll - 2);
+  }
+  nav.addEventListener('scroll', updateArrows, { passive: true });
+  window.addEventListener('resize', updateArrows);
+  updateArrows();
+}
+
 function initSkipLink() {
   if (document.getElementById('skip-link')) return;
   const link = document.createElement('a');
@@ -418,6 +466,7 @@ document.addEventListener('DOMContentLoaded', function () {
 function initAll() {
   initLoadingScreen();
   setupSPA();
+  initNavScrollControls();
   setupClickEffect();
   initBackToTop();
   initPetalRain();
@@ -536,6 +585,7 @@ async function navigateTo(url, push) {
     }
 
     initScrollReveal();
+    initNavScrollControls();
     eraIdx = parseInt(localStorage.getItem(ERA_KEY) || '0');
     applyEra();
 
@@ -3481,6 +3531,9 @@ window.initPhotocards = function() {
 
         const rarity = data.card.rarity;
         const rarityLower = rarity.toLowerCase();
+
+        const stage = document.getElementById('reveal-stage');
+        if (stage) stage.style.setProperty('--rarity-color', getRarityColor(rarity));
 
         reveal.style.display = 'block';
         const img = document.getElementById('pulled-card-img');

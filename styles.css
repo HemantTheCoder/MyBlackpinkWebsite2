@@ -225,6 +225,25 @@ a.glass-card:hover,
 }
 
 /* Buttons */
+/* Wraps .btn-group + the JS-injected scroll arrows so they move together as one
+   sticky unit — sticky positioning has to live on this row, not on .btn-group
+   itself, or arrows overlaid on the nav would visually detach from it once it
+   sticks to the viewport during scroll. */
+.nav-scroll-row {
+  position: sticky;
+  top: 12px;
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 1.5rem 0 2.5rem;
+}
+.nav-scroll-row .btn-group {
+  margin: 0;
+  flex: 1;
+  min-width: 0;
+}
+
 .btn-group {
   display: flex;
   flex-wrap: nowrap;            /* Single row — no more multi-row wall */
@@ -240,9 +259,6 @@ a.glass-card:hover,
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid var(--glass-border);
   border-radius: 100px;
-  position: sticky;
-  top: 12px;
-  z-index: 500;
   /* Hide native scrollbar while keeping scroll */
   scrollbar-width: none;
   -ms-overflow-style: none;
@@ -253,6 +269,30 @@ a.glass-card:hover,
 }
 .btn-group::-webkit-scrollbar { display: none; }
 .btn-group > * { flex-shrink: 0; } /* Items never shrink */
+
+/* Desktop scroll arrows — hidden on touch-sized viewports where swipe already works */
+.nav-scroll-arrow {
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid var(--glass-border);
+  background: rgba(12, 10, 14, 0.85);
+  backdrop-filter: blur(10px);
+  color: var(--text-main);
+  font-size: 1.3rem;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.25s ease, transform 0.2s ease, border-color 0.2s ease;
+}
+.nav-scroll-arrow:hover { transform: scale(1.08); border-color: var(--bp-pink); }
+.nav-scroll-arrow.is-disabled { opacity: 0.25; pointer-events: none; }
+@media (max-width: 768px) {
+  .nav-scroll-arrow { display: none; }
+}
 
 /* Control-deck nav links */
 .btn-group .btn {
