@@ -371,6 +371,15 @@ function initScrollReveal() {
 // =============================================
 // SPA ROUTING
 // =============================================
+function initMotionEnhance() {
+  if (document.getElementById('motion-enhance-script')) return;
+  const s = document.createElement('script');
+  s.id = 'motion-enhance-script';
+  s.type = 'module';
+  s.src = 'motion-enhance.js';
+  document.head.appendChild(s);
+}
+
 function initSkipLink() {
   if (document.getElementById('skip-link')) return;
   const link = document.createElement('a');
@@ -391,6 +400,7 @@ function initSkipLink() {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
+  initMotionEnhance();
   initSkipLink();
   initBiasEngine();
   initLightstickMode();
@@ -2882,7 +2892,8 @@ window.initProfile = async function() {
       const owned = (currentUser.photocards || []).filter(c => c && c.url).length;
       const total = masterCardList.length || 1;
       const pct = Math.min(100, Math.round((owned / total) * 100));
-      pctEl.textContent = pct + '%';
+      if (typeof window.animateNumber === 'function') window.animateNumber(pctEl, pct, { suffix: '%' });
+      else pctEl.textContent = pct + '%';
       barEl.style.width = pct + '%';
     } catch (e) { /* leave at 0% if the card index can't be reached */ }
     renderAchievements();
@@ -2899,9 +2910,15 @@ window.initProfile = async function() {
   const badgeEl = document.getElementById('stan-level-badge');
   if (badgeEl) badgeEl.textContent = stanLevel;
   const playEl = document.getElementById('stat-plays');
-  if (playEl) playEl.textContent = plays;
+  if (playEl) {
+    if (typeof window.animateNumber === 'function') window.animateNumber(playEl, plays);
+    else playEl.textContent = plays;
+  }
   const commEl = document.getElementById('stat-comments');
-  if (commEl) commEl.textContent = comments;
+  if (commEl) {
+    if (typeof window.animateNumber === 'function') window.animateNumber(commEl, comments);
+    else commEl.textContent = comments;
+  }
 
   document.getElementById('update-bias').value = currentUser.bias || 'OT4';
   if (currentUser.dob) document.getElementById('update-dob').value = currentUser.dob;
@@ -3400,7 +3417,10 @@ window.initPhotocards = function() {
         const owned = (currentUser.photocards || []).filter(c => c && c.url).length;
         const total = masterCardList.length || 1;
         const pct = Math.min(100, Math.round((owned / total) * 100));
-        if (pctEl) pctEl.textContent = pct + '%';
+        if (pctEl) {
+          if (typeof window.animateNumber === 'function') window.animateNumber(pctEl, pct, { suffix: '%' });
+          else pctEl.textContent = pct + '%';
+        }
         if (barEl) barEl.style.width = pct + '%';
       } catch (e) { /* leave dashboard at last-known values */ }
     }
